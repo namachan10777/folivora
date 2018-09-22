@@ -714,8 +714,6 @@ ROW3
 Text Label 4200 4250 0    50   ~ 0
 ROW4
 NoConn ~ 2900 2650
-NoConn ~ 4200 3050
-NoConn ~ 4200 3150
 NoConn ~ 4200 4550
 $Comp
 L Device:LED D1
@@ -776,9 +774,9 @@ F 3 "" H 1800 4750 50  0001 C CNN
 	1    1800 4750
 	1    0    0    -1  
 $EndComp
-Text Label 2900 3050 2    50   ~ 0
+Text Label 4200 3050 0    50   ~ 0
 LED1
-Text Label 2900 3150 2    50   ~ 0
+Text Label 4200 3150 0    50   ~ 0
 LED2
 Text Label 3750 6900 3    50   ~ 0
 LED1
@@ -1218,4 +1216,6 @@ F 3 "" H 5550 4600 50  0001 C CNN
 	1    5550 4600
 	1    0    0    -1  
 $EndComp
+NoConn ~ 2900 3050
+NoConn ~ 2900 3150
 $EndSCHEMATC
