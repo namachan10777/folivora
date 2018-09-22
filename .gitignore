@@ -3,3 +3,4 @@
 *.lck
 *-cache.lib
 *.net
+*.kicad_pcb-bak
