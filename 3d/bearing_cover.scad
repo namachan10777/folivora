@@ -51,11 +51,6 @@ difference() {
 			}
 		}
 	}
-	for (i = [0:1]) {
-		for (j = [0:1]) {
-			translate([$pillar_pos_xs[i]+$pillar_size[0]/2, $pillar_pos_ys[j]+$pillar_size[0]/2, -$cover_size[2]/2]) {
-				cylinder(r=$screw_hole_r, h=($cover_size[2]+$pillar_size[2]), $fn=100);
-			}
-		}
-	}
+	translate([0, 0, -$bearing_in_r])
+		v_holes($pillar_size[2]+$cover_size[2]);
 }
