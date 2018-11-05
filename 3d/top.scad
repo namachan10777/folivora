@@ -1,3 +1,5 @@
+include <bearing_base.scad>
+
 $top_t = 6;
 $key_tilt = 12;
 $key_col_size = 22;
@@ -123,3 +125,6 @@ polyhedron(
 		[2, 1, 0],
 	]
 );
+
+rotate([20, 0, -45])
+	bearing_base();

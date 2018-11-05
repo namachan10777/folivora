@@ -10,4 +10,7 @@ module core() {
 	}
 }
 
-core();
+module bearing_base() {
+	translate([-$cover_size[0]/2, -$cover_size[1]/2, $cover_size[2]/2])
+		core();
+}
