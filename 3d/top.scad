@@ -1,7 +1,8 @@
 $top_t = 6;
 $key_tilt = 12;
 $key_col_size = 22;
-$key_row_size = 20;
+$key_repeat = 19;
+$key_row_size = $key_repeat+0.01;
 
 module square() {
 	$square = [$key_col_size, $key_row_size, $top_t];
@@ -49,7 +50,7 @@ module middleColumn() {
 			}
 		}
 	}
-	translate([0, 20, 0]) {
+	translate([0, $key_row_size, 0]) {
 		rotate([0, -$key_tilt, 180]) {
 			square();
 		}
@@ -63,7 +64,7 @@ module leftColumn() {
 			square();
 		}
 	}
-	translate([0, 20, 0]) {
+	translate([0, $key_row_size, 0]) {
 		rotate([0, -$key_tilt, 180]) {
 			square();
 		}
@@ -80,7 +81,7 @@ $key_offsets = [
 ];
 
 for (i = [0: 1: 5]) {
-	translate([$key_offsets[i][0], $key_row_size * i, $key_offsets[i][1]]) {
+	translate([$key_offsets[i][0], $key_repeat * i, $key_offsets[i][1]]) {
 		if (i == 0) {
 			rightColumn();
 		}
@@ -95,14 +96,14 @@ for (i = [0: 1: 5]) {
 
 $anchorage_vertexies = [
 	[0, 0, $top_t],
-	[0, 20, $top_t],
+	[0, $key_row_size, $top_t],
 	[
 		$key_offsets[1][0] - $key_col_size * cos($key_tilt) + $top_t * sin($key_tilt),
 		$key_row_size,
 		$key_offsets[1][1] + $key_col_size * sin($key_tilt) + $top_t * cos($key_tilt)
 	],
 	[0, 0, 0],
-	[$key_offsets[1][0], $key_row_size, $key_offsets[1][1]],
+	[0, $key_row_size, 0],
 	[
 		$key_offsets[1][0] - $key_col_size * cos($key_tilt),
 		$key_row_size,
