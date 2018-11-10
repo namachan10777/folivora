@@ -1,7 +1,8 @@
 include <ball_const.scad>
 
+
 module bearing_hole() {
-	translate([-$bearing_in_r, -$shaft_length/2, 0]) {
+	translate([-$bearing_in_r, -$shaft_length/2, $bearing_in_r]) {
 		union() {
 			translate([0, 0, -$bearing_in_r])
 				cube([$bearing_in_d, $shaft_length, $bearing_in_r]);
@@ -16,6 +17,11 @@ module bearing_hole() {
 }
 
 module bearing_holes() {
+	$bearing_spread_r =
+		sqrt(
+			pow($ball_size + $ball_clearance + $bearing_out_r, 2)
+			- pow($ball_size - $base_cover_padding - $bearing_in_r, 2)
+		);
 	for (theta = [0:120:240]) {
 	rotate([0, 0, theta])
 		translate([$bearing_spread_r, 0, 0])
@@ -25,11 +31,11 @@ module bearing_holes() {
 
 module core() {
 	difference() {
-			translate([0, 0, ($cover_size[2] - $bearing_in_d) / 2])
-				cube($cover_size, center=true);
+			translate([-$cover_size[0]/2, -$cover_size[1]/2, 0])
+				cube($cover_size);
 			translate($hole_pos) {
 				bearing_holes();
-				translate([0, 0, $ball_z]) {
+				translate([0, 0, $ball_size - $base_cover_padding]) {
 					sphere(r=($ball_size+$ball_clearance), $fn=100);
 			}
 		}
@@ -37,20 +43,13 @@ module core() {
 }
 
 difference() {
-	$pillar_pos_xs = [-$cover_size[0]/2, $cover_size[0]/2-$pillar_size[0]];
-	$pillar_pos_ys = [-$cover_size[1]/2, $cover_size[1]/2-$pillar_size[1]];
-	$pillar_pos_z  = $cover_size[2]/2;
+	$pillar_height = $ball_size - $base_cover_padding + $ball_cover_offset;
 	union() {
 		core();
-
-		for (i = [0:1]) {
-			for (j = [0:1]) {
-				translate([$pillar_pos_xs[i], $pillar_pos_ys[j], $pillar_pos_z]) {
-					cube($pillar_size);
-				}
-			}
-		}
+		translate([-$cover_size[0]/2, -$cover_size[1]/2, 0])
+			pillars($pillar_height);
 	}
-	translate([0, 0, -$bearing_in_r])
-		v_holes($pillar_size[2]+$cover_size[2]);
+	translate([-$cover_size[0]/2, -$cover_size[1]/2, 0])
+		v_holes($pillar_height);
 }
+

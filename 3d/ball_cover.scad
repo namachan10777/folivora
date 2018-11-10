@@ -2,11 +2,12 @@ include <ball_const.scad>
 
 module core() {
 	difference() {
-		cube([$cover_size[0], $cover_size[1], $ball_cover_t], center=true);
+		translate([-$cover_size[0]/2, -$cover_size[1]/2, 0])
+			cube([$cover_size[0], $cover_size[1], $ball_cover_t]);
 		translate([
 			$hole_pos[0],
 			$hole_pos[1],
-			$ball_z - ($ball_cover_t + $pillar_size[2] + ($cover_size[2] - $bearing_in_r))
+			-$ball_cover_offset
 		])
 			sphere(r=($ball_size+$ball_cover_clearance), $fn=100);
 	}
@@ -14,6 +15,6 @@ module core() {
 
 difference() {
 	core();
-	translate([0, 0, -$ball_cover_t/2])
+	translate([-$cover_size[0]/2, -$cover_size[1]/2, 0])
 		v_holes($ball_cover_t);
 }
