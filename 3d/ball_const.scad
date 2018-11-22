@@ -1,5 +1,5 @@
-$cover_size = [57, 50, 4];
-$hole_pos = [0, 0, 0];
+$cover_size = [57, 40, 4];
+$hole_pos = [0, -3, 0];
 $ball_size = 17;
 $ball_clearance = 1;
 $bearing_in_r  = 1.5;
@@ -10,6 +10,7 @@ $shaft_length = 8;
 $screw_hole_r = 1.5;
 $ball_cover_t = 1.5;
 $ball_cover_clearance = 0.1;
+$ball_cover_min_width = 5;
 $base_t = 4;
 $ball_cover_offset = 2;
 

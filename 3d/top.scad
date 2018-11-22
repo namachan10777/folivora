@@ -82,92 +82,18 @@ $key_offsets = [
 	[-3, 0]
 ];
 
-for (i = [0: 1: 5]) {
-	translate([$key_offsets[i][0], $key_repeat * i, $key_offsets[i][1]]) {
-		if (i == 0) {
-			rightColumn();
-		}
-		else if (i < 4) {
-			middleColumn();
-		}
-		else {
-			leftColumn();
+union() {
+	for (i = [0: 1: 5]) {
+		translate([$key_offsets[i][0], $key_repeat * i, $key_offsets[i][1]]) {
+			if (i == 0) {
+				rightColumn();
+			}
+			else if (i < 4) {
+				middleColumn();
+			}
+			else {
+				leftColumn();
+			}
 		}
 	}
 }
-
-$anchorage_vertexies = [
-	[0, 0, $top_t],
-	[0, $key_row_size, $top_t],
-	[
-		$key_offsets[1][0] - $key_col_size * cos($key_tilt) + $top_t * sin($key_tilt),
-		$key_row_size,
-		$key_offsets[1][1] + $key_col_size * sin($key_tilt) + $top_t * cos($key_tilt)
-	],
-	[0, 0, 0],
-	[0, $key_row_size, 0],
-	[
-		$key_offsets[1][0] - $key_col_size * cos($key_tilt),
-		$key_row_size,
-		$key_offsets[1][1] + $key_col_size * sin($key_tilt)
-	],
-];
-
-polyhedron(
-	points=$anchorage_vertexies,
-	faces=[
-		[4, 5, 3],
-		[3, 1, 4],
-		[3, 0, 1],
-		[2, 5, 4, 1],
-		[5, 2, 0],
-		[3, 5, 0],
-		[2, 1, 0],
-	]
-);
-
-$trackball_tilt = 20;
-$trackball_sweepback = 45;
-
-rotate([20, 0, -$trackball_sweepback])
-	bearing_base();
-
-$trackball_vrtx_pos_near = [
-	-$base_t * sin($trackball_tilt) * sin($trackball_sweepback),
-	-$base_t * sin($trackball_tilt) * cos($trackball_sweepback),
-	$base_t * cos($trackball_tilt)
-];
-
-$trackball_vrtx_pos_far = [
-	-$cover_size[0] * cos($trackball_sweepback),
-	$cover_size[0] * sin($trackball_sweepback),
-	0,
-];
-
-$bridge_vertexies = [
-	[0, 0, 0],
-	$trackball_vrtx_pos_far,
-	$anchorage_vertexies[5],
-	
-	[0, 0, $top_t],
-	$trackball_vrtx_pos_near,
-	[for (i = [0:2]) $trackball_vrtx_pos_near[i] + $trackball_vrtx_pos_far[i]],
-	$anchorage_vertexies[2]
-];
-
-polyhedron(
-	points=$bridge_vertexies,
-	faces=[
-		[2, 1, 0],
-		[6, 2, 0],
-		[3, 6, 0],
-		[4, 3, 0],
-		[3, 4, 4],
-		[5, 6, 3],
-		[4, 5, 3],
-		[5, 4, 0],
-		[0, 1, 5],
-		[2, 6, 5],
-		[1, 2, 5]
-	]
-);

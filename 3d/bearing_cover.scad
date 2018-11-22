@@ -22,7 +22,7 @@ module bearing_holes() {
 			pow($ball_size + $ball_clearance + $bearing_out_r, 2)
 			- pow($ball_size - $base_cover_padding - $bearing_in_r, 2)
 		);
-	for (theta = [0:120:240]) {
+	for (theta = [-30:120:240]) {
 	rotate([0, 0, theta])
 		translate([$bearing_spread_r, 0, 0])
 			bearing_hole();

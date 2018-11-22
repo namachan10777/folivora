@@ -21,7 +21,7 @@ module bearing_base() {
 			cube([$sensor_hole[0], $sensor_hole[1], $base_cover_padding]);
 		translate([$hole_pos[0], $hole_pos[1], $sensor_pcb_target_offset + $ball_size])
 			sphere(r=($ball_size + $ball_clearance), $fn=50);
-		translate([-$cover_size[0]/2 + $hole_pos[0], -$cover_size[1]/2 + $hole_pos[1], 0])
+		translate([-$cover_size[0]/2, -$cover_size[1]/2, 0])
 			v_holes($sensor_pcb_target_offset + $base_cover_padding);
 	}
 }
