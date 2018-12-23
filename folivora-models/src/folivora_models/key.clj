@@ -11,9 +11,7 @@
 (def key-elm-tilt (/ π 12))
 
 (defn center-move-vec [cube1 cube2]
-  [(/ (- (nth cube1 0) (nth cube2 0)) 2)
-   (/ (- (nth cube1 1) (nth cube2 1)) 2)
-   (/ (- (nth cube1 2) (nth cube2 2)) 2)])
+  (map (fn [p1 p2] (/ (- p1 p2) 2)) cube1 cube2))
 
 (def key-elm
   (model/difference
