@@ -31,7 +31,11 @@
                          (- (nth key-size 2) (* (nth key-size 2) (Math/cos tilt)))]
                         [0
                          (* (nth key-size 1) (Math/cos (- tilt key-elm-tilt)))
-                         (* (nth key-size 1) (Math/sin (- tilt key-elm-tilt)))])]
+                         (* (nth key-size 1) (Math/sin (- tilt key-elm-tilt)))]
+                        [0
+                         (- (* (nth key-size 2) (Math/sin (- tilt key-elm-tilt))))
+                         (- (* (nth key-size 2) (Math/cos (- tilt key-elm-tilt))) (nth key-size 2))
+                         ])]
         (util/add p (f (- times 1) (+ tilt key-elm-tilt))))
       [0 0 0]))
     (f times key-elm-tilt))
