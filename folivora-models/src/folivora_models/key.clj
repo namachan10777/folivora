@@ -67,10 +67,19 @@
        [5 4 3]
        [4 5 2 1]])))
 
-(def key-col-inner
-  (model/union
-    (->> key-elm)
-    (->> key-elm
-         (model/rotate key-elm-tilt [1 0 0])
-         (model/translate (key-elm-pos 1)))
-    (key-joint-padding 0)))
+(defn key-col [near far]
+  (defn make-far [times]
+    (let [k (->> key-elm
+                 (model/rotate (* key-elm-tilt times) [1 0 0])
+                 (model/translate (key-elm-pos times)))]
+      (if (<= times 1)
+        k
+        (model/union k (make-far (- times 1))))))
+  (defn make-near [times]
+    (->> (make-far times)
+         (model/mirror [0 1 0])
+         (model/translate (->> key-size
+                               (util/mul [0 1 0])))))
+  (model/union key-elm
+               (make-far far)
+               (make-near near)))
