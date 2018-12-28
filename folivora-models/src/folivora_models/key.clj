@@ -23,63 +23,46 @@
          (model/translate (->> (center-move-vec key-size hole-size)
                                (util/mul [1 1 0]))))))
 
-(defn key-elm-pos [times]
-  (defn f [times tilt]
-    (if (> times 0)
-      (let [p (util/add [0
-                         (* (nth key-size 2) (Math/sin tilt))
-                         (- (nth key-size 2) (* (nth key-size 2) (Math/cos tilt)))]
-                        [0
-                         (* (nth key-size 1) (Math/cos (- tilt key-elm-tilt)))
-                         (* (nth key-size 1) (Math/sin (- tilt key-elm-tilt)))]
-                        [0
-                         (- (* (nth key-size 2) (Math/sin (- tilt key-elm-tilt))))
-                         (- (* (nth key-size 2) (Math/cos (- tilt key-elm-tilt))) (nth key-size 2))
-                         ])]
-        (util/add p (f (- times 1) (+ tilt key-elm-tilt))))
-      [0 0 0]))
-    (f times key-elm-tilt))
+(defn key-pos-delta-base [tilt]
+  [0
+   (*  1 (nth key-size 2) (Math/sin tilt))
+   (* -1 (nth key-size 2) (Math/cos tilt))])
 
-(defn key-elm-peak [times]
-  (util/add (key-elm-pos times)
-            [0
-             (* (nth key-size 1) (Math/cos (* key-elm-tilt times)))
-             (* (nth key-size 1) (Math/sin (* key-elm-tilt times)))]))
+(defn key-pos-delta-tip [tilt]
+  [0
+   (* (nth key-size 1) (Math/cos tilt))
+   (* (nth key-size 1) (Math/sin tilt))])
 
-; FIXME naming
-(defn key-col-mt [times]
-  (util/add (key-elm-peak times)
-            [0
-             (* (nth key-size 2) (Math/sin (* -1 key-elm-tilt times)))
-             (* (nth key-size 2) (Math/cos (* -1 key-elm-tilt times)))]))
-
-(defn key-joint-padding [times]
-  (let [gap (util/mul [1 0 0] key-size)]
-    (model/polyhedron
-      [(key-elm-peak times)
-       (key-elm-pos (+ times 1))
-       (key-col-mt times)
-       (util/add (key-elm-peak times) gap)
-       (util/add (key-elm-pos (+ times 1)) gap)
-       (util/add (key-col-mt times) gap)]
-      [[0 1 2]
-       [3 4 1 0]
-       [5 4 3]
-       [4 5 2 1]])))
+(defn key-pos-delta-joint [tilt]
+  [0
+   (* -1 (nth key-size 2) (Math/sin tilt))
+   (*  1 (nth key-size 2) (Math/cos tilt))])
 
 (defn key-col [near far]
-  (defn make-far [times]
-    (let [k (->> key-elm
-                 (model/rotate (* key-elm-tilt times) [1 0 0])
-                 (model/translate (key-elm-pos times)))]
+  (defn make-far [times base-pos tilt]
+    (let [current-key-elm
+          (->> key-elm
+               (model/rotate tilt [1 0 0])
+               (model/translate base-pos))]
       (if (<= times 1)
-        k
-        (model/union k (make-far (- times 1))))))
+        current-key-elm
+        (model/union
+          current-key-elm
+          (make-far
+            (- times 1)
+            (util/add
+              base-pos
+              (key-pos-delta-tip tilt)
+              (key-pos-delta-joint tilt)
+              (key-pos-delta-base (+ tilt key-elm-tilt)))
+            (+ tilt key-elm-tilt))))))
   (defn make-near [times]
-    (->> (make-far times)
-         (model/mirror [0 1 0])
-         (model/translate (->> key-size
-                               (util/mul [0 1 0])))))
-  (model/union key-elm
-               (make-far far)
-               (make-near near)))
+    (->> (make-far times
+                   (util/add
+                     (key-pos-delta-base key-elm-tilt)
+                     (key-pos-delta-joint 0))
+                   key-elm-tilt)
+         (model/mirror [0 1 0])))
+  (model/union
+    (make-far (+ far 1) [0 0 0] 0)
+    (make-near near)))
