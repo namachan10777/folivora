@@ -13,7 +13,7 @@
 (defn vecop [op args]
   (defn f [v1 v2]
     (map op v1 v2))
-  (reduce f args))
+  (vec (reduce f args)))
 
 (defn mul [arg & args]
   (vecop * (cons arg args)))
