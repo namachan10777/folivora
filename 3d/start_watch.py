@@ -10,7 +10,7 @@ from watchdog.events import FileSystemEventHandler
 class Handler(FileSystemEventHandler):
 
     def on_modified(self, event):
-        if os.path.abspath(event.src_path) == os.path.abspath(sys.argv[1]):
+        if os.path.splitext(event.src_path)[-1].lower() == '.ml':
             subprocess.call(['ocaml', sys.argv[1]])
 
 if __name__ == '__main__':
