@@ -45,24 +45,35 @@ module Key = struct
         | (_, Joint) ->
             f (tilt -. tilt_step) (level - 1) Top_far
         in
-            if level >= 0
-            then Math.Pos.add (f (tilt_step *. float_of_int level) level spec) (0., 0., get_z key_size)
-            else
-                let spec = match spec with
-                | Top_far -> Joint
-                | Bottom_far -> Base
-                | Base -> Bottom_far
-                | Joint -> Top_far
-                in Math.Pos.add (f (tilt_step *. float_of_int (-level)) (-level) spec) (0., 0., get_z key_size)
-                |> Math.Pos.mul (1., -1., 1.)
-                |> Math.Pos.add (0., get_y key_size, 0.)
+            Math.Pos.add (f (tilt_step *. float_of_int level) level spec) (0., 0., get_z key_size)
+
         
 
+    let key_elm_joint_padding_with_pos tilt i =
+        let bottom1 = sidewall_point tilt i Bottom_far in
+        let joint   = sidewall_point tilt i Top_far in
+        let bottom2 = sidewall_point tilt (i+1) Base in
+        let width = get_x key_size in
+        let bottom_surface = [bottom1; joint; bottom2] in
+        Model.polyhedron
+            (bottom_surface @ List.map (Math.Pos.add (width, 0., 0.)) bottom_surface)
+            [[0; 2; 1]; [0; 1; 4; 3]; [3; 4; 5]; [0; 3; 5; 2]; [1; 2; 5; 4]]
+
     let key_col near far =
-        Model.union @@
-            List.init (near + far + 1) @@ fun i ->
-                let i = i - near in
-                key_elm
-                |> Model.rotate (key_elm_tilt *. float_of_int i, 0., 0.)
-                |> Model.translate (sidewall_point key_elm_tilt i Base)
+        let make_range start finish =
+            Model.union @@
+                (List.init (finish-start) @@ fun i ->
+                    let i = i + start in
+                    key_elm
+                    |> Model.rotate (key_elm_tilt *. float_of_int i, 0., 0.)
+                    |> Model.translate (sidewall_point key_elm_tilt i Base))
+                @ (List.init (finish-start-1) @@ fun i ->
+                    let i = i + start in
+                    key_elm_joint_padding_with_pos key_elm_tilt i) in
+        Model.union [
+            make_range 0 (far+1);
+            (Model.union [make_range 1 (near+1); key_elm_joint_padding_with_pos key_elm_tilt 0])
+            |> Model.mirror (0, 1, 0)
+            |> Model.translate (0., get_y key_size, 0.);
+        ]
 end
