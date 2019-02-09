@@ -48,6 +48,16 @@ module Key = struct
             Math.Pos.add bp (0., (get_y key_size) *. (cos tilt), (get_y key_size) *. (sin tilt)))
         (key_base_pos_series tilts) (tilt_acc tilts)
 
+    let key_padding tri =
+        let ps = tri  in
+        Model.polyhedron ps
+            [[0; 1; 2]]
+
+    let rec map3 f l1 l2 l3 = match (l1, l2, l3) with
+        | ([], [], []) -> []
+        | (e1::l1, e2::l2, e3::l3) -> (f e1 e2 e3) :: map3 f l1 l2 l3
+        | _ -> raise (Invalid_argument "map3")
+ 
     let key_col near far =
         let make_col tilts =
             List.map2 (fun bp tilt ->
@@ -55,6 +65,18 @@ module Key = struct
                 |> Model.rotate (tilt, 0., 0.)
                 |> Model.translate (0., 0., get_z key_size)
                 |> Model.translate bp)
-            (key_base_pos_series tilts) (tilt_acc tilts)
-        in Model.union (key_elm :: (make_col near))
+            (key_base_pos_series tilts) (tilt_acc tilts) in
+        let make_paddings tilts =
+            let ps = map3
+                (fun b j t -> t :: j :: b :: [])
+                (key_base_pos_series tilts)
+                (key_joint_pos_series tilts)
+                (key_tip_pos_series tilts) |> List.flatten in
+            let rec f = function
+                | b :: j :: t :: tl ->
+                    (key_padding [b; j; t]) :: f tl
+                | _ -> []
+            in f ((0., get_y key_size, -.(get_z key_size)) :: (List.rev ps))
+                |> List.map (Model.translate (0., 0., get_z key_size))
+        in Model.union (key_elm :: (make_col near) @ (make_paddings near))
 end
