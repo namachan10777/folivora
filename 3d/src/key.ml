@@ -49,9 +49,8 @@ module Key = struct
         (key_base_pos_series tilts) (tilt_acc tilts)
 
     let key_padding tri =
-        let ps = tri  in
-        Model.polyhedron ps
-            [[0; 1; 2]]
+        let ps = tri @ List.map (Math.Pos.add (get_x key_size, 0., 0.)) tri in
+        Model.polyhedron ps [[0; 1; 2];[1;0;3;4];[4;3;5];[2;1;4;5];[0;2;5;3]]
 
     let rec map3 f l1 l2 l3 = match (l1, l2, l3) with
         | ([], [], []) -> []
