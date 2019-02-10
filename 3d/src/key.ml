@@ -62,6 +62,27 @@ module Key = struct
         | (e1::l1, e2::l2, e3::l3) -> (f e1 e2 e3) :: map3 f l1 l2 l3
         | _ -> raise (Invalid_argument "map3")
 
+    let key_col_padding a b a_offset b_offset =
+        let half tilts offset =
+            let jp = key_joint_pos_series tilts in
+            let bp = key_base_pos_series tilts in
+            let tp = key_tip_pos_series tilts in
+            let ps = (List.hd jp) :: List.flatten (map3 (fun t j b -> [t;b;j]) tp (List.tl jp) bp) @ [(0., 0., -.(get_z key_size))] in
+            List.map (Math.Pos.add offset) ps in
+        let right = half a a_offset in
+        let left  = half b b_offset in
+        let col_n = (List.length a) in
+        let part = col_n * 3 + 2 in
+        let rev_side = List.map (fun l -> List.map ((+) part) l |> List.rev) in
+        let square_r = List.init col_n (fun i -> [i*3+3;i*3+2;i*3+1;i*3]) in
+        let square_l = rev_side square_r in
+        let triangle_r = List.init col_n (fun i -> [i*3+2;i*3+3;i*3+4]) in
+        let triangle_l = rev_side triangle_r in
+        let floor_large = List.init col_n (fun i -> [i*3+1;i*3+2;i*3+part+2;i*3+part+1]) in
+        let floor_small = List.init col_n (fun i -> [i*3+2;i*3+4;i*3+part+4;i*3+part+2]) in
+        let ceil = List.init col_n (fun i -> [i*3+3;i*3;i*3+part;i*3+part+3]) in
+        let cover = [[0;1;part+1;part];[part-1;part-2;part*2-2;part*2-1]] in
+        Model.polyhedron (right @ left) (square_r @ triangle_r @ square_l @ triangle_l @ floor_small @ floor_large @ ceil @ cover) 
  
     let key_col near far =
         let make_col tilts =
