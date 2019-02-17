@@ -1,0 +1,198 @@
+EESchema Schematic File Version 4
+LIBS:col4-cache
+EELAYER 26 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Switch:SW_Push_45deg SW2
+U 1 1 5C655737
+P 4650 3700
+F 0 "SW2" V 4696 3559 50  0000 R CNN
+F 1 "K1" V 4605 3559 50  0000 R CNN
+F 2 "folivora:SW_Cherry_MX1A_1.00u_PCB" H 4650 3700 50  0001 C CNN
+F 3 "" H 4650 3700 50  0001 C CNN
+	1    4650 3700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Switch:SW_Push_45deg SW3
+U 1 1 5C6557BF
+P 5100 3700
+F 0 "SW3" V 5146 3559 50  0000 R CNN
+F 1 "K2" V 5055 3559 50  0000 R CNN
+F 2 "folivora:SW_Cherry_MX1A_1.00u_PCB" H 5100 3700 50  0001 C CNN
+F 3 "" H 5100 3700 50  0001 C CNN
+	1    5100 3700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Switch:SW_Push_45deg SW4
+U 1 1 5C6559A1
+P 5550 3700
+F 0 "SW4" V 5596 3559 50  0000 R CNN
+F 1 "K3" V 5505 3559 50  0000 R CNN
+F 2 "folivora:SW_Cherry_MX1A_1.00u_PCB" H 5550 3700 50  0001 C CNN
+F 3 "" H 5550 3700 50  0001 C CNN
+	1    5550 3700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:D D2
+U 1 1 5C655A7E
+P 4700 3900
+F 0 "D2" H 4700 3700 50  0000 C CNN
+F 1 "D" H 4700 3800 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 4700 3900 50  0001 C CNN
+F 3 "~" H 4700 3900 50  0001 C CNN
+	1    4700 3900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4550 3800 4550 3900
+$Comp
+L Device:D D3
+U 1 1 5C655CE4
+P 5150 3900
+F 0 "D3" H 5150 3700 50  0000 C CNN
+F 1 "D" H 5150 3800 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 5150 3900 50  0001 C CNN
+F 3 "~" H 5150 3900 50  0001 C CNN
+	1    5150 3900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:D D4
+U 1 1 5C655DC6
+P 5600 3900
+F 0 "D4" H 5600 3700 50  0000 C CNN
+F 1 "D" H 5600 3800 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 5600 3900 50  0001 C CNN
+F 3 "~" H 5600 3900 50  0001 C CNN
+	1    5600 3900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5450 3900 5450 3800
+Wire Wire Line
+	5000 3900 5000 3800
+$Comp
+L Switch:SW_Push_45deg SW5
+U 1 1 5C6562D0
+P 6000 3700
+F 0 "SW5" V 6046 3559 50  0000 R CNN
+F 1 "K4" V 5955 3559 50  0000 R CNN
+F 2 "folivora:SW_Cherry_MX1A_1.00u_PCB" H 6000 3700 50  0001 C CNN
+F 3 "" H 6000 3700 50  0001 C CNN
+	1    6000 3700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Switch:SW_Push_45deg SW6
+U 1 1 5C6562D6
+P 6450 3700
+F 0 "SW6" V 6496 3559 50  0000 R CNN
+F 1 "K5" V 6405 3559 50  0000 R CNN
+F 2 "folivora:SW_Cherry_MX1A_1.00u_PCB" H 6450 3700 50  0001 C CNN
+F 3 "" H 6450 3700 50  0001 C CNN
+	1    6450 3700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:D D5
+U 1 1 5C6562DC
+P 6050 3900
+F 0 "D5" H 6050 3700 50  0000 C CNN
+F 1 "D" H 6050 3800 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 6050 3900 50  0001 C CNN
+F 3 "~" H 6050 3900 50  0001 C CNN
+	1    6050 3900
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:D D6
+U 1 1 5C6562E2
+P 6500 3900
+F 0 "D6" H 6500 3700 50  0000 C CNN
+F 1 "D" H 6500 3800 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 6500 3900 50  0001 C CNN
+F 3 "~" H 6500 3900 50  0001 C CNN
+	1    6500 3900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6350 3900 6350 3800
+Wire Wire Line
+	5900 3900 5900 3800
+Wire Wire Line
+	4250 3500 4750 3500
+Wire Wire Line
+	4750 3500 4750 3600
+Wire Wire Line
+	4750 3500 5200 3500
+Wire Wire Line
+	5200 3500 5200 3600
+Connection ~ 4750 3500
+Wire Wire Line
+	5200 3500 5650 3500
+Wire Wire Line
+	5650 3500 5650 3600
+Connection ~ 5200 3500
+Wire Wire Line
+	5650 3500 6100 3500
+Wire Wire Line
+	6100 3500 6100 3600
+Connection ~ 5650 3500
+Wire Wire Line
+	6100 3500 6550 3500
+Wire Wire Line
+	6550 3500 6550 3600
+Connection ~ 6100 3500
+$Comp
+L Connector_Generic:Conn_01x07 J1
+U 1 1 5C656E3F
+P 3350 3600
+F 0 "J1" H 3270 3075 50  0000 C CNN
+F 1 "INTERFACE" H 3270 3166 50  0000 C CNN
+F 2 "Connector_JST:JST_XH_B07B-XH-A_1x07_P2.50mm_Vertical" H 3350 3600 50  0001 C CNN
+F 3 "~" H 3350 3600 50  0001 C CNN
+	1    3350 3600
+	-1   0    0    1   
+$EndComp
+Text Label 4250 3500 0    50   ~ 0
+SELECT
+Text Label 4850 3900 3    50   ~ 0
+READ1
+Text Label 5300 3900 3    50   ~ 0
+READ2
+Text Label 5750 3900 3    50   ~ 0
+READ3
+Text Label 6200 3900 3    50   ~ 0
+READ4
+Text Label 6650 3900 3    50   ~ 0
+READ5
+Text Label 3550 3800 0    50   ~ 0
+READ1
+Text Label 3550 3700 0    50   ~ 0
+READ2
+Text Label 3550 3600 0    50   ~ 0
+READ3
+Text Label 3550 3500 0    50   ~ 0
+READ4
+Text Label 3550 3400 0    50   ~ 0
+READ5
+Text Label 3550 3300 0    50   ~ 0
+SELECT
+NoConn ~ 3550 3900
+NoConn ~ 6000 2800
+$EndSCHEMATC
