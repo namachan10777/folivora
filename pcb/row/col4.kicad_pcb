@@ -62,8 +62,8 @@
     (aux_axis_origin 0 0)
     (visible_elements FFFFFF7F)
     (pcbplotparams
-      (layerselection 0x010fc_ffffffff)
-      (usegerberextensions false)
+      (layerselection 0x010f0_ffffffff)
+      (usegerberextensions true)
       (usegerberattributes false)
       (usegerberadvancedattributes false)
       (creategerberjobfile false)
@@ -85,9 +85,9 @@
       (subtractmaskfromsilk false)
       (outputformat 1)
       (mirror false)
-      (drillshape 1)
+      (drillshape 0)
       (scaleselection 1)
-      (outputdirectory ""))
+      (outputdirectory "gerber/"))
   )
 
   (net 0 "")
@@ -1457,16 +1457,16 @@
     )
     (filled_polygon
       (pts
-        (xy 132.273748 58.855858) (xy 132.259605 58.87) (xy 132.273748 58.884143) (xy 132.094143 59.063748) (xy 132.08 59.049605)
-        (xy 132.065858 59.063748) (xy 131.886253 58.884143) (xy 131.900395 58.87) (xy 131.886253 58.855858) (xy 132.065858 58.676253)
-        (xy 132.08 58.690395) (xy 132.094143 58.676253)
+        (xy 189.423748 58.855858) (xy 189.409605 58.87) (xy 189.423748 58.884143) (xy 189.244143 59.063748) (xy 189.23 59.049605)
+        (xy 189.215858 59.063748) (xy 189.036253 58.884143) (xy 189.050395 58.87) (xy 189.036253 58.855858) (xy 189.215858 58.676253)
+        (xy 189.23 58.690395) (xy 189.244143 58.676253)
       )
     )
     (filled_polygon
       (pts
-        (xy 189.423748 58.855858) (xy 189.409605 58.87) (xy 189.423748 58.884143) (xy 189.244143 59.063748) (xy 189.23 59.049605)
-        (xy 189.215858 59.063748) (xy 189.036253 58.884143) (xy 189.050395 58.87) (xy 189.036253 58.855858) (xy 189.215858 58.676253)
-        (xy 189.23 58.690395) (xy 189.244143 58.676253)
+        (xy 132.273748 58.855858) (xy 132.259605 58.87) (xy 132.273748 58.884143) (xy 132.094143 59.063748) (xy 132.08 59.049605)
+        (xy 132.065858 59.063748) (xy 131.886253 58.884143) (xy 131.900395 58.87) (xy 131.886253 58.855858) (xy 132.065858 58.676253)
+        (xy 132.08 58.690395) (xy 132.094143 58.676253)
       )
     )
     (filled_polygon

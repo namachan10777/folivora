@@ -543,7 +543,7 @@ F 3 "~" H 1750 2150 50  0001 C CNN
 	1    1750 2150
 	1    0    0    -1  
 $EndComp
-Text Label 1900 2150 0    50   ~ 0
+Text Label 1900 2700 0    50   ~ 0
 USB_2
 Wire Wire Line
 	2100 2150 1900 2150
@@ -569,7 +569,7 @@ F 3 "~" H 1750 2700 50  0001 C CNN
 	1    1750 2700
 	1    0    0    -1  
 $EndComp
-Text Label 1900 2700 0    50   ~ 0
+Text Label 1900 2150 0    50   ~ 0
 USB_3
 Wire Wire Line
 	2100 2700 1900 2700
@@ -838,7 +838,7 @@ U 1 1 5C67452B
 P 8650 2700
 F 0 "SW5" H 8550 2700 50  0000 C CNN
 F 1 "K40" H 8550 2600 50  0000 C CNN
-F 2 "Button_Switch_SMD:SW_SPST_TL3305A" H 8650 2700 50  0001 C CNN
+F 2 "folivora:SW_Cherry_MX1A_1.00u_PCB" H 8650 2700 50  0001 C CNN
 F 3 "" H 8650 2700 50  0001 C CNN
 	1    8650 2700
 	1    0    0    -1  
