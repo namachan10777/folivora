@@ -32,4 +32,20 @@ module Track = struct
             hole |> Model.rotate (0., 0., pi *. 2. /. 3.);
             hole |> Model.rotate (0., 0., -. pi *. 2. /. 3.)
         ]
+
+    let under_block =
+        Model.difference
+            (Model.union [
+                Model.cube (pole_d +. hole_clearance *. 2., pole_d, 5.);
+            ])
+            [
+                (Model.translate (pole_d /. 2. +. 3., hole_clearance, 0.)
+                    (Model.cylinder hole_d 5. ~fn:30));
+                (Model.translate (3., pole_d /. 2. +. 3., 0.)
+                    (Model.cylinder hole_d 5. ~fn:30));
+                (Model.translate (pole_d +. 3., pole_d /. 2. +. 3., 0.)
+                    (Model.cylinder hole_d 5. ~fn:30));
+                bearing_holes 17.
+                |> Model.translate (pole_d /. 2. +. 3., pole_d /. 2., 5. -. bearing_shaft_r)
+            ]
 end
