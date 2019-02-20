@@ -8,7 +8,8 @@ module Track = struct
     let hole_clearance = 3.
     let bearing_shaft_r = 1.6
     let bearing_shaft_h = 8.
-    let bearing_r = 3.8
+    let bearing_r = 3.5
+    let bearing_clearance = 0.4
     let bearing_thick = 4.
 
     let bearing_hole =
@@ -18,8 +19,17 @@ module Track = struct
             Model.cube (bearing_shaft_r, bearing_shaft_r*.2.,  bearing_shaft_h)
             |> Model.rotate (0., pi /. 2., 0.)
             |> Model.translate (0., -.bearing_shaft_r, bearing_shaft_r);
-            Model.cylinder bearing_r bearing_thick ~fn:30
+            Model.cylinder (bearing_r+.bearing_clearance) bearing_thick ~fn:30
             |> Model.rotate (0., pi /. 2., 0.)
             |> Model.translate ((bearing_shaft_h -. bearing_thick) /. 2., 0., 0.)
+        ]
+
+    let bearing_holes r =
+        let hole = bearing_hole
+            |> Model.translate (-.bearing_shaft_h/.2., r, 0.) in
+        Model.union [
+            hole;
+            hole |> Model.rotate (0., 0., pi *. 2. /. 3.);
+            hole |> Model.rotate (0., 0., -. pi *. 2. /. 3.)
         ]
 end
