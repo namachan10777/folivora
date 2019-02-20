@@ -33,7 +33,8 @@ module Track = struct
             hole |> Model.rotate (0., 0., -. pi *. 2. /. 3.)
         ]
 
-    let under_block t h =
+    let under_block h =
+        let t = ball_r -. h in
         let bearings_r = sqrt ((ball_r +. bearing_r) ** 2 -. h ** 2) in
         Model.difference
             (Model.union [
