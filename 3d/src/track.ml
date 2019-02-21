@@ -47,14 +47,13 @@ module Track = struct
             ])
             [
                 Model.cylinder hole_r t ~fn:30
-                    |> Model.translate (pillar_d /. 2. +. hole_c, hole_c, 0.);
-                Model.cylinder hole_r t ~fn:30
                     |> Model.translate (hole_c, pillar_d /. 2. +. hole_c, 0.);
                 Model.cylinder hole_r t ~fn:30
                     |> Model.translate (pillar_d +. hole_c, pillar_d /. 2. +. hole_c, 0.);
                 bearinghedge bearings_r
-                    |> Model.translate (pillar_d /. 2. +. hole_c, pillar_d /. 2., t -. bearing_shaft_r);
+                    |> Model.rotate (0., 0., pi /. 3.)
+                    |> Model.translate (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c, t -. bearing_shaft_r);
                 Model.sphere (ball_r +. ball_c) ~fn:50
-                    |> Model.translate (pillar_d /. 2. +. hole_c, pillar_d /. 2., t -. bearing_shaft_r +. h)
+                    |> Model.translate (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c, t -. bearing_shaft_r +. h)
             ]
 end
