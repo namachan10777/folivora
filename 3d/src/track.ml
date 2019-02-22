@@ -58,4 +58,25 @@ module Track = struct
                 Model.sphere (ball_r +. ball_c) ~fn:50
                     |> Model.translate (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c, t -. bearing_shaft_r +. h)
             ]
+
+    let bearing_cover_t = 3.
+
+    let bearing_cover h =
+        let t = ball_r -. h in
+        let bearings_r = sqrt ((ball_r +. bearing_r) ** 2 -. h ** 2) in
+        Model.difference
+            (Model.union [
+                Model.cube (pillar_d +. hole_c *. 2., pillar_d, bearing_cover_t);
+            ])
+            [
+                Model.cylinder hole_r bearing_cover_t ~fn:30
+                    |> Model.translate (hole_c, pillar_d /. 2. +. hole_c, 0.);
+                Model.cylinder hole_r bearing_cover_t ~fn:30
+                    |> Model.translate (pillar_d +. hole_c, pillar_d /. 2. +. hole_c, 0.);
+                Model.sphere (ball_r +. ball_c) ~fn:50
+                    |> Model.translate (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c, h -. bearing_shaft_r);
+                bearinghedge bearings_r
+                    |> Model.rotate (0., 0., pi /. 3.)
+                    |> Model.translate (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c, -.bearing_shaft_r)
+            ]
 end
