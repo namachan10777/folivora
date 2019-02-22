@@ -17,13 +17,15 @@ module Track = struct
     let bearing_c = 0.4
     let bearing_t = 4.
 
+    let eps = 0.1
+
     let bearing_hollowing =
         Model.union [
             Model.cylinder bearing_shaft_r bearing_shaft_h ~fn:30
                 |> Model.rotate (0., pi /. 2., 0.);
-            Model.cube (bearing_shaft_r, bearing_shaft_r*.2.,  bearing_shaft_h)
+            Model.cube (bearing_shaft_r+.eps, bearing_shaft_r*.2.,  bearing_shaft_h)
                 |> Model.rotate (0., pi /. 2., 0.)
-                |> Model.translate (0., -.bearing_shaft_r, bearing_shaft_r);
+                |> Model.translate (0., -.bearing_shaft_r, bearing_shaft_r +. eps);
             Model.cylinder (bearing_r+.bearing_c) bearing_t ~fn:30
                 |> Model.rotate (0., pi /. 2., 0.)
                 |> Model.translate ((bearing_shaft_h -. bearing_t) /. 2., 0., 0.)
