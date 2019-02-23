@@ -45,8 +45,8 @@ module Track = struct
 
     let foundation_body tilt offset =
         let h = ball_r -. offset in
-        let h1 = h +. (fst foundation_bottom) *. (sin tilt) /. 2. in
-        let h2 = h -. (fst foundation_bottom) *. (sin tilt) /. 2. in
+        let h1 = h -. (fst foundation_bottom) *. (sin tilt) /. 2. in
+        let h2 = h +. (fst foundation_bottom) *. (sin tilt) /. 2. in
         let points_half = [
             (0.0, 0.0, 0.0);
             (fst foundation_bottom, 0.0, 0.0);
