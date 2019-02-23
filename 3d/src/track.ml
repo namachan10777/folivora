@@ -71,7 +71,6 @@ module Track = struct
 
     let foundation tilt offset =
         let bearinghedge_r = sqrt ((ball_r +. bearing_r) ** 2. -. offset**2.) in
-        let bearinghedge_h = ball_r -. offset *. (cos tilt) in
         Model.difference (foundation_body tilt offset) [
             bearinghedge bearinghedge_r
             |> Model.rotate (0., 0., pi)
@@ -79,6 +78,34 @@ module Track = struct
             |> Model.translate (bearinghedge_center tilt offset);
             Model.sphere (ball_r +. ball_c) ~fn:50
             |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
-            screw_holes
+            screw_holes;
+        ]
+
+    let cover_top_surface_center tilt offset top_offset =
+        Math.Pos.add (bearinghedge_center tilt offset) (
+            (offset +. top_offset) *. (sin tilt),
+            0.,
+            (offset +. top_offset) *. (cos tilt)
+        )
+
+    let bearing_cover tilt offset top_offset = 
+        let base = Model.cube (fst foundation_bottom, snd foundation_bottom, 100.) in
+        let top_cutter = Model.cube (200., 200., 200.) |> Model.translate (-.100., -.100., 0.) in
+        let bottom_cutter = Model.cube (200., 200., 200.) |> Model.translate (-.100., -.100., -.200.) in
+        let bearinghedge_r = sqrt ((ball_r +. bearing_r) ** 2. -. offset**2.) in
+        Model.difference base [
+            top_cutter
+            |> Model.rotate (0., tilt, 0.)
+            |> Model.translate (cover_top_surface_center tilt offset top_offset);
+            bottom_cutter
+            |> Model.rotate (0., tilt, 0.)
+            |> Model.translate (top_surface_center tilt offset);
+            Model.sphere (ball_r +. ball_c) ~fn:50
+            |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
+            bearinghedge bearinghedge_r
+            |> Model.rotate (0., 0., pi)
+            |> Model.rotate (0., tilt, 0.)
+            |> Model.translate (bearinghedge_center tilt offset);
+            screw_holes;
         ]
 end
