@@ -65,6 +65,14 @@ module Track = struct
             [2; 3; 7; 6];
         ]
 
+    let screw_holes =
+        let points = [
+            (hole_c, snd foundation_center, 0.);
+            ((fst foundation_bottom) -. hole_c, snd foundation_center, 0.);
+        ] in
+        let screw_holes = Model.cylinder ~fn:30 hole_r 50. in
+        Model.union @@ List.map (fun p -> Model.translate p screw_holes) points
+
     let foundation tilt offset =
         let bearinghedge_r = sqrt ((ball_r +. bearing_r) ** 2. -. offset**2.) in
         let bearinghedge_h = ball_r -. offset *. (cos tilt) in
@@ -75,8 +83,8 @@ module Track = struct
             |> Model.translate (fst foundation_center -. offset *. (sin tilt), (snd foundation_center), bearinghedge_h);
             Model.sphere (ball_r +. ball_c) ~fn:50
             |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
+            screw_holes
         ]
-            
 
     let bearing_cover_t = 3.
 end
