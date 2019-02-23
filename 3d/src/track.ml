@@ -17,7 +17,7 @@ module Track = struct
     let bearing_c = 0.4
     let bearing_t = 4.
 
-    let eps = 0.1
+    let eps = 0.2
 
     let bearing_hollowing =
         Model.union [
@@ -44,10 +44,11 @@ module Track = struct
     let foundation_center = (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c)
 
     let foundation_body tilt offset =
-        let h = ball_r -. offset in
+        let h = ball_r -. offset *. (cos tilt) in
+        let x_diff = offset *. (sin tilt) in
         let bank = bearing_shaft_r /. (cos tilt) in
-        let h1 = h -. (fst foundation_bottom) *. (sin tilt) /. 2. +. bank in
-        let h2 = h +. (fst foundation_bottom) *. (sin tilt) /. 2. +. bank in
+        let h1 = h -. ((fst foundation_bottom) /. 2. +. x_diff) *. (sin tilt) +. bank in
+        let h2 = h +. ((fst foundation_bottom) /. 2. -. x_diff) *. (sin tilt) +. bank in
         let points_half = [
             (0.0, 0.0, 0.0);
             (fst foundation_bottom, 0.0, 0.0);
@@ -66,12 +67,14 @@ module Track = struct
 
     let foundation tilt offset =
         let bearinghedge_r = sqrt ((ball_r +. bearing_r) ** 2. -. offset**2.) in
-        let bearinghedge_h = ball_r -. offset in
+        let bearinghedge_h = ball_r -. offset *. (cos tilt) in
         Model.difference (foundation_body tilt offset) [
             bearinghedge bearinghedge_r
             |> Model.rotate (0., 0., pi)
             |> Model.rotate (0., tilt, 0.)
-            |> Model.translate (fst foundation_center, snd foundation_center, bearinghedge_h)
+            |> Model.translate (fst foundation_center -. offset *. (sin tilt), (snd foundation_center), bearinghedge_h);
+            Model.sphere (ball_r +. ball_c) ~fn:50
+            |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
         ]
             
 
