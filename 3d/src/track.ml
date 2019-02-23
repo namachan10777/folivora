@@ -40,43 +40,29 @@ module Track = struct
             hole |> Model.rotate (0., 0., -. pi *. 2. /. 3.)
         ]
 
-    let foundation h =
-        let t = ball_r -. h in
-        let bearings_r = sqrt ((ball_r +. bearing_r) ** 2 -. h ** 2) in
-        Model.difference
-            (Model.union [
-                Model.cube (pillar_d +. hole_c *. 2., pillar_d, t);
-            ])
-            [
-                Model.cylinder hole_r t ~fn:30
-                    |> Model.translate (hole_c, pillar_d /. 2. +. hole_c, 0.);
-                Model.cylinder hole_r t ~fn:30
-                    |> Model.translate (pillar_d +. hole_c, pillar_d /. 2. +. hole_c, 0.);
-                bearinghedge bearings_r
-                    |> Model.rotate (0., 0., pi /. 3.)
-                    |> Model.translate (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c, t -. bearing_shaft_r);
-                Model.sphere (ball_r +. ball_c) ~fn:50
-                    |> Model.translate (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c, t -. bearing_shaft_r +. h)
-            ]
+    let foundation_bottom = (pillar_d +. hole_c *. 2., pillar_d)
+    let foundation_center = (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c)
+
+    let foundation_body tilt offset =
+        let h = ball_r -. offset in
+        let h1 = h +. (fst foundation_bottom) *. (sin tilt) /. 2. in
+        let h2 = h -. (fst foundation_bottom) *. (sin tilt) /. 2. in
+        let points_half = [
+            (0.0, 0.0, 0.0);
+            (fst foundation_bottom, 0.0, 0.0);
+            (fst foundation_bottom, 0.0, h1);
+            (0.0, 0.0, h2)
+        ] in
+        let points_all = points_half @ List.map (Math.Pos.add (0., snd foundation_bottom, 0.)) points_half in
+        Model.polyhedron points_all [
+            [1; 0; 3; 2];
+            [0; 1; 5; 4];
+            [0; 4; 7; 3];
+            [4; 5; 6; 7];
+            [1; 2; 6; 5];
+            [2; 3; 7; 6];
+        ]
+            
 
     let bearing_cover_t = 3.
-
-    let bearing_cover h =
-        let t = ball_r -. h in
-        let bearings_r = sqrt ((ball_r +. bearing_r) ** 2 -. h ** 2) in
-        Model.difference
-            (Model.union [
-                Model.cube (pillar_d +. hole_c *. 2., pillar_d, bearing_cover_t);
-            ])
-            [
-                Model.cylinder hole_r bearing_cover_t ~fn:30
-                    |> Model.translate (hole_c, pillar_d /. 2. +. hole_c, 0.);
-                Model.cylinder hole_r bearing_cover_t ~fn:30
-                    |> Model.translate (pillar_d +. hole_c, pillar_d /. 2. +. hole_c, 0.);
-                Model.sphere (ball_r +. ball_c) ~fn:50
-                    |> Model.translate (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c, h -. bearing_shaft_r);
-                bearinghedge bearings_r
-                    |> Model.rotate (0., 0., pi /. 3.)
-                    |> Model.translate (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c, -.bearing_shaft_r)
-            ]
 end
