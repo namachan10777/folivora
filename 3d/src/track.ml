@@ -17,7 +17,7 @@ module Track = struct
     let bearing_c = 0.4
     let bearing_t = 4.
 
-    let eps = 0.2
+    let eps = 0.1
 
     let bearing_hollowing =
         Model.union [
@@ -76,7 +76,7 @@ module Track = struct
             bearinghedge bearinghedge_r
             |> Model.rotate (0., 0., pi)
             |> Model.rotate (0., tilt, 0.)
-            |> Model.translate (fst foundation_center -. offset *. (sin tilt), (snd foundation_center), bearinghedge_h);
+            |> Model.translate (bearinghedge_center tilt offset);
             Model.sphere (ball_r +. ball_c) ~fn:50
             |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
             screw_holes
