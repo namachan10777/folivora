@@ -45,8 +45,9 @@ module Track = struct
 
     let foundation_body tilt offset =
         let h = ball_r -. offset in
-        let h1 = h -. (fst foundation_bottom) *. (sin tilt) /. 2. in
-        let h2 = h +. (fst foundation_bottom) *. (sin tilt) /. 2. in
+        let bank = bearing_shaft_r /. (cos tilt) in
+        let h1 = h -. (fst foundation_bottom) *. (sin tilt) /. 2. +. bank in
+        let h2 = h +. (fst foundation_bottom) *. (sin tilt) /. 2. +. bank in
         let points_half = [
             (0.0, 0.0, 0.0);
             (fst foundation_bottom, 0.0, 0.0);
@@ -61,6 +62,16 @@ module Track = struct
             [4; 5; 6; 7];
             [1; 2; 6; 5];
             [2; 3; 7; 6];
+        ]
+
+    let foundation tilt offset =
+        let bearinghedge_r = sqrt ((ball_r +. bearing_r) ** 2. -. offset**2.) in
+        let bearinghedge_h = ball_r -. offset in
+        Model.difference (foundation_body tilt offset) [
+            bearinghedge bearinghedge_r
+            |> Model.rotate (0., 0., pi)
+            |> Model.rotate (0., tilt, 0.)
+            |> Model.translate (fst foundation_center, snd foundation_center, bearinghedge_h)
         ]
             
 
