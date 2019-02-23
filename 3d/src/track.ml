@@ -42,28 +42,24 @@ module Track = struct
 
     let foundation_bottom = (pillar_d +. hole_c *. 2., pillar_d)
     let foundation_center = (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c)
+    let bearinghedge_center tilt offset = (
+        (fst foundation_center) -. offset *. (sin tilt),
+        (snd foundation_center),
+        ball_r -. offset *. (cos tilt))
+    let top_surface_center tilt offset =
+        Math.Pos.add (bearinghedge_center tilt offset) (
+            bearing_shaft_r *. (sin tilt),
+            0.,
+            bearing_shaft_r *. (cos tilt)
+        )
 
     let foundation_body tilt offset =
-        let h = ball_r -. offset *. (cos tilt) in
-        let x_diff = offset *. (sin tilt) in
-        let bank = bearing_shaft_r /. (cos tilt) in
-        let h1 = h -. ((fst foundation_bottom) /. 2. +. x_diff) *. (sin tilt) +. bank in
-        let h2 = h +. ((fst foundation_bottom) /. 2. -. x_diff) *. (sin tilt) +. bank in
-        let points_half = [
-            (0.0, 0.0, 0.0);
-            (fst foundation_bottom, 0.0, 0.0);
-            (fst foundation_bottom, 0.0, h1);
-            (0.0, 0.0, h2)
-        ] in
-        let points_all = points_half @ List.map (Math.Pos.add (0., snd foundation_bottom, 0.)) points_half in
-        Model.polyhedron points_all [
-            [1; 0; 3; 2];
-            [0; 1; 5; 4];
-            [0; 4; 7; 3];
-            [4; 5; 6; 7];
-            [1; 2; 6; 5];
-            [2; 3; 7; 6];
-        ]
+        let base = Model.cube (fst foundation_bottom, snd foundation_bottom, 100.) in
+        let cutter = Model.cube (200., 200., 200.) |> Model.translate (-.100., -.100., 0.) in
+        Model.difference base [
+            cutter
+            |> Model.rotate (0., tilt, 0.)
+            |> Model.translate (top_surface_center tilt offset)]
 
     let screw_holes =
         let points = [
@@ -85,6 +81,4 @@ module Track = struct
             |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
             screw_holes
         ]
-
-    let bearing_cover_t = 3.
 end
