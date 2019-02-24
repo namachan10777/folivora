@@ -1,0 +1,12 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: namachan10777/folivora:latest
+
+    steps:
+      - checkout
+
+      - run:
+          name: 3d parts build
+          command: ./3d/build.sh

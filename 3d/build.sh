@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+cd $(dirname $0)
+
 rm *.scad
 echo "generation scad files..."
 utop ./src/deploy.ml
