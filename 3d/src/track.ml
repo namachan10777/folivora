@@ -1,5 +1,3 @@
-#use "./scad_ml/src/scad.ml";;
-
 module Track = struct
     let pillar_d = 41.9
 

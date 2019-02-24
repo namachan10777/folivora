@@ -1,5 +1,3 @@
-#use "./scad_ml/src/scad.ml";;
-
 let w = 17.78
 let h = 4.
 let d = 7.62
