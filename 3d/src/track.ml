@@ -3,17 +3,18 @@ module Track = struct
 
 
     let ball_r = 17.0
-    let ball_c = 0.5
+    let ball_c_cover = 0.5
+    let ball_c_foundation = 1.0
 
     let hole_r = 1.7
     let hole_c = 3.
 
     let bearing_shaft_r = 1.6
-    let bearing_shaft_h = 8.
+    let bearing_shaft_h = 12.
 
     let bearing_r = 3.5
-    let bearing_c = 0.4
-    let bearing_t = 4.
+    let bearing_c = 1.0
+    let bearing_t = 5.
 
     let eps = 0.1
 
@@ -74,7 +75,7 @@ module Track = struct
             |> Model.rotate (0., 0., pi)
             |> Model.rotate (0., tilt, 0.)
             |> Model.translate (bearinghedge_center tilt offset);
-            Model.sphere (ball_r +. ball_c) ~fn:50
+            Model.sphere (ball_r +. ball_c_foundation) ~fn:50
             |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
             screw_holes;
         ]
@@ -93,7 +94,7 @@ module Track = struct
         let bearinghedge_r = sqrt ((ball_r +. bearing_r) ** 2. -. offset**2.) in
         let sphere_hollwing =
             Model.minkowski [
-                Model.sphere (ball_r +. ball_c) ~fn:50;
+                Model.sphere (ball_r +. ball_c_cover) ~fn:50;
                 Model.cylinder 0.0001 10.0
             ]
             |> Model.translate (0., 0., -10.) in
