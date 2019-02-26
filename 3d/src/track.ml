@@ -91,6 +91,12 @@ module Track = struct
         let top_cutter = Model.cube (200., 200., 200.) |> Model.translate (-.100., -.100., 0.) in
         let bottom_cutter = Model.cube (200., 200., 200.) |> Model.translate (-.100., -.100., -.200.) in
         let bearinghedge_r = sqrt ((ball_r +. bearing_r) ** 2. -. offset**2.) in
+        let sphere_hollwing =
+            Model.minkowski [
+                Model.sphere (ball_r +. ball_c) ~fn:50;
+                Model.cylinder 0.0001 10.0
+            ]
+            |> Model.translate (0., 0., -10.) in
         Model.difference base [
             top_cutter
             |> Model.rotate (0., tilt, 0.)
@@ -98,7 +104,7 @@ module Track = struct
             bottom_cutter
             |> Model.rotate (0., tilt, 0.)
             |> Model.translate (top_surface_center tilt offset);
-            Model.sphere (ball_r +. ball_c) ~fn:50
+            sphere_hollwing
             |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
             bearinghedge bearinghedge_r
             |> Model.rotate (0., 0., pi)
