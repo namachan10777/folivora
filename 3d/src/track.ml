@@ -3,28 +3,29 @@ module Track = struct
 
 
     let ball_r = 17.0
-    let ball_c_cover = 0.5
-    let ball_c_foundation = 1.0
+    let ball_c_cover = 0.7
+    let ball_c_foundation = 1.2
 
     let hole_r = 1.7
     let hole_c = 3.
 
-    let bearing_shaft_r = 1.6
+    let bearing_shaft_r = 1.5
+    let bearing_shaft_c = 0.5
     let bearing_shaft_h = 12.
 
     let bearing_r = 3.5
-    let bearing_c = 1.0
+    let bearing_c = 1.5
     let bearing_t = 5.
 
     let eps = 0.1
 
     let bearing_hollowing =
         Model.union [
-            Model.cylinder bearing_shaft_r bearing_shaft_h ~fn:30
+            Model.cylinder (bearing_shaft_r +. bearing_shaft_c) bearing_shaft_h ~fn:30
                 |> Model.rotate (0., pi /. 2., 0.);
-            Model.cube (bearing_shaft_r+.eps, bearing_shaft_r*.2.,  bearing_shaft_h)
+            Model.cube (bearing_shaft_r +. bearing_shaft_c +.eps, (bearing_shaft_r +. bearing_shaft_c) *.2.,  bearing_shaft_h)
                 |> Model.rotate (0., pi /. 2., 0.)
-                |> Model.translate (0., -.bearing_shaft_r, bearing_shaft_r +. eps);
+                |> Model.translate (0., -.bearing_shaft_r-.bearing_shaft_c, bearing_shaft_r +. eps);
             Model.cylinder (bearing_r+.bearing_c) bearing_t ~fn:30
                 |> Model.rotate (0., pi /. 2., 0.)
                 |> Model.translate ((bearing_shaft_h -. bearing_t) /. 2., 0., 0.)
@@ -78,6 +79,8 @@ module Track = struct
             Model.sphere (ball_r +. ball_c_foundation) ~fn:50
             |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
             screw_holes;
+            Model.cylinder 8.0 10.0 ~fn:30
+            |> Model.translate (fst foundation_center, snd foundation_center, 0.0);
         ]
 
     let cover_top_surface_center tilt offset top_offset =
