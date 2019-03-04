@@ -1,0 +1,30 @@
+% -*- cofing: utf-8-*-
+@require: steamer
+@require: itemize
+
+Steamer.document(|
+  title = {自作キーボード};
+  author = {namachan10777};
+  institute = {香川高等専門学校 電気情報工学科};
+  date = {2019年2月27日};
+  show-title = false;
+  show-toc = false;
+|) '<
+  +section {自己紹介} <
+    +make-title{自作キーボードについて}{namachan10777}{香川高等専門学校 電気情報工学科}{2019年2月27日}
+    +frame ?:({自己紹介})<
+      +listing {
+        * 中野将生
+        * 香川高等専門学校 電気情報工学科4年
+        * 百合と山が好き
+        * NeovimとArch Linuxが好き
+      }
+    >
+
+    +frame ?:({お願い})<
+      +p{
+        Facebook用の実写アイコンが欲しいので写真取ってTwitterで晒してください
+      }
+    >
+  >
+>
