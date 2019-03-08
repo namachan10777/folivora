@@ -3,7 +3,7 @@
 @require: itemize
 
 Steamer.document(|
-  title = {ポインティングデバイス・キーボード一体型デバイスの提案};
+  title = {キーボード温泉};
   author = {namachan10777};
   institute = {香川高等専門学校 電気情報工学科};
   date = {2019年2月27日};
@@ -11,7 +11,7 @@ Steamer.document(|
   show-toc = false;
 |) '<
   +section {自己紹介} <
-    +make-title{ポインティングデバイス・キーボード一体型デバイスの提案}{namachan10777}{香川高等専門学校 電気情報工学科}{2019年2月27日}
+    +make-title{キーボード温泉}{namachan10777}{香川高等専門学校 電気情報工学科}{2019年2月27日}
     +frame ?:({自己紹介})<
       +listing {
         * 中野将生
@@ -26,6 +26,24 @@ Steamer.document(|
       +p{
         Facebook用の実写アイコンが欲しいので写真取ってTwitterで晒してください
       }
+    >
+
+    +frame ?:({自作キーボードとは})<
+    >
+
+    +frame ?:({既存のデバイスの問題点})<
+    >
+
+    +frame ?:({提案手法})<
+    >
+
+    +frame ?:({実装})<
+    >
+
+    +frame ?:({自作キーボードを支える技術})<
+    >
+
+    +frame ?:({fork me!})<
     >
   >
 >
