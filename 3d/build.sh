@@ -4,7 +4,7 @@ cd $(dirname $0)
 
 echo "generation scad files..."
 rm -rf *.scad
-utop ./src/deploy.ml
+ocaml ./src/deploy.ml
 for f in *.scad;do
 	echo "compiling " $f
 	openscad -o $(basename $f .scad).stl $f
