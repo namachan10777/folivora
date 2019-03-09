@@ -13,4 +13,6 @@ jobs:
             git submodule update --remote
       - run:
           name: 3d parts build
-          command: ./3d/build.sh
+          command: |
+            mkdir ~/.local/share
+            ./3d/build.sh

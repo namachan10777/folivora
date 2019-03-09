@@ -5,6 +5,6 @@ RUN apt-get update && \
 	add-apt-repository ppa:openscad/releases && \
 	apt-get update && \
 	apt-get upgrade -y && \
-	apt-get install -y openscad curl ocaml zip
+	apt-get install -y openscad curl ocaml zip git
 
 ENTRYPOINT ["/bin/bash"]
