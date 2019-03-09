@@ -16,5 +16,12 @@ jobs:
           command: |
             mkdir -p ~/.local/share
             ./3d/build.sh
+      - run:
+          name: Zip pcb files
+          command: ./zip-pcb-files.sh
       - store_artifacts:
           path: ./3d/3d.zip
+          destination: 3d
+      - store_artifacts:
+          path: ./pcb.zip
+          destination: pcb
