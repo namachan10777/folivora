@@ -17,4 +17,4 @@ jobs:
             mkdir -p ~/.local/share
             ./3d/build.sh
       - store_artifacts:
-          path: /3d/3d.zip
+          path: ./3d/3d.zip
