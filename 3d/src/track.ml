@@ -6,15 +6,15 @@ module Track = struct
     let ball_c_cover = 0.7
     let ball_c_foundation = 1.2
 
-    let hole_r = 1.7
+    let hole_r = 1.55
     let hole_c = 3.
 
-    let bearing_shaft_r = 1.5
-    let bearing_shaft_c = 0.5
-    let bearing_shaft_h = 12.
+    let bearing_shaft_r = 1.25
+    let bearing_shaft_c = 0.05
+    let bearing_shaft_h = 15.
 
-    let bearing_r = 3.5
-    let bearing_c = 1.5
+    let bearing_r = 3.25
+    let bearing_c = 1.
     let bearing_t = 5.
 
     let eps = 0.1
