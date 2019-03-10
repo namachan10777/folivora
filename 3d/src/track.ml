@@ -34,17 +34,20 @@ module Track = struct
                 |> Model.rotate (0., pi /. 2., 0.)
                 |> Model.translate ((bearing_shaft_h -. bearing_t) /. 2., 0., 0.)
         ]
+        |> Model.translate (-.bearing_shaft_h/.2., 0., 0.)
 
-    let bearinghedge offset =
+    let hedge model offset =
         let r = sqrt ((ball_r +. bearing_min_r) ** 2. -. offset**2.) in
-        let hole = bearing_hollowing
-            |> Model.translate (-.bearing_shaft_h/.2., r, 0.) in
+        let hole = model 
+            |> Model.translate (0., r, 0.) in
         Model.union [
             hole;
             hole |> Model.rotate (0., 0.,    pi *. 2. /. 3.);
             hole |> Model.rotate (0., 0., -. pi *. 2. /. 3.)
         ]
 
+    let bearinghedge offset =
+        hedge bearing_hollowing offset
 
     let foundation_bottom = (pillar_d +. hole_c *. 2., pillar_d)
     let foundation_center = (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c)
@@ -67,25 +70,46 @@ module Track = struct
             |> Model.rotate (0., tilt, 0.)
             |> Model.translate (top_surface_center tilt offset)]
 
-    let screw_holes =
+    let screw_holes r =
         let points = [
             (hole_c, snd foundation_center, 0.);
             ((fst foundation_bottom) -. hole_c, snd foundation_center, 0.);
         ] in
-        let screw_holes = Model.cylinder ~fn:30 hole_r 50. in
+        let screw_holes = Model.cylinder ~fn:30 r 50. in
         Model.union @@ List.map (fun p -> Model.translate p screw_holes) points
 
+    let mold tilt offset =
+        let bearing_mold = Model.cylinder (bearing_out_r +. 3.0) (bearing_shaft_h +. 3.0)
+            |> Model.translate (0., 0., -.(bearing_shaft_h +. 3.0) /. 2.)
+            |> Model.rotate (0., pi /. 2., 0.) in
+        let path = Model.cylinder 0.001 (100.0)
+            |> Model.translate (0., 0., -.50.) in
+        Model.union [
+            Model.minkowski [
+                path;
+                hedge bearing_mold offset
+                |> Model.rotate (0., 0., pi)
+                |> Model.rotate (0., tilt, 0.)
+                |> Model.translate (bearinghedge_center tilt offset)];
+            Model.cylinder (ball_r +. 4.0) 50.
+            |> Model.translate (fst foundation_center, snd foundation_center, 0.);
+            screw_holes 4.
+        ]
+
     let foundation tilt offset =
-        Model.difference (foundation_body tilt offset) [
-            bearinghedge offset
-            |> Model.rotate (0., 0., pi)
-            |> Model.rotate (0., tilt, 0.)
-            |> Model.translate (bearinghedge_center tilt offset);
-            Model.sphere (ball_r +. ball_c_foundation) ~fn:50
-            |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
-            screw_holes;
-            Model.cylinder 8.0 10.0 ~fn:30
-            |> Model.translate (fst foundation_center, snd foundation_center, 0.0);
+        Model.intersection [
+            Model.difference (foundation_body tilt offset) [
+                bearinghedge offset
+                |> Model.rotate (0., 0., pi)
+                |> Model.rotate (0., tilt, 0.)
+                |> Model.translate (bearinghedge_center tilt offset);
+                Model.sphere (ball_r +. ball_c_foundation) ~fn:50
+                |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
+                screw_holes 1.55;
+                Model.cylinder 8.0 10.0 ~fn:30
+                |> Model.translate (fst foundation_center, snd foundation_center, 0.0);
+            ];
+            mold tilt offset
         ]
 
     let cover_top_surface_center tilt offset top_offset =
@@ -105,19 +129,23 @@ module Track = struct
                 Model.cylinder 0.0001 10.0
             ]
             |> Model.translate (0., 0., -10.) in
-        Model.difference base [
-            top_cutter
-            |> Model.rotate (0., tilt, 0.)
-            |> Model.translate (cover_top_surface_center tilt offset top_offset);
-            bottom_cutter
-            |> Model.rotate (0., tilt, 0.)
-            |> Model.translate (top_surface_center tilt offset);
-            sphere_hollwing
-            |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
-            bearinghedge offset
-            |> Model.rotate (0., 0., pi)
-            |> Model.rotate (0., tilt, 0.)
-            |> Model.translate (bearinghedge_center tilt offset);
-            screw_holes;
+        Model.intersection [
+            Model.difference base [
+                top_cutter
+                |> Model.rotate (0., tilt, 0.)
+                |> Model.translate (cover_top_surface_center tilt offset top_offset);
+                bottom_cutter
+                |> Model.rotate (0., tilt, 0.)
+                |> Model.translate (top_surface_center tilt offset);
+                sphere_hollwing
+                |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
+                bearinghedge offset
+                |> Model.rotate (0., 0., pi)
+                |> Model.rotate (0., tilt, 0.)
+                |> Model.translate (bearinghedge_center tilt offset);
+                screw_holes 1.55;
+            ];
+            mold tilt offset
         ]
+
 end
