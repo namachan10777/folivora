@@ -14,4 +14,4 @@ let () =
     build (Block.anchorage 3.0 (angle_unit *. 0.)) "block1.scad";
     build (Block.anchorage 4.0 (angle_unit *. 2.)) "block2.scad";
     build (Track.foundation (pi /. 10.) 7.0) "foundation.scad";
-    build (Track.bearing_cover (pi /. 10.) 7.0 3.0) "cover.scad"
+    build (Track.bearing_cover (pi /. 10.) 7.0 5.0) "cover.scad"
