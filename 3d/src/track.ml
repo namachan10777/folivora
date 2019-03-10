@@ -13,8 +13,8 @@ module Track = struct
     let bearing_shaft_c = 0.05
     let bearing_shaft_h = 15.
 
-    let bearing_in_r = 3.25
-    let bearing_out_r = 1.5
+    let bearing_in_r = 1.5
+    let bearing_out_r = 3.25
     let bearing_c = 1.
     let bearing_t = 5.
 
@@ -35,7 +35,8 @@ module Track = struct
                 |> Model.translate ((bearing_shaft_h -. bearing_t) /. 2., 0., 0.)
         ]
 
-    let bearinghedge r =
+    let bearinghedge offset =
+        let r = sqrt ((ball_r +. bearing_min_r) ** 2. -. offset**2.) in
         let hole = bearing_hollowing
             |> Model.translate (-.bearing_shaft_h/.2., r, 0.) in
         Model.union [
@@ -43,6 +44,7 @@ module Track = struct
             hole |> Model.rotate (0., 0.,    pi *. 2. /. 3.);
             hole |> Model.rotate (0., 0., -. pi *. 2. /. 3.)
         ]
+
 
     let foundation_bottom = (pillar_d +. hole_c *. 2., pillar_d)
     let foundation_center = (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c)
@@ -74,9 +76,8 @@ module Track = struct
         Model.union @@ List.map (fun p -> Model.translate p screw_holes) points
 
     let foundation tilt offset =
-        let bearinghedge_r = sqrt ((ball_r +. bearing_min_r) ** 2. -. offset**2.) in
         Model.difference (foundation_body tilt offset) [
-            bearinghedge bearinghedge_r
+            bearinghedge offset
             |> Model.rotate (0., 0., pi)
             |> Model.rotate (0., tilt, 0.)
             |> Model.translate (bearinghedge_center tilt offset);
@@ -98,7 +99,6 @@ module Track = struct
         let base = Model.cube (fst foundation_bottom, snd foundation_bottom, 100.) in
         let top_cutter = Model.cube (200., 200., 200.) |> Model.translate (-.100., -.100., 0.) in
         let bottom_cutter = Model.cube (200., 200., 200.) |> Model.translate (-.100., -.100., -.200.) in
-        let bearinghedge_r = sqrt ((ball_r +. bearing_min_r) ** 2. -. offset**2.) in
         let sphere_hollwing =
             Model.minkowski [
                 Model.sphere (ball_r +. ball_c_cover) ~fn:50;
@@ -114,7 +114,7 @@ module Track = struct
             |> Model.translate (top_surface_center tilt offset);
             sphere_hollwing
             |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
-            bearinghedge bearinghedge_r
+            bearinghedge offset
             |> Model.rotate (0., 0., pi)
             |> Model.rotate (0., tilt, 0.)
             |> Model.translate (bearinghedge_center tilt offset);
