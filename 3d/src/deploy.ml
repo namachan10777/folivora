@@ -15,5 +15,5 @@ let () =
     build (Block.anchorage 4.0 (angle_unit *. 2.)) "block2.scad";
     build (Track.foundation (pi /. 10.) 7.0) "foundation-left.scad";
     build (Track.foundation (pi /. 10.) 7.0 |> Model.mirror (1, 0, 0)) "foundation-right.scad";
-    build (Track.bearing_cover (pi /. 10.) 7.0 5.0) "cover-left.scad"
+    build (Track.bearing_cover (pi /. 10.) 7.0 5.0) "cover-left.scad";
     build (Track.bearing_cover (pi /. 10.) 7.0 5.0 |> Model.mirror (1, 0, 0)) "cover-right.scad"
