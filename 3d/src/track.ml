@@ -13,11 +13,15 @@ module Track = struct
     let bearing_shaft_c = 0.5
     let bearing_shaft_h = 12.
 
-    let bearing_r = 3.5
+    let bearing_in_r = 3.5
+    let bearing_out_r = 1.5
     let bearing_c = 1.5
     let bearing_t = 5.
 
     let eps = 0.1
+
+    let bearing_range = bearing_out_r +. (bearing_in_r -. bearing_shaft_r)
+    let bearing_min_r = bearing_out_r -. (bearing_in_r -. bearing_shaft_r)
 
     let bearing_hollowing =
         Model.union [
@@ -26,7 +30,7 @@ module Track = struct
             Model.cube (bearing_shaft_r +. bearing_shaft_c +.eps, (bearing_shaft_r +. bearing_shaft_c) *.2.,  bearing_shaft_h)
                 |> Model.rotate (0., pi /. 2., 0.)
                 |> Model.translate (0., -.bearing_shaft_r-.bearing_shaft_c, bearing_shaft_r +. eps);
-            Model.cylinder (bearing_r+.bearing_c) bearing_t ~fn:30
+            Model.cylinder (bearing_range+.bearing_c) bearing_t ~fn:30
                 |> Model.rotate (0., pi /. 2., 0.)
                 |> Model.translate ((bearing_shaft_h -. bearing_t) /. 2., 0., 0.)
         ]
@@ -70,7 +74,7 @@ module Track = struct
         Model.union @@ List.map (fun p -> Model.translate p screw_holes) points
 
     let foundation tilt offset =
-        let bearinghedge_r = sqrt ((ball_r +. bearing_r) ** 2. -. offset**2.) in
+        let bearinghedge_r = sqrt ((ball_r +. bearing_min_r) ** 2. -. offset**2.) in
         Model.difference (foundation_body tilt offset) [
             bearinghedge bearinghedge_r
             |> Model.rotate (0., 0., pi)
@@ -94,7 +98,7 @@ module Track = struct
         let base = Model.cube (fst foundation_bottom, snd foundation_bottom, 100.) in
         let top_cutter = Model.cube (200., 200., 200.) |> Model.translate (-.100., -.100., 0.) in
         let bottom_cutter = Model.cube (200., 200., 200.) |> Model.translate (-.100., -.100., -.200.) in
-        let bearinghedge_r = sqrt ((ball_r +. bearing_r) ** 2. -. offset**2.) in
+        let bearinghedge_r = sqrt ((ball_r +. bearing_min_r) ** 2. -. offset**2.) in
         let sphere_hollwing =
             Model.minkowski [
                 Model.sphere (ball_r +. ball_c_cover) ~fn:50;
