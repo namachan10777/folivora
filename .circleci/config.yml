@@ -21,7 +21,7 @@ jobs:
           command: ./zip-pcb-files.sh
       - store_artifacts:
           path: ./3d/3d.zip
-          destination: 3d
+          destination: 3d.zip
       - store_artifacts:
           path: ./pcb.zip
-          destination: pcb
+          destination: pcb.zip
