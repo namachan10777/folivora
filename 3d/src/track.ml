@@ -1,7 +1,7 @@
 module Track = struct
     let pillar_d = 41.9
 
-    let ball_r = 17.0
+    let ball_r = 12.5
     let ball_c_cover = 0.3
     let ball_c_foundation = 1.2
 
