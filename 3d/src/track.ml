@@ -24,7 +24,7 @@ module Track = struct
         |> Model.translate (-50., -50., 0.)
 
     let bottom_cutter = Model.cube (100., 100., 50.)
-        |> Model.translate (-50., -50., 50.)
+        |> Model.translate (-50., -50., -50.)
 
     let needle = Model.cylinder 0.0001 100.
         |> Model.translate (0., 0., -50.)
@@ -79,10 +79,13 @@ module Track = struct
             |> Model.rotate (0., tilt, 0.)
             |> Model.translate (top_surface_center tilt offset)]
 
+    let screw_far_p = (hole_region_r, snd foundation_center, 0.)
+    let screw_near_p = ((fst foundation_bottom) -. hole_region_r, snd foundation_center, 0.)
+
     let screw_holes r =
         let points = [
-            (hole_region_r, snd foundation_center, 0.);
-            ((fst foundation_bottom) -. hole_region_r, snd foundation_center, 0.);
+            screw_far_p;
+            screw_near_p;
         ] in
         let screw_holes = Model.cylinder ~fn:30 r 50. in
         Model.union @@ List.map (fun p -> Model.translate p screw_holes) points
@@ -128,6 +131,14 @@ module Track = struct
 
     let bearing_cover tilt offset top_offset = 
         let base = Model.cube (fst foundation_bottom, snd foundation_bottom, 100.) in
+        let cover_center_z = match cover_top_surface_center tilt offset top_offset with (_, _, z) -> z in
+        let cover_lowest_z = cover_center_z  -. (snd foundation_bottom) *. (sin tilt) /. 2. in
+        (* 縁の部分の高さ *)
+        let opening_r = sqrt (ball_r**2. -. top_offset**2.) in
+        let cover_highest_z = cover_center_z +. opening_r *. (sin tilt) in
+        let top_leveler =
+            let cutter_p = (0., 0., cover_highest_z) in
+            top_cutter |> Model.translate cutter_p in
         let sphere_hollwing =
             Model.minkowski [
                 Model.sphere (ball_r +. ball_c_cover) ~fn:50;
@@ -149,6 +160,9 @@ module Track = struct
                 |> Model.rotate (0., tilt, 0.)
                 |> Model.translate (bearinghedge_center tilt offset);
                 screw_holes 1.55;
+                top_leveler;
+                Model.cylinder 4. 10.0 ~fn:30 |> Model.translate (Math.Pos.add screw_near_p (0., 0., cover_lowest_z-.2.0));
+                Model.cylinder 4. 10.0 ~fn:30 |> Model.translate (Math.Pos.add screw_far_p (0., 0., cover_highest_z-.2.0));
             ];
             mold tilt offset
         ]
