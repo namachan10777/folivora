@@ -26,8 +26,8 @@ module Track = struct
     let bottom_cutter = Model.cube (100., 100., 50.)
         |> Model.translate (-50., -50., -50.)
 
-    let needle = Model.cylinder 0.0001 100.
-        |> Model.translate (0., 0., -50.)
+    let needle = Model.cylinder 0.0001 50.
+        |> Model.translate (0., 0., -10.)
 
     let bearing_hollowing =
         Model.union [
@@ -162,7 +162,7 @@ module Track = struct
                 screw_holes 1.55;
                 top_leveler;
                 Model.cylinder 4. 10.0 ~fn:30 |> Model.translate (Math.Pos.add screw_near_p (0., 0., cover_lowest_z-.2.0));
-                Model.cylinder 4. 10.0 ~fn:30 |> Model.translate (Math.Pos.add screw_far_p (0., 0., cover_highest_z-.2.0));
+                Model.cylinder 4. 10.0 ~fn:30 |> Model.translate (Math.Pos.add screw_far_p (0., 0., cover_highest_z-.1.0));
             ];
             mold tilt offset
         ]
