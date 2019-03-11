@@ -1,13 +1,13 @@
 module Track = struct
     let pillar_d = 41.9
 
-
     let ball_r = 17.0
     let ball_c_cover = 0.3
     let ball_c_foundation = 1.2
 
     let hole_r = 1.55
-    let hole_c = 3.
+    let hole_c = 0.01
+    let hole_region_r = 3.
 
     let bearing_shaft_r = 1.5
     let bearing_shaft_c = 0.1
@@ -20,24 +20,34 @@ module Track = struct
 
     let eps = 0.1
 
-    let bearing_range = bearing_out_r +. (bearing_in_r -. bearing_shaft_r)
-    let bearing_min_r = bearing_out_r -. (bearing_in_r -. bearing_shaft_r)
+    let top_cutter = Model.cube (100., 100., 50.)
+        |> Model.translate (-50., -50., 0.)
+
+    let bottom_cutter = Model.cube (100., 100., 50.)
+        |> Model.translate (-50., -50., 50.)
+
+    let needle = Model.cylinder 0.0001 100.
+        |> Model.translate (0., 0., -50.)
 
     let bearing_hollowing =
         Model.union [
+            (* ベアリングの軸 *)
             Model.cylinder (bearing_shaft_r +. bearing_shaft_c) bearing_shaft_h ~fn:30
                 |> Model.rotate (0., pi /. 2., 0.);
+            (* ベアリング軸 (上から挿入出来るように切り抜き *)
             Model.cube (bearing_shaft_r +. bearing_shaft_c +.eps, (bearing_shaft_r +. bearing_shaft_c) *.2.,  bearing_shaft_h)
                 |> Model.rotate (0., pi /. 2., 0.)
                 |> Model.translate (0., -.bearing_shaft_r-.bearing_shaft_c, bearing_shaft_r +. eps);
-            Model.cylinder (bearing_range+.bearing_c) bearing_t ~fn:30
+            (* ベアリング可動部 *)
+            Model.cylinder (bearing_out_r+.bearing_c) bearing_t ~fn:30
                 |> Model.rotate (0., pi /. 2., 0.)
                 |> Model.translate ((bearing_shaft_h -. bearing_t) /. 2., 0., 0.)
         ]
+        (* center = true *)
         |> Model.translate (-.bearing_shaft_h/.2., 0., 0.)
 
-    let hedge model offset =
-        let r = sqrt ((ball_r +. bearing_min_r) ** 2. -. offset**2.) in
+    let arrange_as_circle model offset =
+        let r = sqrt ((ball_r +. bearing_out_r) ** 2. -. offset**2.) in
         let hole = model 
             |> Model.translate (0., r, 0.) in
         Model.union [
@@ -46,11 +56,11 @@ module Track = struct
             hole |> Model.rotate (0., 0., -. pi *. 2. /. 3.)
         ]
 
-    let bearinghedge offset =
-        hedge bearing_hollowing offset
+    let bearing_circle offset =
+        arrange_as_circle bearing_hollowing offset
 
-    let foundation_bottom = (pillar_d +. hole_c *. 2., pillar_d)
-    let foundation_center = (pillar_d /. 2. +. hole_c, pillar_d /. 2. +. hole_c)
+    let foundation_bottom = (pillar_d +. hole_region_r *. 2., pillar_d)
+    let foundation_center = (pillar_d /. 2. +. hole_region_r, pillar_d /. 2. +. hole_region_r)
     let bearinghedge_center tilt offset = (
         (fst foundation_center) -. offset *. (sin tilt),
         (snd foundation_center),
@@ -64,16 +74,15 @@ module Track = struct
 
     let foundation_body tilt offset =
         let base = Model.cube (fst foundation_bottom, snd foundation_bottom, 100.) in
-        let cutter = Model.cube (200., 200., 200.) |> Model.translate (-.100., -.100., 0.) in
         Model.difference base [
-            cutter
+            top_cutter
             |> Model.rotate (0., tilt, 0.)
             |> Model.translate (top_surface_center tilt offset)]
 
     let screw_holes r =
         let points = [
-            (hole_c, snd foundation_center, 0.);
-            ((fst foundation_bottom) -. hole_c, snd foundation_center, 0.);
+            (hole_region_r, snd foundation_center, 0.);
+            ((fst foundation_bottom) -. hole_region_r, snd foundation_center, 0.);
         ] in
         let screw_holes = Model.cylinder ~fn:30 r 50. in
         Model.union @@ List.map (fun p -> Model.translate p screw_holes) points
@@ -82,12 +91,10 @@ module Track = struct
         let bearing_mold = Model.cylinder (bearing_out_r +. 3.0) (bearing_shaft_h +. 3.0)
             |> Model.translate (0., 0., -.(bearing_shaft_h +. 3.0) /. 2.)
             |> Model.rotate (0., pi /. 2., 0.) in
-        let path = Model.cylinder 0.001 (100.0)
-            |> Model.translate (0., 0., -.50.) in
         Model.union [
             Model.minkowski [
-                path;
-                hedge bearing_mold offset
+                needle;
+                arrange_as_circle bearing_mold offset
                 |> Model.rotate (0., 0., pi)
                 |> Model.rotate (0., tilt, 0.)
                 |> Model.translate (bearinghedge_center tilt offset)];
@@ -99,7 +106,7 @@ module Track = struct
     let foundation tilt offset =
         Model.intersection [
             Model.difference (foundation_body tilt offset) [
-                bearinghedge offset
+                bearing_circle offset
                 |> Model.rotate (0., 0., pi)
                 |> Model.rotate (0., tilt, 0.)
                 |> Model.translate (bearinghedge_center tilt offset);
@@ -121,8 +128,6 @@ module Track = struct
 
     let bearing_cover tilt offset top_offset = 
         let base = Model.cube (fst foundation_bottom, snd foundation_bottom, 100.) in
-        let top_cutter = Model.cube (200., 200., 200.) |> Model.translate (-.100., -.100., 0.) in
-        let bottom_cutter = Model.cube (200., 200., 200.) |> Model.translate (-.100., -.100., -.200.) in
         let sphere_hollwing =
             Model.minkowski [
                 Model.sphere (ball_r +. ball_c_cover) ~fn:50;
@@ -139,7 +144,7 @@ module Track = struct
                 |> Model.translate (top_surface_center tilt offset);
                 sphere_hollwing
                 |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
-                bearinghedge offset
+                bearing_circle offset
                 |> Model.rotate (0., 0., pi)
                 |> Model.rotate (0., tilt, 0.)
                 |> Model.translate (bearinghedge_center tilt offset);
