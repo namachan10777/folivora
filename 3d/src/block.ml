@@ -12,7 +12,7 @@ let ( ** ) = pow
 
 module Block = struct
     let block_thick = 5.08
-    let slit_width = 2.54 *. 6.0 +. 0.2
+    let slit_width = 2.54 *. 6.0 +. 0.5
     let block_width = 19.0
     let slit_thick = 1.6
     let min_thick = 2.0
