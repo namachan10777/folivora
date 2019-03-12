@@ -16,4 +16,5 @@ let () =
     build (Track.foundation (pi /. 20.) 4.0) "foundation-left.scad";
     build (Track.foundation (pi /. 20.) 4.0 |> Model.mirror (1, 0, 0)) "foundation-right.scad";
     build (Track.bearing_cover (pi /. 20.) 4.0 4.0) "cover-left.scad";
-    build (Track.bearing_cover (pi /. 20.) 4.0 4.0 |> Model.mirror (1, 0, 0)) "cover-right.scad"
+    build (Track.bearing_cover (pi /. 20.) 4.0 4.0 |> Model.mirror (1, 0, 0)) "cover-right.scad";
+    build (Model.sphere 12.5 ~fn:100) "sphere.scad"

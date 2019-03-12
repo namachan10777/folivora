@@ -11,11 +11,10 @@ let rec pow x = function
 let ( ** ) = pow
 
 module Block = struct
-    let eps = 0.0
     let block_thick = 5.08
-    let slit_width = 2.54 *. 6.0 +. eps
+    let slit_width = 2.54 *. 6.0 +. 0.2
     let block_width = 19.0
-    let slit_thick = 1.8 +. eps
+    let slit_thick = 1.6
     let min_thick = 2.0
     let min_thick_bottom = 1.0
 
