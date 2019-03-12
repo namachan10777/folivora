@@ -1,7 +1,8 @@
 module Track = struct
-    let pillar_d = 41.9
+    let pillar_d = 30.48
 
-    let ball_r = 17.0
+    let ball_r = 12.5
+
     let ball_c_cover = 0.3
     let ball_c_foundation = 1.2
 
@@ -59,7 +60,7 @@ module Track = struct
     let bearing_circle offset =
         arrange_as_circle bearing_hollowing offset
 
-    let foundation_bottom = (pillar_d +. hole_region_r *. 2., pillar_d)
+    let foundation_bottom = (pillar_d +. hole_region_r *. 2., ball_r *. 2. +. bearing_out_r +. bearing_shaft_h /. 2.)
     let foundation_center = (pillar_d /. 2. +. hole_region_r, pillar_d /. 2. +. hole_region_r)
     let bearinghedge_center tilt offset = (
         (fst foundation_center) -. offset *. (sin tilt),
@@ -73,14 +74,14 @@ module Track = struct
         )
 
     let foundation_body tilt offset =
-        let base = Model.cube (fst foundation_bottom, snd foundation_bottom, 100.) in
+        let base = Model.cube (fst foundation_bottom, snd foundation_bottom, 40.) in
         Model.difference base [
             top_cutter
             |> Model.rotate (0., tilt, 0.)
             |> Model.translate (top_surface_center tilt offset)]
 
-    let screw_far_p = (hole_region_r, snd foundation_center, 0.)
-    let screw_near_p = ((fst foundation_bottom) -. hole_region_r, snd foundation_center, 0.)
+    let screw_far_p = (hole_region_r, snd foundation_center -. hole_r, 0.)
+    let screw_near_p = ((fst foundation_bottom) -. hole_region_r, snd foundation_center -. hole_r, 0.)
 
     let screw_holes r =
         let points = [
@@ -119,7 +120,7 @@ module Track = struct
                 Model.cylinder 8.0 10.0 ~fn:30
                 |> Model.translate (fst foundation_center, snd foundation_center, 0.0);
             ];
-            mold tilt offset
+            mold tilt offset;
         ]
 
     let cover_top_surface_center tilt offset top_offset =
@@ -164,7 +165,7 @@ module Track = struct
                 Model.cylinder 4. 10.0 ~fn:30 |> Model.translate (Math.Pos.add screw_near_p (0., 0., cover_lowest_z-.2.0));
                 Model.cylinder 4. 10.0 ~fn:30 |> Model.translate (Math.Pos.add screw_far_p (0., 0., cover_highest_z-.2.0));
             ];
-            mold tilt offset
+            mold tilt offset;
         ]
 
 end
