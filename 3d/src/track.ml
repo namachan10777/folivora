@@ -1,7 +1,7 @@
 module Track = struct
-    let pillar_d = 30.48
+    let pillar_d = 2.54 *. 16.
 
-    let ball_r = 12.5
+    let ball_r = 17.0
 
     let ball_c_cover = 0.3
     let ball_c_foundation = 1.2
@@ -20,6 +20,8 @@ module Track = struct
     let bearing_t = 5.
 
     let eps = 0.1
+
+    let pcb_thick = 1.8
 
     let top_cutter = Model.cube (100., 100., 50.)
         |> Model.translate (-50., -50., 0.)
@@ -60,112 +62,47 @@ module Track = struct
     let bearing_circle offset =
         arrange_as_circle bearing_hollowing offset
 
-    let foundation_bottom = (pillar_d +. hole_region_r *. 2., ball_r *. 2. +. bearing_out_r +. bearing_shaft_h /. 2.)
-    let foundation_center = (pillar_d /. 2. +. hole_region_r, pillar_d /. 2. +. hole_region_r)
-    let bearinghedge_center tilt offset = (
-        (fst foundation_center) -. offset *. (sin tilt),
-        (snd foundation_center),
-        ball_r -. offset *. (cos tilt))
-    let top_surface_center tilt offset =
-        Math.Pos.add (bearinghedge_center tilt offset) (
-            bearing_shaft_r *. (sin tilt),
-            0.,
-            bearing_shaft_r *. (cos tilt)
-        )
+    let lens_len = 15.6
+    let nut_insert_d = 2.54 *. 12.
 
-    let foundation_body tilt offset =
-        let base = Model.cube (fst foundation_bottom, snd foundation_bottom, 40.) in
-        Model.difference base [
-            top_cutter
-            |> Model.rotate (0., tilt, 0.)
-            |> Model.translate (top_surface_center tilt offset)]
-
-    let screw_far_p = (hole_region_r, snd foundation_center -. hole_r, 0.)
-    let screw_near_p = ((fst foundation_bottom) -. hole_region_r, snd foundation_center -. hole_r, 0.)
-
-    let screw_holes r =
-        let points = [
-            screw_far_p;
-            screw_near_p;
+    let foundation offset =
+        let width = pillar_d +. hole_region_r *. 2. in
+        let depth =
+            (* 奥側半分 *)
+            (ball_r +. bearing_out_r *. 2.) +.
+            (* 手前側半分 *)
+            (ball_r +. 7.40) in
+        let height = bearing_shaft_r *. 2. +. 3. in
+        let lump = Model.cube (width, depth, height) in
+        let bearings = bearing_circle offset in
+        let sphere = Model.sphere (ball_r +. ball_c_foundation) in
+        let screw_hole = Model.cylinder hole_r height ~fn:30 in
+        let lens_cut = Model.cube (lens_len, 7.40 -. pcb_thick, height) in
+        let lens_window = Model.cube (12.96 -. 0.5, ball_r +. 7.70, height) in
+        let nut = Model.cylinder 3.2 2.4 ~fn:6 in
+        let nut_insert = Model.minkowski [
+            nut |> Model.rotate (pi/.2., 0., 0.) |> Model.translate (0., 2.4, 0.);
+            Model.cylinder 0.0001 (height /. 2.);
         ] in
-        let screw_holes = Model.cylinder ~fn:30 r 50. in
-        Model.union @@ List.map (fun p -> Model.translate p screw_holes) points
-
-    let mold tilt offset =
-        let bearing_mold = Model.cylinder (bearing_out_r +. 3.0) (bearing_shaft_h +. 3.0)
-            |> Model.translate (0., 0., -.(bearing_shaft_h +. 3.0) /. 2.)
-            |> Model.rotate (0., pi /. 2., 0.) in
-        Model.union [
-            Model.minkowski [
-                needle;
-                arrange_as_circle bearing_mold offset
-                |> Model.rotate (0., 0., pi)
-                |> Model.rotate (0., tilt, 0.)
-                |> Model.translate (bearinghedge_center tilt offset)];
-            Model.cylinder (ball_r +. 4.0) 50.
-            |> Model.translate (fst foundation_center, snd foundation_center, 0.);
-            screw_holes 4.
+        let opt_screw = Model.cylinder hole_r 10. ~fn:30 |> Model.translate (0., 0., -5.) |> Model.rotate (pi/.2., 0., 0.) in
+        let nut_hollowing = Model.union [
+            nut_insert;
+            opt_screw;
+        ] in
+        let nut_inserts =
+            let xs = [-.nut_insert_d /. 2.; nut_insert_d /. 2.] in
+            Model.union @@ List.map (fun x -> Model.translate (x, 0., height/.2.) nut_hollowing) xs in
+        let screw_holes =
+            let xs = [hole_region_r; width -. hole_region_r] in
+            let ys = [depth/.2.; depth -. hole_region_r] in
+            let ps = List.flatten @@ List.map (fun x -> List.map (fun y -> (x, y, 0.)) ys) xs in
+            Model.union (List.map (fun p -> Model.translate p screw_hole) ps) in
+        Model.difference lump [
+            bearings |> Model.translate (width/.2., depth/.2., height -. bearing_shaft_r);
+            sphere |> Model.translate (width/.2., depth/.2., height -. bearing_shaft_r +. offset);
+            screw_holes;
+            lens_cut |> Model.translate ((width -. lens_len) /. 2., 0., 0.);
+            lens_window |> Model.translate ((width -. (12.96 -. 0.5)) /. 2., 0., 0.);
+            nut_inserts |> Model.translate (width /. 2., 3., 0.);
         ]
-
-    let foundation tilt offset =
-        Model.intersection [
-            Model.difference (foundation_body tilt offset) [
-                bearing_circle offset
-                |> Model.rotate (0., 0., pi)
-                |> Model.rotate (0., tilt, 0.)
-                |> Model.translate (bearinghedge_center tilt offset);
-                Model.sphere (ball_r +. ball_c_foundation) ~fn:50
-                |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
-                screw_holes 1.55;
-                Model.cylinder 8.0 10.0 ~fn:30
-                |> Model.translate (fst foundation_center, snd foundation_center, 0.0);
-            ];
-            mold tilt offset;
-        ]
-
-    let cover_top_surface_center tilt offset top_offset =
-        Math.Pos.add (bearinghedge_center tilt offset) (
-            (offset +. top_offset) *. (sin tilt),
-            0.,
-            (offset +. top_offset) *. (cos tilt)
-        )
-
-    let bearing_cover tilt offset top_offset = 
-        let base = Model.cube (fst foundation_bottom, snd foundation_bottom, 100.) in
-        let cover_center_z = match cover_top_surface_center tilt offset top_offset with (_, _, z) -> z in
-        let cover_lowest_z = cover_center_z  -. (snd foundation_bottom) *. (sin tilt) /. 2. in
-        (* 縁の部分の高さ *)
-        let opening_r = sqrt (ball_r**2. -. top_offset**2.) in
-        let cover_highest_z = cover_center_z +. opening_r *. (sin tilt) in
-        let top_leveler =
-            let cutter_p = (0., 0., cover_highest_z) in
-            top_cutter |> Model.translate cutter_p in
-        let sphere_hollwing =
-            Model.minkowski [
-                Model.sphere (ball_r +. ball_c_cover) ~fn:50;
-                Model.cylinder 0.0001 10.0
-            ]
-            |> Model.translate (0., 0., -10.) in
-        Model.intersection [
-            Model.difference base [
-                top_cutter
-                |> Model.rotate (0., tilt, 0.)
-                |> Model.translate (cover_top_surface_center tilt offset top_offset);
-                bottom_cutter
-                |> Model.rotate (0., tilt, 0.)
-                |> Model.translate (top_surface_center tilt offset);
-                sphere_hollwing
-                |> Model.translate (fst foundation_center, snd foundation_center, ball_r);
-                bearing_circle offset
-                |> Model.rotate (0., 0., pi)
-                |> Model.rotate (0., tilt, 0.)
-                |> Model.translate (bearinghedge_center tilt offset);
-                screw_holes 1.55;
-                top_leveler;
-                Model.cylinder 4. 10.0 ~fn:30 |> Model.translate (Math.Pos.add screw_near_p (0., 0., cover_lowest_z-.2.0));
-                Model.cylinder 4. 10.0 ~fn:30 |> Model.translate (Math.Pos.add screw_far_p (0., 0., cover_highest_z-.1.0));
-            ];
-            mold tilt offset;
-        ]
-
 end
