@@ -65,20 +65,41 @@ module Track = struct
     let lens_len = 15.6
     let nut_insert_d = 2.54 *. 12.
 
-    let foundation offset =
+    let block_size southern nothern =
         let width = pillar_d +. hole_region_r *. 2. in
         let depth =
             (* 奥側半分 *)
             (ball_r +. bearing_out_r *. 2.) +.
             (* 手前側半分 *)
             (ball_r +. 7.40) in
-        let height = bearing_shaft_r *. 2. +. 3. in
-        let lump = Model.cube (width, depth, height) in
+        let height = southern +. nothern in
+        (width, depth, height)
+
+    let trackball_block offset nothern southern =
+        let (width, depth, height) as block_size = block_size southern nothern in
+        let lump = Model.cube block_size in
         let bearings = bearing_circle offset in
         let sphere = Model.sphere (ball_r +. ball_c_foundation) in
         let screw_hole = Model.cylinder hole_r height ~fn:30 in
         let lens_cut = Model.cube (lens_len, 7.40 -. pcb_thick, height) in
         let lens_window = Model.cube (12.96 -. 0.5, ball_r +. 7.70, height) in
+        let screw_holes =
+            let xs = [hole_region_r; width -. hole_region_r] in
+            let ys = [depth/.2.; depth -. hole_region_r] in
+            let ps = List.flatten @@ List.map (fun x -> List.map (fun y -> (x, y, 0.)) ys) xs in
+            Model.union (List.map (fun p -> Model.translate p screw_hole) ps) in
+        Model.difference lump [
+            bearings |> Model.translate (width/.2., depth/.2., southern -. bearing_shaft_r);
+            sphere |> Model.translate (width/.2., depth/.2., southern -. bearing_shaft_r +. offset);
+            screw_holes;
+            lens_cut |> Model.translate ((width -. lens_len) /. 2., 0., 0.);
+            lens_window |> Model.translate ((width -. (12.96 -. 0.5)) /. 2., 0., 0.);
+        ]
+
+    let foundation offset =
+        let height = (bearing_shaft_r +. 3.0) in
+        let (width, _, _)  = block_size 0.0 height in
+        let lump = trackball_block offset 0.0 height in
         let nut = Model.cylinder 3.2 2.4 ~fn:6 in
         let nut_insert = Model.minkowski [
             nut |> Model.rotate (pi/.2., 0., 0.) |> Model.translate (0., 2.4, 0.);
@@ -92,17 +113,18 @@ module Track = struct
         let nut_inserts =
             let xs = [-.nut_insert_d /. 2.; nut_insert_d /. 2.] in
             Model.union @@ List.map (fun x -> Model.translate (x, 0., height/.2.) nut_hollowing) xs in
-        let screw_holes =
-            let xs = [hole_region_r; width -. hole_region_r] in
-            let ys = [depth/.2.; depth -. hole_region_r] in
-            let ps = List.flatten @@ List.map (fun x -> List.map (fun y -> (x, y, 0.)) ys) xs in
-            Model.union (List.map (fun p -> Model.translate p screw_hole) ps) in
         Model.difference lump [
-            bearings |> Model.translate (width/.2., depth/.2., height -. bearing_shaft_r);
-            sphere |> Model.translate (width/.2., depth/.2., height -. bearing_shaft_r +. offset);
-            screw_holes;
-            lens_cut |> Model.translate ((width -. lens_len) /. 2., 0., 0.);
-            lens_window |> Model.translate ((width -. (12.96 -. 0.5)) /. 2., 0., 0.);
             nut_inserts |> Model.translate (width /. 2., 3., 0.);
+        ]
+
+    let rim_height = 3.0
+
+    let cover offset ledge =
+        let height = offset +. rim_height in
+        let block_size = block_size 0.0 pcb_thick in
+        let cutter = Model.cube block_size in
+        let lump = trackball_block offset height pcb_thick in
+        Model.difference lump [
+            cutter |> Model.translate (0., ledge, 0.);
         ]
 end
