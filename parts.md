@@ -1,3 +1,0 @@
-# Electrical Parts
-| Name | Qty |
-| 
