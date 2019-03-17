@@ -1,0 +1,225 @@
+EESchema Schematic File Version 4
+EELAYER 26 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Switch:SW_Push_45deg SW1
+U 1 1 5C8E9B2E
+P 4400 3400
+F 0 "SW1" V 4446 3259 50  0000 R CNN
+F 1 "SW0" V 4355 3259 50  0000 R CNN
+F 2 "folivora:SW_Cherry_MX1A_1.00u_PCB" H 4400 3400 50  0001 C CNN
+F 3 "" H 4400 3400 50  0001 C CNN
+	1    4400 3400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:D D1
+U 1 1 5C8E9B82
+P 4450 3600
+F 0 "D1" H 4450 3450 50  0000 C CNN
+F 1 "D0" H 4350 3450 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 4450 3600 50  0001 C CNN
+F 3 "~" H 4450 3600 50  0001 C CNN
+	1    4450 3600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4300 3500 4300 3600
+$Comp
+L Switch:SW_Push_45deg SW2
+U 1 1 5C8E9CA7
+P 4850 3400
+F 0 "SW2" V 4896 3259 50  0000 R CNN
+F 1 "SW1" V 4805 3259 50  0000 R CNN
+F 2 "folivora:SW_Cherry_MX1A_1.00u_PCB" H 4850 3400 50  0001 C CNN
+F 3 "" H 4850 3400 50  0001 C CNN
+	1    4850 3400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:D D2
+U 1 1 5C8E9CAD
+P 4900 3600
+F 0 "D2" H 4900 3450 50  0000 C CNN
+F 1 "D1" H 4800 3450 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 4900 3600 50  0001 C CNN
+F 3 "~" H 4900 3600 50  0001 C CNN
+	1    4900 3600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4750 3500 4750 3600
+$Comp
+L Switch:SW_Push_45deg SW3
+U 1 1 5C8E9DC7
+P 5300 3400
+F 0 "SW3" V 5346 3259 50  0000 R CNN
+F 1 "SW2" V 5255 3259 50  0000 R CNN
+F 2 "folivora:SW_Cherry_MX1A_1.00u_PCB" H 5300 3400 50  0001 C CNN
+F 3 "" H 5300 3400 50  0001 C CNN
+	1    5300 3400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:D D3
+U 1 1 5C8E9DCD
+P 5350 3600
+F 0 "D3" H 5350 3450 50  0000 C CNN
+F 1 "D2" H 5250 3450 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 5350 3600 50  0001 C CNN
+F 3 "~" H 5350 3600 50  0001 C CNN
+	1    5350 3600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5200 3500 5200 3600
+$Comp
+L Switch:SW_Push_45deg SW4
+U 1 1 5C8E9DD4
+P 5750 3400
+F 0 "SW4" V 5796 3259 50  0000 R CNN
+F 1 "SW3" V 5705 3259 50  0000 R CNN
+F 2 "folivora:SW_Cherry_MX1A_1.00u_PCB" H 5750 3400 50  0001 C CNN
+F 3 "" H 5750 3400 50  0001 C CNN
+	1    5750 3400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:D D4
+U 1 1 5C8E9DDA
+P 5800 3600
+F 0 "D4" H 5800 3450 50  0000 C CNN
+F 1 "D3" H 5700 3450 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 5800 3600 50  0001 C CNN
+F 3 "~" H 5800 3600 50  0001 C CNN
+	1    5800 3600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5650 3500 5650 3600
+$Comp
+L Switch:SW_Push_45deg SW5
+U 1 1 5C8E9EC3
+P 6200 3400
+F 0 "SW5" V 6246 3259 50  0000 R CNN
+F 1 "SW4" V 6155 3259 50  0000 R CNN
+F 2 "folivora:SW_Cherry_MX1A_1.00u_PCB" H 6200 3400 50  0001 C CNN
+F 3 "" H 6200 3400 50  0001 C CNN
+	1    6200 3400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:D D5
+U 1 1 5C8E9EC9
+P 6250 3600
+F 0 "D5" H 6250 3450 50  0000 C CNN
+F 1 "D4" H 6150 3450 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 6250 3600 50  0001 C CNN
+F 3 "~" H 6250 3600 50  0001 C CNN
+	1    6250 3600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push_45deg SW6
+U 1 1 5C8E9ECF
+P 6650 3400
+F 0 "SW6" V 6696 3259 50  0000 R CNN
+F 1 "SW5" V 6605 3259 50  0000 R CNN
+F 2 "folivora:SW_Cherry_MX1A_1.00u_PCB" H 6650 3400 50  0001 C CNN
+F 3 "" H 6650 3400 50  0001 C CNN
+	1    6650 3400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:D D6
+U 1 1 5C8E9ED5
+P 6700 3600
+F 0 "D6" H 6700 3450 50  0000 C CNN
+F 1 "D5" H 6600 3450 50  0000 C CNN
+F 2 "Diode_SMD:D_SOD-123" H 6700 3600 50  0001 C CNN
+F 3 "~" H 6700 3600 50  0001 C CNN
+	1    6700 3600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6550 3500 6550 3600
+Wire Wire Line
+	6100 3600 6100 3500
+Wire Wire Line
+	6750 3300 6750 3200
+Wire Wire Line
+	6750 3200 6300 3200
+Wire Wire Line
+	6300 3200 6300 3300
+Wire Wire Line
+	6300 3200 5850 3200
+Wire Wire Line
+	5850 3200 5850 3300
+Connection ~ 6300 3200
+Wire Wire Line
+	5850 3200 5400 3200
+Wire Wire Line
+	5400 3200 5400 3300
+Connection ~ 5850 3200
+Wire Wire Line
+	5400 3200 4950 3200
+Wire Wire Line
+	4950 3200 4950 3300
+Connection ~ 5400 3200
+Wire Wire Line
+	4950 3200 4500 3200
+Wire Wire Line
+	4500 3200 4500 3300
+Connection ~ 4950 3200
+Text Label 4500 3200 0    50   ~ 0
+SELECT
+Text Label 4600 3600 3    50   ~ 0
+READ0
+Text Label 5050 3600 3    50   ~ 0
+READ1
+Text Label 5500 3600 3    50   ~ 0
+READ2
+Text Label 5950 3600 3    50   ~ 0
+READ3
+Text Label 6400 3600 3    50   ~ 0
+READ4
+Text Label 6850 3600 3    50   ~ 0
+READ5
+$Comp
+L Connector:Conn_01x07_Male J1
+U 1 1 5C8EAB08
+P 3700 3050
+F 0 "J1" H 3673 2980 50  0000 R CNN
+F 1 "INTERFACE" H 3673 3071 50  0000 R CNN
+F 2 "Connector_JST:JST_XH_B07B-XH-A_1x07_P2.50mm_Vertical" H 3700 3050 50  0001 C CNN
+F 3 "~" H 3700 3050 50  0001 C CNN
+	1    3700 3050
+	-1   0    0    1   
+$EndComp
+Text Label 3500 2750 2    50   ~ 0
+SELECT
+Text Label 3500 3350 2    50   ~ 0
+READ0
+Text Label 3500 3250 2    50   ~ 0
+READ1
+Text Label 3500 3150 2    50   ~ 0
+READ2
+Text Label 3500 3050 2    50   ~ 0
+READ3
+Text Label 3500 2950 2    50   ~ 0
+READ4
+Text Label 3500 2850 2    50   ~ 0
+READ5
+$EndSCHEMATC
