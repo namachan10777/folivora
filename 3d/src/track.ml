@@ -65,6 +65,7 @@ module Track = struct
     let lens_len = 15.6
     let nut_insert_d = 2.54 *. 12.
 
+
     let block_size southern nothern =
         let width = pillar_d +. hole_region_r *. 2. in
         let depth =
@@ -75,6 +76,16 @@ module Track = struct
         let height = southern +. nothern in
         (width, depth, height)
 
+    let screw_poss southern nothern = 
+        let (width, depth, _) as block_size = block_size southern nothern in
+        let xs = [hole_region_r; width -. hole_region_r] in
+        let ys = [depth/.2.; depth -. hole_region_r] in
+        List.flatten @@ List.map (fun x -> List.map (fun y -> (x, y, 0.)) ys) xs
+
+    let screw_poss_rel offset southern nothern =
+        let (width, depth, _) as block_size = block_size southern nothern in
+        screw_poss southern nothern |> List.map (fun p -> Math.Pos.sub p (width/.2., depth/.2., southern -. bearing_shaft_r +. offset))
+
     let trackball_block offset nothern southern =
         let (width, depth, height) as block_size = block_size southern nothern in
         let lump = Model.cube block_size in
@@ -84,9 +95,7 @@ module Track = struct
         let lens_cut = Model.cube (lens_len, 7.40 -. pcb_thick, height) in
         let lens_window = Model.cube (12.96 -. 0.5, ball_r +. 7.70, height) in
         let screw_holes =
-            let xs = [hole_region_r; width -. hole_region_r] in
-            let ys = [depth/.2.; depth -. hole_region_r] in
-            let ps = List.flatten @@ List.map (fun x -> List.map (fun y -> (x, y, 0.)) ys) xs in
+            let ps = screw_poss southern nothern in
             Model.union (List.map (fun p -> Model.translate p screw_hole) ps) in
         Model.difference lump [
             bearings |> Model.translate (width/.2., depth/.2., southern -. bearing_shaft_r);
@@ -127,4 +136,7 @@ module Track = struct
         Model.difference lump [
             cutter |> Model.translate (0., ledge, 0.);
         ]
+
+    let screw_positions offset =
+        screw_poss_rel offset 0.0 (bearing_shaft_r +. 3.0)
 end
