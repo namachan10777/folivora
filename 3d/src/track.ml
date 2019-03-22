@@ -1,7 +1,8 @@
 module Track = struct
-    let pillar_d = 2.54 *. 16.
+    let pillar_d_w = 2.54 *. 16.
+    let pillar_d_d = 2.54 *. 6.
 
-    let ball_r = 17.0
+    let ball_r = 12.5
 
     let ball_c_cover = 0.3
     let ball_c_foundation = 1.2
@@ -64,13 +65,17 @@ module Track = struct
 
     let lens_len = 15.6
     let nut_insert_d = 2.54 *. 12.
-
+    let lens_ball_offset = 2.40
+    let ball_optpcb_offset = 7.40
+    let pcb_t = 1.8
+    let lens_hollowing_depth = ball_optpcb_offset -. pcb_t
+    let depth_first_half = ball_r +. lens_hollowing_depth
 
     let block_size southern nothern =
-        let width = pillar_d +. hole_region_r *. 2. in
+        let width = pillar_d_w +. hole_region_r *. 2. in
         let depth =
             (* 奥側半分 *)
-            (ball_r +. bearing_out_r *. 2.) +.
+            (pillar_d_d +. hole_region_r) +.
             (* 手前側半分 *)
             (ball_r +. 7.40) in
         let height = southern +. nothern in
@@ -79,7 +84,7 @@ module Track = struct
     let screw_poss southern nothern = 
         let (width, depth, _) as block_size = block_size southern nothern in
         let xs = [hole_region_r; width -. hole_region_r] in
-        let ys = [depth/.2.; depth -. hole_region_r] in
+        let ys = [depth_first_half; depth_first_half +. pillar_d_d] in
         List.flatten @@ List.map (fun x -> List.map (fun y -> (x, y, 0.)) ys) xs
 
     let screw_poss_rel offset southern nothern =
@@ -92,14 +97,14 @@ module Track = struct
         let bearings = bearing_circle offset in
         let sphere = Model.sphere (ball_r +. ball_c_foundation) ~fn:100 in
         let screw_hole = Model.cylinder hole_r height ~fn:30 in
-        let lens_cut = Model.cube (lens_len, 7.40 -. pcb_thick, height) in
-        let lens_window = Model.cube (12.96 -. 0.5, ball_r +. 7.70, height) in
+        let lens_cut = Model.cube (lens_len, lens_hollowing_depth, height) in
+        let lens_window = Model.cube (12.96 -. 0.5, depth_first_half, height) in
         let screw_holes =
             let ps = screw_poss southern nothern in
             Model.union (List.map (fun p -> Model.translate p screw_hole) ps) in
         Model.difference lump [
-            bearings |> Model.translate (width/.2., depth/.2., southern -. bearing_shaft_r);
-            sphere |> Model.translate (width/.2., depth/.2., southern -. bearing_shaft_r +. offset);
+            bearings |> Model.translate (width/.2., depth_first_half, southern -. bearing_shaft_r);
+            sphere |> Model.translate (width/.2., depth_first_half, southern -. bearing_shaft_r +. offset);
             screw_holes;
             lens_cut |> Model.translate ((width -. lens_len) /. 2., 0., 0.);
             lens_window |> Model.translate ((width -. (12.96 -. 0.5)) /. 2., 0., 0.);
