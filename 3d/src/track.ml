@@ -138,8 +138,12 @@ module Track = struct
         let block_size = block_size 0.0 pcb_thick in
         let cutter = Model.cube block_size in
         let lump = trackball_block offset height pcb_thick in
+        let top_cutter = Model.cube (100., 50., 10.) |> Model.translate (-50., 0., 0.) in
         Model.difference lump [
             cutter |> Model.translate (0., ledge, 0.);
+            top_cutter
+            |> Model.rotate (0., pi /. 12., 0.)
+            |> Model.translate ((pillar_d_w /. 2.) +. hole_region_r, 0., height +. pcb_thick);
         ]
 
     let screw_positions offset =
