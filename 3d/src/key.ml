@@ -120,6 +120,53 @@ module Key = struct
         | x :: [] -> x
         | _ :: tl -> last tl
 
+    let key_rib_far h l =
+        let extension = 3.0 in
+        let base_p n = List.init (n+1) (fun i -> bending *. float_of_int i )
+            |> List.fold_left
+                (fun p bending -> P.add p (0., (get_y key_block_size) *. cos bending, (get_y key_block_size) *. sin bending))
+                (0., 0., 0.)
+            |> P.add (0., -. (get_z key_block_size) *. (sin (bending *. float_of_int n)), 0.) in
+        let joint n t = 
+            M.cube (t, extension, (get_z key_block_size) *. (cos (bending *. (float_of_int n))))
+            |> M.translate @@ base_p n in
+        let wall n t diff =
+            let wall_h = h
+                +. (get_z key_block_size) *. (cos (bending *. (float_of_int n)))
+                +. (get_z (base_p n))
+                +. (get_z diff) in
+            M.cube (t, rib_thin, wall_h)
+            |> M.translate (P.mul (base_p n) (1., 1., 0.))
+            |> M.translate (0., extension, -.h -. get_z diff) in
+        let rec place_rec x_acc = function
+            | (far1, p1) :: ((far2, p2) as col2) :: tl ->
+                let slide src =
+                    let (x1, y1, z1), (x2, y2, z2) = p1, p2 in
+                    M.translate (x1, y2-.y1, z2-.z1) src in
+                let move_bridge = M.translate (get_x key_block_size, 0., 0.) in
+                let model = M.union [
+                    wall far1 (get_x key_block_size) p1;
+                    joint far2 (get_x key_block_size);
+                    (M.hull [(wall far1 0.01 p1); (slide (wall far2 0.01 p2))]) |> move_bridge;
+                    (M.hull [(joint far1 0.01); (slide (joint far2 0.01))]) |> move_bridge;
+                ] |> M.translate (x_acc +. get_x p1, get_y p1, get_z p1) in
+                model :: place_rec (x_acc +. (get_x p1) +. (get_x key_block_size)) (col2::tl)
+            | (far, p) :: [] ->
+               let model = M.union [
+                    wall far (get_x key_block_size) p;
+                    joint far (get_x key_block_size);
+                ] |> M.translate (x_acc, get_y p, get_z p) in
+               [model]
+            | [] -> []
+        in M.union @@ place_rec 0.0 l
+
+    let key_rib h l =
+        let far = key_rib_far h (List.map (fun (near, far, p) -> (far, p)) l) in
+        let near = key_rib_far h (List.map (fun (near, far, (x, y, z)) -> (near, (x, -.y, z))) l)
+            |> M.mirror (0, 1, 0)
+            |> M.translate (0., get_y key_block_size, 0.) in
+        M.union [far; near]
+
     let key_module l =
         let inside_rib = 
             l |> List.hd |> function (near, far, p) -> key_rib_side 2.0 near far |> M.translate (P.sub p (rib_thin, 0., 0.)) in
@@ -132,5 +179,6 @@ module Key = struct
             key_pad l;
             inside_rib;
             outside_rib;
+            key_rib 2.0 l;
         ]
 end
