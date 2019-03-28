@@ -8,7 +8,7 @@ module Key = struct
 
     let key_wellhole_size = (15., 14.5)
     let key_bottleneck_size = (14.0, 14.0, 1.2)
-    let key_block_size = (19.0, 19.5, 4.0)
+    let key_block_size = (17.0, 21., 3.0)
 
     let expand = function (x, y) -> (x, y, 0.0)
 
@@ -95,7 +95,7 @@ module Key = struct
     (* 左右側面: 左右に適当に延伸、延伸部分と底面への投影の間で各々凸法を取る *)
     (* 前後側面: 前後に水平に延伸、延伸部分と底面への投影の間で各々凸法を取る *)
 
-    let rib_thin = 3.0
+    let rib_thin = 6.0
 
     let key_rib_side h near far =
         let rib_block = M.cube (rib_thin, get_y key_block_size, get_z key_block_size) in
