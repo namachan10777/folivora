@@ -120,17 +120,41 @@ module Key = struct
         | x :: [] -> x
         | _ :: tl -> last tl
 
+    let wall_h = 6.0
+
+    let screw_holes h l =
+        let x1 = (let (_, _, (x, _, _)) = (List.hd l) in x) -. rib_thin /. 2. in
+        let x2 =
+            (List.fold_left (fun acc (_, _, (x, _, _)) -> acc +. x) 0.0 l)
+            +. rib_thin /. 2.
+            +. (get_x key_block_size) *. (float_of_int (List.length l))in
+        let y1 = 1.27 *. 24. in
+        let y2 = -. 1.27 *. 12. in
+        let screw_hole = M.union [
+            M.cylinder 1.55 40. ~fn:30;
+            M.cube (6., 6., 40.) ~center:true |> M.translate (0., 0., 20. +. h +. (get_z key_block_size));
+        ] in
+        M.union [
+            screw_hole |> M.translate (x1, y1, -.h);
+            screw_hole |> M.translate (x1, y2, -.h);
+            screw_hole |> M.translate (x2, y1, -.h);
+            screw_hole |> M.translate (x2, y2, -.h);
+        ]
+
+
     let key_module l =
         let inside_rib = 
-            l |> List.hd |> function (near, far, p) -> key_rib_side 2.0 near far |> M.translate (P.sub p (rib_thin, 0., 0.)) in
+            l |> List.hd |> function (near, far, p) -> key_rib_side wall_h near far |> M.translate (P.sub p (rib_thin, 0., 0.)) in
         let outside_rib = 
             l |> last |> function (near, far, (_, y, z)) ->
                 let x_acc = (List.length l |> float_of_int) *. (get_x key_block_size)
                 +. List.fold_left (fun acc (_, _, p) -> acc +. (get_x p)) 0.0 l in
-                key_rib_side 2.0 near far |> M.translate (x_acc, y, z) in
-        M.union [
-            key_pad l;
-            inside_rib;
-            outside_rib;
-        ]
+                key_rib_side wall_h near far |> M.translate (x_acc, y, z) in
+        M.difference
+            (M.union [
+                key_pad l;
+                inside_rib;
+                outside_rib;
+            ])
+            [screw_holes wall_h l]
 end
