@@ -3,8 +3,8 @@ module Key = struct
     module P = Math.Pos
     let key_wellhole_size = (15.5, 14.5, 1.2)
     let key_bottleneck_size = (14.0, 14.0, 1.0)
-    let key_hollowing_size = (16.5, 16.5, 1.0)
-    let key_block_size = (17.0, 21., (get_z key_wellhole_size) +. (get_z key_bottleneck_size) +. (get_z key_hollowing_size))
+    let key_hollowing_size = (16.51, 16.51, 1.0)
+    let key_block_size = (16.51, 21., (get_z key_wellhole_size) +. (get_z key_bottleneck_size) +. (get_z key_hollowing_size))
 
     let expand = function (x, y) -> (x, y, 0.0)
 
@@ -89,7 +89,7 @@ module Key = struct
     (* 左右側面: 左右に適当に延伸、延伸部分と底面への投影の間で各々凸法を取る *)
     (* 前後側面: 前後に水平に延伸、延伸部分と底面への投影の間で各々凸法を取る *)
 
-    let rib_thin = 6.0
+    let rib_thin = 6.35
 
     let key_rib_side h near far =
         let rib_block = M.cube (rib_thin, get_y key_block_size, get_z key_block_size) in
@@ -126,7 +126,7 @@ module Key = struct
         let y2 = -. 1.27 *. 12. in
         let screw_hole = M.union [
             M.cylinder 1.55 40. ~fn:30;
-            M.cube (6., 6., 40.) ~center:true |>> (0., 0., 20. +. h +. (get_z key_block_size));
+            M.cube (rib_thin, rib_thin, 40.) ~center:true |>> (0., 0., 20. +. h +. (get_z key_block_size));
         ] in
         M.union [
             screw_hole |>> (x1, y1, -.h);
