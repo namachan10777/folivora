@@ -28,66 +28,71 @@ module Key = struct
 
     let bending = pi /. 10.
 
-    let key_col near far =
-        let rec place_rec p bend_total = function
+    let col param =
+        let (w, d, h) = key_block_size in
+        let rec f p_acc b_acc = function
             | 0 -> []
             | n ->
-                let bend_total = bend_total +. bending in
-                let succ_p = p <+> (0., (get_y key_block_size) *. (cos bend_total), (get_y key_block_size) *. (sin bend_total)) in
-                (key_block |@> (bend_total, 0., 0.) |>> p) :: (place_rec succ_p bend_total (n - 1))
-        in
-        let f n = M.union (place_rec (0., get_y key_block_size, 0.) 0.0 n) in
-        let far = f far in
-        let near = f near |> M.mirror (0, 1, 0) |>> (0., get_y key_block_size, 0.) in
-        M.union [key_block; far; near]
+                let b_acc = b_acc +. bending in
+                let model = key_block |@> (b_acc, 0., 0.) |>> p_acc in
+                let p_acc = p_acc <+> (0., d *. cos b_acc, d *. sin b_acc) in
+                model :: f p_acc b_acc (n-1)
+        in M.union @@ f (0., 0., 0.) 0. param
 
-    (* 薄い側面を作って個別に凸包を取る *)
-    let key_col_bridge_half p_diff left right =
-        let plate = M.cube (0.01, get_y key_block_size, get_z key_block_size) in
-        let pole = M.cube (0.01, 0.01, get_z key_block_size) in
-        let rec place_rec p p_diff bend_total = function
+    let bond param p_diff =
+        let plate = M.cube (0.0001, get_y key_block_size, get_z key_block_size) in
+        let pole = M.cube (0.0001, 0.0001, get_z key_block_size) in
+        let (w, d, h) = key_block_size in
+        let rec f l_pole r_pole p_acc b_acc =
+            let b_acc = b_acc +. bending in
+            let model = plate |@> (b_acc, 0., 0.) |>> p_acc in
+            let p_acc = p_acc <+> (0., d *. cos b_acc, d *. sin b_acc) in
+            let renewed_l_pole = pole |@> (b_acc, 0., 0.) |>> p_acc in
+            let renewed_r_pole = renewed_l_pole |>> p_diff in
+            function
             | (0, 0) -> []
+            | (n, 0) ->
+                let bond = M.hull [ model; r_pole; ] in
+                bond :: f renewed_l_pole r_pole p_acc b_acc (n-1, 0)
+            | (0, m) ->
+                let bond = M.hull [ l_pole; model |>> p_diff; ] in
+                bond :: f l_pole renewed_r_pole p_acc b_acc (0, m-1)
             | (n, m) ->
-                let bend_total = bend_total +. bending in
-                let succ_p = p <+> (0., (get_y key_block_size) *. (cos bend_total), (get_y key_block_size) *. (sin bend_total)) in
-                let place a b = M.hull [
-                    (a |@> (bend_total, 0., 0.) |>> p);
-                    (b |@> (bend_total, 0., 0.) |>> (p <+> p_diff));
+                let bond = M.hull [ model; model |>> p_diff; ] in
+                bond :: f renewed_l_pole renewed_r_pole p_acc b_acc (n-1, m-1)
+        in M.union @@ f pole pole (0., 0., 0.) 0. param
+
+    let key_pad params =
+        let (w, d, h) = key_block_size in
+        let rec arrange x_acc = function
+            | (near, far, p) :: ((near', far', p') as param) :: tl ->
+                let p_diff = p' <-> p <+> (p <*> (1., 0., 0.)) in
+                let far_bond = bond (far, far') p_diff in
+                let near_bond = bond (near, near') (p_diff <*> (1., -1., 1.)) in
+                let near = col near in
+                let far = col far in
+                let plate = M.cube (0.001, get_y key_block_size, get_z key_block_size) in
+                let center_bond = M.hull [plate; plate |>> p_diff ] in
+                let col = M.union [
+                    far |>> (0., get_y key_block_size, 0.);
+                    far_bond |>> (get_x key_block_size, get_y key_block_size, 0.);
+                    near |> M.mirror (0, 1, 0);
+                    near_bond |>> (get_x key_block_size, 0., 0.) |> M.mirror (0, 1, 0);
+                    key_block;
+                    center_bond |>> (get_x key_block_size, 0., 0.);
                 ] in
-                match n, m with
-                | 0, m -> (place pole plate) :: (place_rec succ_p p_diff bend_total (0, m-1))
-                | n, 0 -> (place plate pole) :: (place_rec succ_p p_diff bend_total (n-1, 0))
-                | n, m -> (place plate plate) :: (place_rec succ_p p_diff bend_total (n-1, m-1))
-        in
-        M.union (place_rec (0., get_y key_block_size, 0.) p_diff 0.0 (left, right))
-
-    let key_col_bridge p_diff left right = match left, right with
-        (left_near, left_far), (right_near, right_far) ->
-            let plate = M.cube (0.01, get_y key_block_size, get_z key_block_size) in
-            let far = key_col_bridge_half p_diff left_far right_far in
-            let near = key_col_bridge_half (p_diff <*> (1., -1., 1.)) left_near right_near
-                |> M.mirror (0, 1, 0) |>> (0., get_y key_block_size, 0.) in
-            let base = M.hull [plate; plate |>> p_diff] in
-            M.union [near; far; base]
-
-    let key_pad l =
-        let rec f x_acc = function
-            | (near1, far1, p1) :: ((near2, far2, p2) as col2) :: tl ->
-                let sub = P.sub p2 p1 in
-                let sub = (get_x p2, get_y sub, get_z sub) in
-                let bridge = key_col_bridge sub (near1, far1) (near2, far2) |>> (get_x key_block_size, 0., 0.) in
-                let col = key_col near1 far1 in
-                let p = (x_acc +. (get_x p1), get_y p1, get_z p1) in
-                let x_acc = x_acc +. (get_x p1) +. (get_x key_block_size) in
-                let col_set = M.union [col; bridge] |>> p  in
-                col_set :: f x_acc (col2 :: tl)
+                (col |>> (p <+> (x_acc, 0., 0.))) :: arrange (x_acc +. w +. get_x p) (param :: tl)
             | (near, far, p) :: [] ->
-                let col = key_col near far in
-                [col |>> ((x_acc, 0., 0.) <+> p)]
+                let far = col far in
+                let near = col near in
+                let col = M.union [
+                    far |>> (0., get_y key_block_size, 0.);
+                    near |> M.mirror (0, 1, 0);
+                    key_block;
+                ] in
+                [col |>> (p <+> (x_acc, 0., 0.))]
             | [] -> []
-        in M.union @@ f 0. l
-    (* 左右側面: 左右に適当に延伸、延伸部分と底面への投影の間で各々凸法を取る *)
-    (* 前後側面: 前後に水平に延伸、延伸部分と底面への投影の間で各々凸法を取る *)
+        in M.union @@ arrange 0.0 params
 
     let rib_thin = 6.35
 
