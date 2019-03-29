@@ -1,11 +1,6 @@
 module Key = struct
     module M = Model
     module P = Math.Pos
-
-    let get_x = function (x, _, _) -> x
-    let get_y = function (_, y, _) -> y
-    let get_z = function (_, _, z) -> z
-
     let key_wellhole_size = (15.5, 14.5, 1.2)
     let key_bottleneck_size = (14.0, 14.0, 1.0)
     let key_hollowing_size = (16.5, 16.5, 1.0)
