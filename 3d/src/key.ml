@@ -6,9 +6,10 @@ module Key = struct
     let get_y = function (_, y, _) -> y
     let get_z = function (_, _, z) -> z
 
-    let key_wellhole_size = (15., 14.5)
-    let key_bottleneck_size = (14.0, 14.0, 1.2)
-    let key_block_size = (17.0, 21., 3.0)
+    let key_wellhole_size = (15.5, 14.5, 1.2)
+    let key_bottleneck_size = (14.0, 14.0, 1.0)
+    let key_hollowing_size = (16.5, 16.5, 1.0)
+    let key_block_size = (17.0, 21., (get_z key_wellhole_size) +. (get_z key_bottleneck_size) +. (get_z key_hollowing_size))
 
     let expand = function (x, y) -> (x, y, 0.0)
 
@@ -21,15 +22,21 @@ module Key = struct
         ((f x1 x2) *. (g x_active), (f y1 y2) *. (g y_active), (f z1 z2) *. (g z_active))
 
     let key_block =
+        let key_block = M.cube key_block_size in
         let bottleneck = M.cube key_bottleneck_size in
-        let wellhole = M.cube (fst key_wellhole_size, snd key_wellhole_size, (get_z key_block_size) -. (get_z key_bottleneck_size)) in
-        M.difference (M.cube key_block_size) [
+        let hollowing = M.cube key_hollowing_size in
+        let wellhole = M.cube key_wellhole_size in
+        M.difference key_block [
+            hollowing
+            |> M.translate (centerize_cube (true, true, false) key_block_size key_hollowing_size)
+            |> M.translate (0., 0., (get_z key_wellhole_size) +. (get_z key_bottleneck_size));
             bottleneck
             |> M.translate (centerize_cube (true, true, false) key_block_size key_bottleneck_size)
-            |> M.translate (0., 0., (get_z key_block_size) -. (get_z key_bottleneck_size));
-            wellhole
-            |> M.translate (centerize_cube (true, true, false) key_block_size (expand key_wellhole_size));
+            |> M.translate (0., 0., (get_z key_wellhole_size));
+            wellhole 
+            |> M.translate (centerize_cube (true, true, false) key_block_size key_wellhole_size)
         ]
+
 
     let bending = pi /. 10.
 
