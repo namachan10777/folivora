@@ -1,10 +1,11 @@
 module Key = struct
     module M = Model
     module P = Math.Pos
-    let key_wellhole_size = (15.5, 14.5, 1.2)
-    let key_bottleneck_size = (14.0, 14.0, 1.0)
-    let key_hollowing_size = (16.51, 16.51, 1.0)
-    let key_block_size = (16.51, 21., (get_z key_wellhole_size) +. (get_z key_bottleneck_size) +. (get_z key_hollowing_size))
+    let key_wellhole_d = 4.0
+    let key_wellhole_size = (15.5, 4.0, 1.2)
+    let key_hollowing_size = (15.5, 15.5, 1.0)
+    let key_bottleneck_size = (14.0, 14.0, 1.0 +. get_z key_wellhole_size)
+    let key_block_size = (16.51, 21., (get_z key_bottleneck_size) +. (get_z key_hollowing_size))
 
     let expand = function (x, y) -> (x, y, 0.0)
 
@@ -17,12 +18,15 @@ module Key = struct
         M.difference key_block [
             hollowing
             |>> ((key_block_size <-> key_hollowing_size) <*> (half, half, 0.0)
-                <+> (0., 0., (get_z key_wellhole_size) +. (get_z key_bottleneck_size)));
+                <+> (0., 0., get_z key_bottleneck_size));
             bottleneck
-            |>> ((key_block_size <-> key_bottleneck_size) <*> (half, half, 0.0)
-                <+> (0., 0., (get_z key_wellhole_size)));
+            |>> ((key_block_size <-> key_bottleneck_size) <*> (half, half, 0.0));
             wellhole 
-            |>> ((key_block_size <-> key_wellhole_size) <*> (half, half, 0.0));
+            |>> (((key_block_size <-> key_wellhole_size) <*> (half, half, 0.0))
+                <-> (0., key_wellhole_d, 0.));
+            wellhole 
+            |>> (((key_block_size <-> key_wellhole_size) <*> (half, half, 0.0))
+                <+> (0., key_wellhole_d, 0.));
         ]
 
 
