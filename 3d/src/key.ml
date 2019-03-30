@@ -96,23 +96,24 @@ module Key = struct
 
     let rib_thin = 6.35
 
-    let key_rib_side h near far =
-        let rib_block = M.cube (rib_thin, get_y key_block_size, get_z key_block_size) in
-        let rec place_rec p bend_total = function
+    let key_sidewall_half h n =
+        let (_, d, _) = key_block_size in
+        let wall_top = M.cube (rib_thin, get_y key_block_size, get_z key_block_size) in
+        let rec f p_acc b_acc = function
             | 0 -> []
             | n ->
-                let bend_total = bend_total +. bending in
-                let succ_p = p <+> (0., (get_y key_block_size) *. (cos bend_total), (get_y key_block_size) *. (sin bend_total)) in
-                let placed_block = (rib_block |@> (bend_total, 0., 0.) |>> p) in
-                let projection = M.projection placed_block in
-                let bottom = M.linear_extrude ~height:0.01 projection |>> (0., 0., -.h) in
-                (M.hull [placed_block; bottom]):: (place_rec succ_p bend_total (n - 1))
-        in
-        let f n = M.union (place_rec (0., get_y key_block_size, 0.) 0.0 n) in
-        let far = f far in
-        let near = f near |> M.mirror (0, 1, 0) |>> (0., get_y key_block_size, 0.) in
-        let orig = M.cube (rib_thin, get_y key_block_size, (get_z key_block_size) +. h) |>> (0., 0., -.h) in
-        M.union [orig; far; near]
+                let b_acc = b_acc +. bending in
+                let wall_top = wall_top |@> (b_acc, 0., 0.) |>> p_acc in
+                let bottom = wall_top |> M.projection |> M.linear_extrude ~height:0.0001 |>> (0., 0., -.h) in
+                let p_acc = p_acc <+> (0., d *. cos b_acc, d *. sin b_acc) in
+                (M.hull [wall_top; bottom]) :: f p_acc b_acc (n-1)
+        in M.union @@ f (0., 0., 0.) 0. n
+
+    let key_sidewall h (near, far) =
+        let far = key_sidewall_half h far |>> (0., get_y key_block_size, 0.) in
+        let near = key_sidewall_half h near |> M.mirror (0, 1, 0) in
+        let base = M.cube (rib_thin, get_y key_block_size, h +. get_z key_block_size) |>> (0., 0., -.h) in
+        M.union [far; near; base]
 
     let rec last = function
         | [] -> raise (Invalid_argument "")
@@ -143,12 +144,14 @@ module Key = struct
 
     let key_module l =
         let inside_rib = 
-            l |> List.hd |> function (near, far, p) -> key_rib_side wall_h near far |>> (p <-> (rib_thin, 0., 0.)) in
+            l |> List.hd |> function (near, far, p) ->
+                key_sidewall (wall_h -. get_z p) (near, far) |>> (p <-> (rib_thin, 0., 0.)) in
         let outside_rib = 
             l |> last |> function (near, far, (_, y, z)) ->
-                let x_acc = (List.length l |> float_of_int) *. (get_x key_block_size)
-                +. List.fold_left (fun acc (_, _, p) -> acc +. (get_x p)) 0.0 l in
-                key_rib_side wall_h near far |>> (x_acc, y, z) in
+                let x_acc =
+                    (List.length l |> float_of_int) *. (get_x key_block_size)
+                    +. List.fold_left (fun acc (_, _, p) -> acc +. (get_x p)) 0.0 l in
+                key_sidewall (wall_h -. z) (near, far) |>> (x_acc, y, z) in
         M.difference
             (M.union [
                 key_pad l;
