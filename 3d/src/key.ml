@@ -1,11 +1,11 @@
 module Key = struct
     module M = Model
     module P = Math.Pos
-    let key_wellhole_d = 4.0
-    let key_wellhole_size = (15.5, 4.0, 1.2)
-    let key_hollowing_size = (15.5, 15.5, 1.0)
+    let key_wellhole_d = 3.5
+    let key_wellhole_size = (15.5, 4.0, 1.8)
+    let key_hollowing_size = (15.5, 15.5, 1.2)
     let key_bottleneck_size = (14.0, 14.0, 1.0 +. get_z key_wellhole_size)
-    let key_block_size = (16.51, 21., (get_z key_bottleneck_size) +. (get_z key_hollowing_size))
+    let key_block_size = (16.51, 20., (get_z key_bottleneck_size) +. (get_z key_hollowing_size))
 
     let expand = function (x, y) -> (x, y, 0.0)
 
@@ -149,13 +149,13 @@ module Key = struct
     let key_module l =
         let inside_rib = 
             l |> List.hd |> function (near, far, p) ->
-                key_sidewall (wall_h -. get_z p) (near, far) |>> (p <-> (rib_thin, 0., 0.)) in
+                key_sidewall (wall_h +. get_z p) (near, far) |>> (p <-> (rib_thin, 0., 0.)) in
         let outside_rib = 
             l |> last |> function (near, far, (_, y, z)) ->
                 let x_acc =
                     (List.length l |> float_of_int) *. (get_x key_block_size)
                     +. List.fold_left (fun acc (_, _, p) -> acc +. (get_x p)) 0.0 l in
-                key_sidewall (wall_h -. z) (near, far) |>> (x_acc, y, z) in
+                key_sidewall (wall_h +. z) (near, far) |>> (x_acc, y, z) in
         M.difference
             (M.union [
                 key_pad l;
