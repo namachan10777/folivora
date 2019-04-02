@@ -94,17 +94,30 @@ module Track = struct
         ]
 
     let side_plate = M.cube (0.001, get_y side_block_size, get_z side_block_size)
-    let side_block_p1 = (-.40.64, -12.7, -5.0)
+    let side_block_p1 = (-.44.45, -12.7, -5.0)
     let side_block_p2 = (+.25.4, 0.0, -5.0)
 
     let theta_step = pi /. 10.
 
+    let thumb_key_w = 18.0
+    let thumb_key_block_size = (thumb_key_w, get_y Key.key_block_size, get_z Key.key_block_size)
+
+    let thumb_key =
+        let lump = M.cube thumb_key_block_size in
+        Model.difference lump [
+            Key.key_hollowing |>> (thumb_key_block_size <*> (1./.2., 1./.2., 0.0));
+        ]
+
+    let sidewall_t = 3.0
+    let sidewall_h = 5.0 +. (get_z thumb_key_block_size)
+
     let thumb_keys =
-        let (w, d, h) = Key.key_block_size in
-        let key = Key.key_block in
+        let (w, d, h) = thumb_key_block_size in
+        let key = thumb_key in
         let key_plate = M.cube (0.001, d, h) in
         let rec arrange term p_acc bend_acc = function
             | 0 ->
+                let key_plate = M.cube (0.001, d +. sidewall_t, h) |>> (0., -.sidewall_t, 0.) in
                 [M.hull [
                     key_plate |@> (0., 0., -.bend_acc) |>> p_acc;
                     side_plate |>> term;
@@ -115,13 +128,19 @@ module Track = struct
                     key_plate |@> (0., 0., -.bend_acc -. theta_step) |>> p_acc;
                 ] in
                 let key = key |@> (0., 0., -.bend_acc -. theta_step) |>> p_acc in
+                let sidewall = M.cube (get_x thumb_key_block_size, sidewall_t, sidewall_h)
+                    |>> (0., -.sidewall_t, 0.)
+                    |@> (0., 0., -.bend_acc -. theta_step)
+                    |>> (p_acc <+> (0., 0., (get_z thumb_key_block_size) -. sidewall_h)) in
                 let bend_acc = bend_acc +. theta_step in
                 let p_acc = p_acc <+> (w *. cos bend_acc, -. w *. sin bend_acc, 0.0) in
-                bond :: key :: arrange term p_acc bend_acc (n-1)
+                bond :: sidewall :: key :: arrange term p_acc bend_acc (n-1)
         in
         let right = arrange (side_block_p2 <+> (w, 0., 0.)) (w, 0., 0.) 0. 1 |> M.union in
         let left = arrange (side_block_p1 <*> (-1.0, 1.0, 1.0)) (0., 0., 0.) 0. 2 |> M.union |> M.mirror (1, 0, 0) in
         let left_side_block = side_block |>> (side_block_p1 <-> (get_x side_block_size, 0., 0.)) in
         let right_side_block = side_block |>> (side_block_p2 <+> (w, 0., 0.)) in
-        M.union [key; right; left; left_side_block; right_side_block]
+        let sidewall = M.cube(get_x thumb_key_block_size, sidewall_t, sidewall_h)
+            |>> (0., -.sidewall_t, (get_z thumb_key_block_size) -. sidewall_h) in
+        M.union [key; right; left; left_side_block; right_side_block; sidewall]
 end

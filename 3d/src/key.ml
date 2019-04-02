@@ -9,24 +9,22 @@ module Key = struct
 
     let expand = function (x, y) -> (x, y, 0.0)
 
+    let key_hollowing =
+        let centerize = (-1./.2., -1./.2., 0.0) in
+        let bottleneck = M.cube key_bottleneck_size |>> (key_bottleneck_size <*>  centerize) in
+        let hollowing = M.cube key_hollowing_size |>> (key_hollowing_size <*> centerize) in
+        let wellhole = M.cube key_wellhole_size |>> (key_wellhole_size <*> centerize) in
+        M.union [
+            bottleneck;
+            hollowing |>> (0., 0., get_z key_bottleneck_size);
+            wellhole |>> (0., -.key_wellhole_d, 0.);
+            wellhole |>> (0., +.key_wellhole_d, 0.);
+        ]
+
     let key_block =
-        let half = 1. /. 2. in
         let key_block = M.cube key_block_size in
-        let bottleneck = M.cube key_bottleneck_size in
-        let hollowing = M.cube key_hollowing_size in
-        let wellhole = M.cube key_wellhole_size in
         M.difference key_block [
-            hollowing
-            |>> ((key_block_size <-> key_hollowing_size) <*> (half, half, 0.0)
-                <+> (0., 0., get_z key_bottleneck_size));
-            bottleneck
-            |>> ((key_block_size <-> key_bottleneck_size) <*> (half, half, 0.0));
-            wellhole 
-            |>> (((key_block_size <-> key_wellhole_size) <*> (half, half, 0.0))
-                <-> (0., key_wellhole_d, 0.));
-            wellhole 
-            |>> (((key_block_size <-> key_wellhole_size) <*> (half, half, 0.0))
-                <+> (0., key_wellhole_d, 0.));
+            key_hollowing |>> ((get_x key_block_size) /. 2., (get_y key_block_size) /. 2., 0.);
         ]
 
 
