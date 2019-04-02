@@ -1,6 +1,6 @@
 #use "./src/common.ml"
-#use "./src/track.ml"
 #use "./src/key.ml"
+#use "./src/track.ml"
 
 let angle_unit = pi /. 18.
 
@@ -10,10 +10,7 @@ let build scad filename =
     close_out oc
 
 let () =
-    build (Track.foundation 4.0) "foundation-left.scad";
-    build (Track.foundation 4.0 |> Model.mirror (1, 0, 0)) "foundation-right.scad";
-    build (Track.cover 4.0 10.0) "cover-left.scad";
-    build (Track.cover 4.0 10.0 |> Model.mirror (1, 0, 0)) "cover-right.scad";
+    build (Track.thumb_keys) "thumbkey.scad";
     build (Key.key_module [
         (1, 2, (2.54, 0., 0.));
         (1, 2, (2.54, 2., -.1.));
