@@ -22,6 +22,8 @@ module Track = struct
     let eps = 0.1
 
     let pcb_thick = 1.8
+    let lens_offset = 2.40
+    let pcb_offset = 7.40 -. pcb_thick
 
     let offset = 5.0
     let bearing_arrange_r = sqrt ((ball_r +. bearing_out_r) ** 2. -. offset**2.)
@@ -55,7 +57,7 @@ module Track = struct
     let bearing_circle =
         Model.union @@ arrange_as_circle bearing_hollowing offset
 
-    let foundation_t = 5.0
+    let foundation_t = 10.0
 
     let trackball_block_w =
         let w1 = (bearing_arrange_r +. bearing_shaft_r) *. sin (pi /. 3.)
@@ -65,22 +67,65 @@ module Track = struct
         2. *. max w1 w2
 
     let trackball_block_d_near =
-        let d1 = (bearing_arrange_r +. bearing_shaft_r) *. cos (pi /. 3.)
-            +. bearing_shaft_h /. 2. *. sin (pi /. 3.) in
-        let d2 = (bearing_arrange_r +. bearing_out_r +. bearing_c) *. cos (pi /. 3.)
-            +. bearing_t /. 2. *. sin (pi /. 3.) in
-        max (max d1 d2) ball_r
+        ball_r +. pcb_offset
 
     let trackball_block_d_far =
         bearing_arrange_r +. bearing_out_r +. bearing_c
 
-    let trackball_block =
-        let under = Model.cube (trackball_block_w, trackball_block_d_far +. trackball_block_d_near, foundation_t) in
-        let sphere = Model.sphere (ball_r +. ball_c_foundation) in
-        Model.difference under [
-            bearing_circle |>> (trackball_block_w /. 2., trackball_block_d_near, foundation_t -. bearing_shaft_r);
-            sphere |>> (trackball_block_w /. 2., trackball_block_d_near, foundation_t -. bearing_shaft_r +. offset);
+    let lens_opening_size = 10.0
+    let lens_hollowing_size = 20.
+
+    let nut_insert =
+        M.union [
+            M.cylinder 1.55 20. ~fn:30 |@> (-.pi/.2., 0., 0.)
+                |>> (0., 2.5 -. 20. +. 0.5, 0.);
+            M.cylinder 3.2 2.5 ~fn:6 |@> (-.pi/.2., pi/.2., 0.);
+            M.cube (5.5, 2.5, foundation_t /. 2.) |>> (-5.5/.2., 0., 0.);
         ]
+
+    let nut_d = 15.24
+    let screw_clearance = 2.
+    let cover_max_t = offset +. 4.0
+    let cover_min_t = 3.0
+
+    let trackball_block =
+        let w = trackball_block_w in
+        let d = trackball_block_d_near +. trackball_block_d_far in
+        let h = foundation_t +. cover_max_t in
+        let lump = M.cube(w, d, h) in
+        let sphere = M.sphere (ball_r +. ball_c_foundation) in
+        let lens_opening = M.cube (lens_opening_size, ball_r, h) in
+        let lens_hollowing = M.cube (lens_hollowing_size, pcb_offset -. pcb_thick, h) in
+        let screw_hole = M.cylinder 1.55 h ~fn:30 in
+        M.difference lump [
+            bearing_circle |>> (w /. 2., trackball_block_d_near, foundation_t -. bearing_shaft_r);
+            sphere |>> (trackball_block_w /. 2., trackball_block_d_near, foundation_t -. bearing_shaft_r +. offset);
+            lens_opening |>> ((trackball_block_w -. lens_opening_size) /. 2., 0., 0.);
+            lens_hollowing |>> ((trackball_block_w -. lens_hollowing_size) /. 2., 0., 0.);
+            nut_insert |>> (trackball_block_w /. 2. -. nut_d, 2.4+.2.5, foundation_t/.2.);
+            nut_insert |>> (trackball_block_w /. 2. +. nut_d, 2.4+.2.5, foundation_t/.2.);
+            screw_hole |>> (screw_clearance, screw_clearance, 0.);
+            screw_hole |>> (screw_clearance, trackball_block_d_near +. trackball_block_d_far -. screw_clearance, 0.);
+            screw_hole |>> (trackball_block_w -. screw_clearance, trackball_block_d_near +. trackball_block_d_far -. screw_clearance, 0.);
+            screw_hole |>> (trackball_block_w -. screw_clearance, screw_clearance, 0.);
+        ]
+
+    let trackball_foundation =
+        M.difference trackball_block [
+            M.cube (trackball_block_w, trackball_block_d_near +. trackball_block_d_far, cover_max_t)
+            |>> (0., 0., foundation_t);
+        ]
+
+    let trackball_cover =
+        let cover_slant = atan ((cover_max_t -. cover_min_t) /. trackball_block_w) in
+        M.difference trackball_block [
+            M.cube (trackball_block_w, trackball_block_d_near +. trackball_block_d_far, foundation_t)
+            |>> (0., 0., 0.);
+            M.cube (trackball_block_w +. 10.0, trackball_block_d_near +. trackball_block_d_far, cover_max_t +. 10.)
+            |@> (0., -.cover_slant, 0.)
+            |>> (0., 0., foundation_t +. cover_min_t);
+        ]
+
 
     let side_block_size = (6.35, 12.7, 10.0)
 
@@ -95,7 +140,7 @@ module Track = struct
 
     let side_plate = M.cube (0.001, get_y side_block_size, get_z side_block_size)
     let side_block_p1 = (-.44.45, -12.7, -5.0)
-    let side_block_p2 = (+.25.4, 0.0, -5.0)
+    let side_block_p2 = (+.40.64, 0.0, -5.0)
 
     let theta_step = pi /. 10.
 
@@ -136,11 +181,43 @@ module Track = struct
                 let p_acc = p_acc <+> (w *. cos bend_acc, -. w *. sin bend_acc, 0.0) in
                 bond :: sidewall :: key :: arrange term p_acc bend_acc (n-1)
         in
-        let right = arrange (side_block_p2 <+> (w, 0., 0.)) (w, 0., 0.) 0. 1 |> M.union in
+        let right = arrange (side_block_p2 <+> (0., 0., 0.)) (w, 0., 0.) 0. 1 |> M.union in
         let left = arrange (side_block_p1 <*> (-1.0, 1.0, 1.0)) (0., 0., 0.) 0. 2 |> M.union |> M.mirror (1, 0, 0) in
         let left_side_block = side_block |>> (side_block_p1 <-> (get_x side_block_size, 0., 0.)) in
-        let right_side_block = side_block |>> (side_block_p2 <+> (w, 0., 0.)) in
+        let right_side_block = side_block |>> (side_block_p2) in
         let sidewall = M.cube(get_x thumb_key_block_size, sidewall_t, sidewall_h)
             |>> (0., -.sidewall_t, (get_z thumb_key_block_size) -. sidewall_h) in
         M.union [key; right; left; left_side_block; right_side_block; sidewall]
+
+    let trackball_p = (-10., -27., ball_r -. offset -. foundation_t -. (get_z side_block_size) -. (get_z side_block_p1))
+    let thumbkey_p = (-32., -30., 0.)
+
+    let thumb_track =
+        let (w, d, h) = thumb_key_block_size in
+        let d = 35.0 in
+        let thumb_key_block_size = (w, d, h) in
+        let thumb_key = M.difference (M.cube thumb_key_block_size) [
+            Key.key_hollowing |>> (thumb_key_block_size <*> (1./.2., 0.0, 0.0) <+> (0., 15., 0.));
+        ] in
+        let left_side_block = side_block |>> (side_block_p1 <-> (get_x side_block_size, 0., 0.)) in
+        let right_side_block = side_block |>> side_block_p2 in
+        let trackball_block = trackball_foundation |>> trackball_p in
+        let key_plate = M.cube (0.001, d, h) in
+        let trackball_plate = M.cube (0.0001, trackball_block_d_far+.trackball_block_d_near, foundation_t) in
+        let key = thumb_key |@> (0., 0., pi/.10.) |>> thumbkey_p in
+        let bonds = [
+            M.hull [
+                key_plate |@> (0., 0., pi/.10.) |>> thumbkey_p;
+                side_plate |>> side_block_p1;
+            ];
+            M.hull [
+                key_plate |>> (get_x thumb_key_block_size, 0., 0.) |@> (0., 0., pi/.10.) |>> thumbkey_p;
+                trackball_plate |>> trackball_p;
+            ];
+            M.hull [
+                trackball_plate |>> (trackball_p <+> (trackball_block_w, 0., 0.));
+                side_plate |>> side_block_p2;
+            ];
+        ] in
+        M.union @@ [left_side_block;right_side_block; trackball_block; key;] @ bonds
 end
