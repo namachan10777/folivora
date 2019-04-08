@@ -1,4 +1,4 @@
-module Track = struct
+module Thumb = struct
     module M = Model
 
     let ball_r = 17.0

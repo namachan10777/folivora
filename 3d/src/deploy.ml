@@ -1,6 +1,6 @@
 #use "./src/common.ml"
 #use "./src/key.ml"
-#use "./src/track.ml"
+#use "./src/thumb.ml"
 
 let angle_unit = pi /. 18.
 
@@ -10,10 +10,10 @@ let build scad filename =
     close_out oc
 
 let () =
-    build (Track.nut_insert) "nutinsert.scad";
-    build (Track.thumb_keys) "thumbkey.scad";
-    build (Track.thumb_track) "thumbtrack.scad";
-    build (Track.trackball_cover) "trackball_cover.scad";
+    build (Thumb.nut_insert) "nutinsert.scad";
+    build (Thumb.thumb_keys) "thumbkey.scad";
+    build (Thumb.thumb_track) "thumbtrack.scad";
+    build (Thumb.trackball_cover) "trackball_cover.scad";
     build (Key.key_module [
         (1, 2, (2.54, 0., 0.));
         (1, 2, (2.54, 2., -.1.));
