@@ -96,6 +96,9 @@ module Key = struct
                 ] in
                 let far = col n |>> (0., 2. *. d, 0.) in
                 [M.union [ near; far ] |>> (x_acc, dy, dz)]
-            | [] -> []
-        in M.union @@ build 0.0 params
+            | [] -> [] in
+        let key_pad = M.union @@ build 0.0 params in
+        match params with
+        | (_, dy, dz) :: _ -> key_pad |>> (0., -.dy, -.dz)
+        | [] -> key_pad
 end
