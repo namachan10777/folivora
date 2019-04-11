@@ -14,11 +14,11 @@ let () =
     build (Thumb.thumb_keys) "thumbkey.scad";
     build (Thumb.thumb_track) "thumbtrack.scad";
     build (Thumb.trackball_cover) "trackball_cover.scad";
-    build (Key.key_module [
-        (1, 2, (2.54, 0., 0.));
-        (1, 2, (2.54, 2., -.1.));
-        (1, 2, (2.54, 5., -.2.));
-        (1, 2, (2.54, 3., -.1.));
-        (1, 1, (2.54, -3., -.1.));
-        (1, 1, (2.54, -5., -.2.));
+    build (Key.key_pad [
+        (2, 0., 0.);
+        (2, 2., -.1.);
+        (2, 5., -.2.);
+        (2, 3., -.1.);
+        (1, -3., -.1.);
+        (1, -5., -.2.);
     ]) "key.scad"

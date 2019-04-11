@@ -30,6 +30,8 @@ module Key = struct
 
     let bending = pi /. 10.
 
+    let col_d = 2.54
+
     let col param =
         let (w, d, h) = key_block_size in
         let rec f p_acc b_acc = function
@@ -41,126 +43,59 @@ module Key = struct
                 model :: f p_acc b_acc (n-1)
         in M.union @@ f (0., 0., 0.) 0. param
 
-    let bond param p_diff =
-        let plate = M.cube (0.0001, get_y key_block_size, get_z key_block_size) in
-        let pole = M.cube (0.0001, 0.0001, get_z key_block_size) in
+    let bond col_num (dy, dz) =
         let (w, d, h) = key_block_size in
+        let plate = M.cube (0.0001, d, h) in
+        let pole = M.cube (0.0001, 0.0001, h) in
         let rec f l_pole r_pole p_acc b_acc =
             let b_acc = b_acc +. bending in
-            let model = plate |@> (b_acc, 0., 0.) |>> p_acc in
+            let side_face = plate |@> (b_acc, 0., 0.) |>> p_acc in
             let p_acc = p_acc <+> (0., d *. cos b_acc, d *. sin b_acc) in
+            (* 基準の位置に移動 *)
             let renewed_l_pole = pole |@> (b_acc, 0., 0.) |>> p_acc in
-            let renewed_r_pole = renewed_l_pole |>> p_diff in
+            (* 左側を基準に右側も動かす *)
+            let renewed_r_pole = renewed_l_pole |>> (col_d, dy, dz) in
             function
             | (0, 0) -> []
             | (n, 0) ->
-                let bond = M.hull [ model; r_pole; ] in
+                let bond = M.hull [ side_face; r_pole; ] in
+                (* 右側は既に終了しているので更新しない *)
                 bond :: f renewed_l_pole r_pole p_acc b_acc (n-1, 0)
             | (0, m) ->
-                let bond = M.hull [ l_pole; model |>> p_diff; ] in
+                let bond = M.hull [ l_pole; side_face |>> (col_d, dy, dz); ] in
+                (* 左側は既に終了しているので更新しない *)
                 bond :: f l_pole renewed_r_pole p_acc b_acc (0, m-1)
             | (n, m) ->
-                let bond = M.hull [ model; model |>> p_diff; ] in
+                let bond = M.hull [ side_face; side_face |>> (col_d, dy, dz); ] in
                 bond :: f renewed_l_pole renewed_r_pole p_acc b_acc (n-1, m-1)
-        in M.union @@ f pole pole (0., 0., 0.) 0. param
+        in M.union @@ f pole pole (0., 0., 0.) 0. col_num
 
     let key_pad params =
         let (w, d, h) = key_block_size in
-        let rec arrange x_acc = function
-            | (near, far, p) :: ((near', far', p') as param) :: tl ->
-                let p_diff = p' <-> p <+> (p <*> (1., 0., 0.)) in
-                let far_bond = bond (far, far') p_diff in
-                let near_bond = bond (near, near') (p_diff <*> (1., -1., 1.)) in
-                let near = col near in
-                let far = col far in
-                let plate = M.cube (0.001, get_y key_block_size, get_z key_block_size) in
-                let center_bond = M.hull [plate; plate |>> p_diff ] in
-                let col = M.union [
-                    far |>> (0., get_y key_block_size, 0.);
-                    far_bond |>> (get_x key_block_size, get_y key_block_size, 0.);
-                    near |> M.mirror (0, 1, 0);
-                    near_bond |>> (get_x key_block_size, 0., 0.) |> M.mirror (0, 1, 0);
+        let rec build x_acc =
+            function
+            | (n, dy, dz) :: ((n', dy', dz') as succ) :: tl ->
+                let near = M.union [
                     key_block;
-                    center_bond |>> (get_x key_block_size, 0., 0.);
+                    key_block |>> (0., d, 0.);
                 ] in
-                (col |>> (p <+> (x_acc, 0., 0.))) :: arrange (x_acc +. w +. get_x p) (param :: tl)
-            | (near, far, p) :: [] ->
-                let far = col far in
-                let near = col near in
-                let col = M.union [
-                    far |>> (0., get_y key_block_size, 0.);
-                    near |> M.mirror (0, 1, 0);
+                let far = col n |>> (0., 2. *. d, 0.) in
+                let bond = bond (n, n') (dy' -. dy, dz' -. dz) |>> (w, 2. *. d, 0.) in
+                let bond' =
+                    let side_face = M.cube (0.001, 2. *. d, h) in
+                    M.hull [
+                        side_face |>> (w, 0., 0.);
+                        side_face |>> (w +. col_d, dy' -. dy, dz' -. dz);
+                    ] in
+                let packed = M.union [ near; far; bond; bond' ] |>> (x_acc, dy, dz) in
+                packed :: build (x_acc +. w +. col_d) (succ :: tl)
+            | (n, dy, dz) :: [] ->
+                let near = M.union [
                     key_block;
+                    key_block |>> (0., d, 0.);
                 ] in
-                [col |>> (p <+> (x_acc, 0., 0.))]
+                let far = col n |>> (0., 2. *. d, 0.) in
+                [M.union [ near; far ] |>> (x_acc, dy, dz)]
             | [] -> []
-        in M.union @@ arrange 0.0 params
-
-    let rib_thin = 6.35
-
-    let key_sidewall_half h n =
-        let (_, d, _) = key_block_size in
-        let wall_top = M.cube (rib_thin, get_y key_block_size, get_z key_block_size) in
-        let rec f p_acc b_acc = function
-            | 0 -> []
-            | n ->
-                let b_acc = b_acc +. bending in
-                let wall_top = wall_top |@> (b_acc, 0., 0.) |>> p_acc in
-                let bottom = wall_top |> M.projection |> M.linear_extrude ~height:0.0001 |>> (0., 0., -.h) in
-                let p_acc = p_acc <+> (0., d *. cos b_acc, d *. sin b_acc) in
-                (M.hull [wall_top; bottom]) :: f p_acc b_acc (n-1)
-        in M.union @@ f (0., 0., 0.) 0. n
-
-    let key_sidewall h (near, far) =
-        let far = key_sidewall_half h far |>> (0., get_y key_block_size, 0.) in
-        let near = key_sidewall_half h near |> M.mirror (0, 1, 0) in
-        let base = M.cube (rib_thin, get_y key_block_size, h +. get_z key_block_size) |>> (0., 0., -.h) in
-        M.union [far; near; base]
-
-    let rec last = function
-        | [] -> raise (Invalid_argument "")
-        | x :: [] -> x
-        | _ :: tl -> last tl
-
-    let wall_h = 6.0
-
-    let screw_holes h l =
-        let x1 = (let (_, _, (x, _, _)) = (List.hd l) in x) -. rib_thin /. 2. in
-        let x2 =
-            (List.fold_left (fun acc (_, _, (x, _, _)) -> acc +. x) 0.0 l)
-            +. rib_thin /. 2.
-            +. (get_x key_block_size) *. (float_of_int (List.length l))in
-        let y1 = 1.27 *. 24. in
-        let y2 = -. 1.27 *. 12. in
-        let screw_hole = M.union [
-            M.cylinder 1.55 40. ~fn:30;
-            M.cube (rib_thin, rib_thin, 40.) ~center:true |>> (0., 0., 20. +. h +. (get_z key_block_size));
-        ] in
-        M.union [
-            screw_hole |>> (x1, y1, -.h);
-            screw_hole |>> (x1, y2, -.h);
-            screw_hole |>> (x2, y1, -.h);
-            screw_hole |>> (x2, y2, -.h);
-        ]
-
-
-    let key_module l =
-        let inside_rib = 
-            l |> List.hd |> function (near, far, p) ->
-                key_sidewall (wall_h +. get_z p) (near, far) |>> (p <-> (rib_thin, 0., 0.)) in
-        let outside_rib = 
-            l |> last |> function (near, far, (_, y, z)) ->
-                let x_acc =
-                    (List.length l |> float_of_int) *. (get_x key_block_size)
-                    +. List.fold_left (fun acc (_, _, p) -> acc +. (get_x p)) 0.0 l in
-                key_sidewall (wall_h +. z) (near, far) |>> (x_acc, y, z) in
-        M.difference
-            (M.union [
-                key_pad l;
-                inside_rib;
-                outside_rib;
-            ])
-            [screw_holes wall_h l]
-
-
+        in M.union @@ build 0.0 params
 end
