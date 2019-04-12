@@ -75,30 +75,134 @@ module Key = struct
         let rec build x_acc =
             function
             | (n, dy, dz) :: ((n', dy', dz') as succ) :: tl ->
-                let near = M.union [
-                    key_block;
-                    key_block |>> (0., d, 0.);
-                ] in
-                let far = col n |>> (0., 2. *. d, 0.) in
-                let bond = bond (n, n') (dy' -. dy, dz' -. dz) |>> (w, 2. *. d, 0.) in
-                let bond' =
-                    let side_face = M.cube (0.001, 2. *. d, h) in
+                let middle = key_block in
+                let near = col 1 |> M.mirror (0, 1, 0) in
+                let far = col n |>> (0., d, 0.) in
+                let bond_far = bond (n, n') (dy' -. dy, dz' -. dz) |>> (w, d, 0.) in
+                let bond_near = bond (1, 1) (dy -. dy', dz' -. dz) |> M.mirror (0, 1, 0) |>> (w, 0., 0.) in
+                let bond =
+                    let side_face = M.cube (0.001, d, h) in
                     M.hull [
                         side_face |>> (w, 0., 0.);
                         side_face |>> (w +. col_d, dy' -. dy, dz' -. dz);
                     ] in
-                let packed = M.union [ near; far; bond; bond' ] |>> (x_acc, dy, dz) in
+                let packed = M.union [ near; middle; far; bond_near; bond; bond_far ] |>> (x_acc, dy, dz) in
                 packed :: build (x_acc +. w +. col_d) (succ :: tl)
             | (n, dy, dz) :: [] ->
-                let near = M.union [
-                    key_block;
-                    key_block |>> (0., d, 0.);
-                ] in
-                let far = col n |>> (0., 2. *. d, 0.) in
-                [M.union [ near; far ] |>> (x_acc, dy, dz)]
+                let middle = key_block in
+                let near = col 1 |> M.mirror (0, 1, 0) in
+                let far = col n |>> (0., d, 0.) in
+                [M.union [ near; middle; far ] |>> (x_acc, dy, dz)]
             | [] -> [] in
         let key_pad = M.union @@ build 0.0 params in
         match params with
-        | (_, dy, dz) :: _ -> key_pad |>> (0., -.dy, -.dz)
+        | (_, dy, dz) :: _ -> key_pad |>> (0., -.dy +. d *. cos bending, -.dz -. d *. sin bending)
         | [] -> key_pad
+
+    let thumb_key_curve = pi /. 8.
+
+    let thumb_key_block =
+        let (w, d, h) = key_block_size in
+        M.difference (M.cube (19.05, d, h)) [
+            key_hollowing |>> (19.05 /. 2., d/.2., 0.);
+        ]
+
+    let thumb_p =
+        let (_, d, _) = key_block_size in
+        (19.05, -19.05, -.d *. sin bending)
+
+    let key_main params =
+        let (_, oy, oz) = List.hd params in
+        let orig = (0., oy, oz) in
+        let (w, d, h) = key_block_size in
+        let w' = 19.05 in
+        let pad = key_pad params in
+        let needle = M.cube(0.001, 0.001, h) in
+        let key_side_face = M.cube (0.001, d, h) in
+        let thumb4 = thumb_key_block |@> (0., 0., -.thumb_key_curve) |>> (thumb_p <+> (w', 0., 0.)) in
+        let thumb3 = thumb_key_block |>> thumb_p in
+        let thumb2 = thumb_key_block |>> (-.w', 0., 0.) |@> (0., 0., thumb_key_curve) |>> thumb_p in
+        let thumb1 = thumb_key_block
+            |>> (-.w', 0., 0.)
+            |@> (0., 0., 2. *. thumb_key_curve)
+            |>> (thumb_p <-> (w' *. cos thumb_key_curve, w' *. sin thumb_key_curve, 0.))  in
+        let bond1 = M.hull [
+            key_side_face |@> (0., 0., 2. *. thumb_key_curve) |>> (-.w' *. cos thumb_key_curve, -.w' *. sin thumb_key_curve, 0.);
+            key_side_face |@> (0., 0., 1. *. thumb_key_curve) |>> (-.w' *. cos thumb_key_curve, -.w' *. sin thumb_key_curve, 0.);
+        ] |>> thumb_p in
+        let bond2 = M.hull [
+            key_side_face;
+            key_side_face |@> (0., 0., thumb_key_curve);
+        ] |>> thumb_p in
+        let bond3 = M.hull [
+            key_side_face;
+            key_side_face |@> (0., 0., -.thumb_key_curve);
+        ] |>> ((w', 0., 0.) <+> thumb_p) in
+        let ext0 = M.hull [
+            M.cube (w', 0.001, h)
+            |>> (-.w', d, 0.)
+            |@> (0., 0., thumb_key_curve)
+            |>> thumb_p;
+            M.cube (w, 0.001, h)
+            |@> (-.bending, 0., 0.);
+        ] in
+        let make_ext_to_pad_bond n parts =
+            let (_, dy, dz) = List.nth params n in
+            let (_, dy', dz') = List.nth params (n+1) in
+            M.hull ([
+                needle
+                |@> (-.bending, 0., 0.)
+                |>> ((w +. (col_d *. float_of_int n) +. w *. float_of_int n, dy, dz) <-> orig);
+                needle
+                |@> (-.bending, 0., 0.)
+                |>> ((w +. col_d +. (col_d *. float_of_int n) +. w *. float_of_int n, dy', dz') <-> orig);
+            ] @ parts) in
+        let make_ext_to_pad_key n parts =
+            let (_, dy, dz) = List.nth params n in
+            M.hull ([
+                M.cube (w, 0.001, h)
+                |@> (-.bending, 0., 0.)
+                |>> (((w +. col_d) *. float_of_int n, dy, dz) <-> orig);
+            ] @ parts) in
+        let ext1 = make_ext_to_pad_bond 0 [
+                needle |>> (0., d, 0.) |@> (0., 0., thumb_key_curve) |>> thumb_p;
+                needle |>> ((0., d, 0.) <+> thumb_p);
+            ] in
+        let ext2 = make_ext_to_pad_key 1 [
+                M.cube (w', 0.001, h) |>> (thumb_p <+> (0., d, 0.));
+            ] in
+        let ext3 = make_ext_to_pad_bond 1 [
+                needle |>> (0., d, 0.) |@> (0., 0., -.thumb_key_curve) |>> (thumb_p <+> (w', 0., 0.));
+                needle |>> ((w', d, 0.) <+> thumb_p);
+            ] in
+        let ext4 = make_ext_to_pad_key 2 [
+                M.cube (w', 0.001, h) |>> (0., d, 0.) |@> (0., 0., -.thumb_key_curve) |>> ((w', 0., 0.) <+> thumb_p);
+            ] in
+        let ext5 = make_ext_to_pad_bond 2 [
+                M.cube (w', 0.001, h) |>> (0., d, 0.) |@> (0., 0., -.thumb_key_curve) |>> ((w', 0., 0.) <+> thumb_p);
+            ] in
+        let ext6 = make_ext_to_pad_key 3 [
+                M.cube (w', 0.001, h) |>> (0., d, 0.) |@> (0., 0., -.thumb_key_curve) |>> ((w', 0., 0.) <+> thumb_p);
+            ] in
+        let ext7 = make_ext_to_pad_bond 3 [
+                needle |>> (w', d, 0.) |@> (0., 0., -.thumb_key_curve) |>> ((w', 0., 0.) <+> thumb_p);
+            ] in
+        M.union [
+            pad;
+            thumb1;
+            thumb2;
+            thumb3;
+            thumb4;
+            bond1;
+            bond2;
+            bond3;
+            ext0;
+            ext1;
+            ext2;
+            ext3;
+            ext4;
+            ext5;
+            ext6;
+            ext7;
+        ]
 end
