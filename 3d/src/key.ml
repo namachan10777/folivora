@@ -44,6 +44,7 @@ module Key = struct
         in M.union @@ f (0., 0., 0.) 0. param
 
     let wall_t = 3.0
+    let wall_clearance = 3.0
 
     let col_wall param wall_h_base =
         let (w, d, h) = key_block_size in
@@ -52,10 +53,10 @@ module Key = struct
         let thick = h *. cos (bending *. float_of_int param) in
         let ext = M.hull [
             M.cube (w, 0.001, h) |@> (bending *. float_of_int param, 0., 0.) |>> pos;
-            M.cube (w, 0.001, h *. cos (bending *. float_of_int param)) |>> pos;
+            M.cube (w, wall_clearance, h *. cos (bending *. float_of_int param)) |>> pos;
         ] in
         let wall_h = wall_h_base +. (get_z pos) +. h *. cos (bending *. float_of_int param) in
-        let wall = M.cube (w, wall_t, wall_h) |>> (0., get_y pos, -.wall_h_base) in
+        let wall = M.cube (w, wall_t, wall_h) |>> (0., wall_clearance +. get_y pos, -.wall_h_base) in
         M.union [ ext; wall ]
 
     let bond_wall wall_h_base (ln, rn) (dy, dz) =
@@ -64,18 +65,30 @@ module Key = struct
             |> List.fold_left (fun p bend -> p <+> (0., d *. cos bend, d *. sin bend)) (0., 0., 0.) in
         let lpos = pos ln in
         let rpos = (pos rn) <+> (col_d, dy, dz) in
-        let bond_ext = M.hull [
+        let addtional_ext = if ln > rn then [
+            M.cube (0.001, 0.001, h) |@> (bending *. float_of_int rn, 0., 0.) |>> (rpos <+> (wall_t, 0., 0.));
+            M.cube (0.001, wall_clearance, h *. cos (bending *. float_of_int rn)) |>> (rpos <+> (wall_t, 0., 0.));
+        ] else if rn > ln then [
+            M.cube (0.001, 0.001, h) |@> (bending *. float_of_int ln, 0., 0.) |>> (lpos <-> (wall_t, 0., 0.));
+            M.cube (0.001, wall_clearance, h *. cos (bending *. float_of_int ln)) |>> (lpos <-> (wall_t, 0., 0.));
+        ] else [] in
+        let bond_ext = M.hull (addtional_ext @ [
             M.cube (0.001, 0.001, h) |@> (bending *. float_of_int ln, 0., 0.) |>> lpos;
-            M.cube (0.001, 0.001, h *. cos (bending *. float_of_int ln)) |>> lpos;
+            M.cube (0.001, wall_clearance, h *. cos (bending *. float_of_int ln)) |>> lpos;
             M.cube (0.001, 0.001, h) |@> (bending *. float_of_int rn, 0., 0.) |>> rpos;
-            M.cube (0.001, 0.001, h *. cos (bending *. float_of_int rn)) |>> rpos;
-        ] in
+            M.cube (0.001, wall_clearance, h *. cos (bending *. float_of_int rn)) |>> rpos;
+        ]) in
         let wall_h_l = wall_h_base +. (get_z lpos) +. h *. cos (bending *. float_of_int ln) in
         let wall_h_r = wall_h_base +. (get_z rpos) +. h *. cos (bending *. float_of_int rn) in
-        let bond_wall = M.hull [
-            M.cube (0.001, wall_t, wall_h_l) |>> (0., get_y lpos, -.wall_h_base);
-            M.cube (0.001, wall_t, wall_h_r) |>> (col_d, get_y rpos, -.wall_h_base);
-        ] in
+        let addtional_wall = if ln > rn then [
+            M.cube (0.001, wall_t, wall_h_r) |>> (col_d +. wall_t, wall_clearance +. get_y rpos, -.wall_h_base);
+        ] else if rn > ln then [
+            M.cube (0.001, wall_t, wall_h_l) |>> (-.wall_t, wall_clearance +. get_y lpos, -.wall_h_base);
+        ] else [] in
+        let bond_wall = M.hull (addtional_wall @ [
+            M.cube (0.001, wall_t, wall_h_l) |>> (0., wall_clearance +. get_y lpos, -.wall_h_base);
+            M.cube (0.001, wall_t, wall_h_r) |>> (col_d, wall_clearance +. get_y rpos, -.wall_h_base);
+        ]) in
         M.union [ bond_ext; bond_wall ]
 
     let bond col_num (dy, dz) =
