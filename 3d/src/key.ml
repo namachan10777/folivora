@@ -43,6 +43,41 @@ module Key = struct
                 model :: f p_acc b_acc (n-1)
         in M.union @@ f (0., 0., 0.) 0. param
 
+    let wall_t = 3.0
+
+    let col_wall param wall_h_base =
+        let (w, d, h) = key_block_size in
+        let pos = List.init param (fun n -> bending +. bending *. float_of_int n)
+            |> List.fold_left (fun p bend -> p <+> (0., d *. cos bend, d *. sin bend)) (0., 0., 0.) in
+        let thick = h *. cos (bending *. float_of_int param) in
+        let ext = M.hull [
+            M.cube (w, 0.001, h) |@> (bending *. float_of_int param, 0., 0.) |>> pos;
+            M.cube (w, 0.001, h *. cos (bending *. float_of_int param)) |>> pos;
+        ] in
+        let wall_h = wall_h_base +. (get_z pos) +. h *. cos (bending *. float_of_int param) in
+        let wall = M.cube (w, wall_t, wall_h) |>> (0., get_y pos, -.wall_h_base) in
+        M.union [ ext; wall ]
+
+    let bond_wall wall_h_base (ln, rn) (dy, dz) =
+        let (w, d, h) = key_block_size in
+        let pos n = List.init n (fun n -> bending +. bending *. float_of_int n)
+            |> List.fold_left (fun p bend -> p <+> (0., d *. cos bend, d *. sin bend)) (0., 0., 0.) in
+        let lpos = pos ln in
+        let rpos = (pos rn) <+> (col_d, dy, dz) in
+        let bond_ext = M.hull [
+            M.cube (0.001, 0.001, h) |@> (bending *. float_of_int ln, 0., 0.) |>> lpos;
+            M.cube (0.001, 0.001, h *. cos (bending *. float_of_int ln)) |>> lpos;
+            M.cube (0.001, 0.001, h) |@> (bending *. float_of_int rn, 0., 0.) |>> rpos;
+            M.cube (0.001, 0.001, h *. cos (bending *. float_of_int rn)) |>> rpos;
+        ] in
+        let wall_h_l = wall_h_base +. (get_z lpos) +. h *. cos (bending *. float_of_int ln) in
+        let wall_h_r = wall_h_base +. (get_z rpos) +. h *. cos (bending *. float_of_int rn) in
+        let bond_wall = M.hull [
+            M.cube (0.001, wall_t, wall_h_l) |>> (0., get_y lpos, -.wall_h_base);
+            M.cube (0.001, wall_t, wall_h_r) |>> (col_d, get_y rpos, -.wall_h_base);
+        ] in
+        M.union [ bond_ext; bond_wall ]
+
     let bond col_num (dy, dz) =
         let (w, d, h) = key_block_size in
         let plate = M.cube (0.0001, d, h) in
@@ -70,6 +105,8 @@ module Key = struct
                 bond :: f renewed_l_pole renewed_r_pole p_acc b_acc (n-1, m-1)
         in M.union @@ f pole pole (0., 0., 0.) 0. col_num
 
+    let wall_h = 5.0
+
     let key_pad params =
         let (w, d, h) = key_block_size in
         let rec build x_acc =
@@ -78,7 +115,9 @@ module Key = struct
                 let middle = key_block in
                 let near = col 1 |> M.mirror (0, 1, 0) in
                 let far = col n |>> (0., d, 0.) in
+                let far_wall = col_wall n (wall_h +. dz) |>> (0., d, 0.) in
                 let bond_far = bond (n, n') (dy' -. dy, dz' -. dz) |>> (w, d, 0.) in
+                let bond_wall_far = bond_wall (wall_h +. dz) (n, n') (dy' -. dy, dz' -. dz) |>> (w, d, 0.) in
                 let bond_near = bond (1, 1) (dy -. dy', dz' -. dz) |> M.mirror (0, 1, 0) |>> (w, 0., 0.) in
                 let bond =
                     let side_face = M.cube (0.001, d, h) in
@@ -86,13 +125,14 @@ module Key = struct
                         side_face |>> (w, 0., 0.);
                         side_face |>> (w +. col_d, dy' -. dy, dz' -. dz);
                     ] in
-                let packed = M.union [ near; middle; far; bond_near; bond; bond_far ] |>> (x_acc, dy, dz) in
+                let packed = M.union [ near; middle; far; bond_near; bond; bond_far; far_wall; bond_wall_far ] |>> (x_acc, dy, dz) in
                 packed :: build (x_acc +. w +. col_d) (succ :: tl)
             | (n, dy, dz) :: [] ->
                 let middle = key_block in
                 let near = col 1 |> M.mirror (0, 1, 0) in
                 let far = col n |>> (0., d, 0.) in
-                [M.union [ near; middle; far ] |>> (x_acc, dy, dz)]
+                let far_wall = col_wall n (wall_h +. dz) |>> (0., d, 0.) in
+                [M.union [ near; middle; far; far_wall ] |>> (x_acc, dy, dz)]
             | [] -> [] in
         let key_pad = M.union @@ build 0.0 params in
         match params with
