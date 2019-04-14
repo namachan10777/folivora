@@ -32,7 +32,7 @@ module Key = struct
 
     let col_d = 2.54
 
-    let col param =
+    let col_impl block param =
         let (w, d, h) = key_block_size in
         let rec f p_acc b_acc = function
             | 0 -> []
@@ -43,8 +43,35 @@ module Key = struct
                 model :: f p_acc b_acc (n-1)
         in M.union @@ f (0., 0., 0.) 0. param
 
+    let col = col_impl key_block
+
     let wall_t = 3.0
     let wall_clearance = 3.0
+
+    let col_side_wall param wall_h_base =
+        let (w, d, h) = key_block_size in
+        let rec f p_acc b_acc = function
+            | 0 -> []
+            | n ->
+                let b_acc = b_acc +. bending in
+                let model = M.cube (wall_t, d, h) |@> (b_acc, 0., 0.) |>> p_acc in
+                let bottom = M.cube (wall_t, d *. cos b_acc, 0.001) |>> (get_x p_acc, get_y p_acc, -.wall_h_base) in
+                let p_acc = p_acc <+> (0., d *. cos b_acc, d *. sin b_acc) in
+                (M.hull [ model; bottom ]) :: f p_acc b_acc (n-1)
+        in M.union @@ f (0., 0., 0.) 0. param
+
+    let col_side_wall_with_ext param wall_h_base =
+        let (w, d, h) = key_block_size in
+        let pos = List.init param (fun n -> bending +. bending *. float_of_int n)
+            |> List.fold_left (fun p bend -> p <+> (0., d *. cos bend, d *. sin bend)) (0., 0., 0.) in
+        M.union [
+            col_side_wall param wall_h_base;
+            M.cube (
+                wall_t,
+                wall_t +. wall_clearance +. h *. sin (bending *. float_of_int param),
+                wall_h_base +. (get_z pos) +. h *. cos (bending *. float_of_int param))
+            |>> (0., (get_y pos) -. h *. sin (bending *. float_of_int param), -.wall_h_base);
+        ]
 
     let col_wall param wall_h_base =
         let (w, d, h) = key_block_size in
@@ -164,6 +191,11 @@ module Key = struct
         let (_, d, _) = key_block_size in
         (19.05, -19.05, -.d *. sin bending)
 
+    let rec last = function
+        | [] -> raise (Invalid_argument "")
+        | [x] -> x
+        | x :: tl -> last tl
+
     let key_main params =
         let (_, oy, oz) = List.hd params in
         let orig = (0., oy, oz) in
@@ -172,10 +204,23 @@ module Key = struct
         let pad = key_pad params in
         let needle = M.cube(0.001, 0.001, h) in
         let key_side_face = M.cube (0.001, d, h) in
-        let thumb4 = thumb_key_block |@> (0., 0., -.thumb_key_curve) |>> (thumb_p <+> (w', 0., 0.)) in
+        let thumb_key_block = M.union [
+            thumb_key_block;
+            M.cube (w', wall_t, wall_h +. h) |>> (0., -.wall_t, -.wall_h);
+        ] in
+        let thumb4 =
+            M.union [
+                thumb_key_block;
+                M.cube (wall_t, d +. wall_t, wall_h +. h) |>> (w', -. wall_t, -.wall_h);
+            ] |@> (0., 0., -.thumb_key_curve) |>> (thumb_p <+> (w', 0., 0.)) in
         let thumb3 = thumb_key_block |>> thumb_p in
         let thumb2 = thumb_key_block |>> (-.w', 0., 0.) |@> (0., 0., thumb_key_curve) |>> thumb_p in
-        let thumb1 = thumb_key_block
+        let thumb1 =
+            M.union [
+                thumb_key_block;
+                M.cube (wall_t, d +. wall_t, wall_h +. h) |>> (-.wall_t, -. wall_t, -.wall_h);
+                M.cube (wall_t +. w', wall_t, wall_h +. h) |>> (-.wall_t, d, -.wall_h);
+            ]
             |>> (-.w', 0., 0.)
             |@> (0., 0., 2. *. thumb_key_curve)
             |>> (thumb_p <-> (w' *. cos thumb_key_curve, w' *. sin thumb_key_curve, 0.))  in
@@ -240,7 +285,72 @@ module Key = struct
         let ext7 = make_ext_to_pad_bond 3 [
                 needle |>> (w', d, 0.) |@> (0., 0., -.thumb_key_curve) |>> ((w', 0., 0.) <+> thumb_p);
             ] in
+        let side_wall_l =
+            let side_wall2_with_ext = col_side_wall_with_ext 2 wall_h in
+            let side_wall1 = col_side_wall 1 wall_h in
+            M.union [
+                side_wall2_with_ext |>> (0., d, 0.);
+                side_wall1 |> M.mirror (0, 1, 0);
+                M.cube (wall_t, d, wall_h +. h) |>> (0., 0., -.wall_h);
+            ] |>> (-.wall_t, d *. cos bending, -. d *. sin bending) in
+        let side_wall_r =
+            let x = ((col_d +. w) *. float_of_int (List.length params)) -. col_d in
+            let (_, dy, dz) = last params in
+            let side_wall1_with_ext = col_side_wall_with_ext 1 (wall_h +. dz) in
+            let side_wall1 = col_side_wall 1 (wall_h +. dz) in
+            M.union [
+                side_wall1_with_ext |>> (0., d, 0.);
+                side_wall1_with_ext |> M.mirror (0, 1, 0);
+                side_wall1 |> M.mirror (0, 1, 0);
+                M.cube (wall_t, d, wall_h +. h +. dz) |>> (0., 0., -.wall_h -. dz);
+            ] |>> (x, dy +. d *. cos bending, dz -. d *. sin bending) in
+        let wall_near = 
+            let (n, dy, dz) = List.nth params 4 in
+            let (n', dy', dz') = List.nth params 5 in
+            M.union [
+                col_wall 1 (wall_h +. dz);
+                col_wall 1 (wall_h +. dz') |>> (w +. col_d, dy -. dy', dz' -. dz);
+                bond_wall (wall_h +. dz) (1, 1) (dy -. dy', dz' -. dz) |>> (w, 0., 0.);
+            ] |> M.mirror (0, 1, 0) |>> ((w +. col_d) *. 4., dy +. d *. cos bending, dz -. d *. sin bending) in
+        let ext8 =
+            let (_, dy, dz) = List.nth params 4 in
+            M.hull [
+                M.hull [
+                    M.cube (0.001, 0.001, wall_h +. h) |>> (w', d, -.wall_h);
+                    M.cube (0.001, 0.001, wall_h +. h) |>> (w' +. wall_t, d, -.wall_h);
+                ] |@> (0., 0., -.thumb_key_curve) |>> (thumb_p <+> (w', 0., 0.));
+                M.hull [
+                    M.cube (0.001, wall_t, 0.001);
+                    M.cube (0.001, 0.001, dz +. wall_h +. (d *. sin bending) +. (h *. cos bending));
+                    M.cube (0.001, wall_t +. wall_clearance +. h *. sin bending, 0.001)
+                    |>> (0., 0., dz +. wall_h +. (d *. sin bending) +. (h *. cos bending));
+                ] |>> ((w +. col_d) *. 4., dy -. wall_clearance -. wall_t, -. wall_h -. d *. sin bending);
+            ] in
+        let ext9 = M.hull [
+            M.cube (0.001, wall_t, wall_h +. h)
+            |>> (0., d, 0.)
+            |@> (0., 0., 2. *. thumb_key_curve)
+            |>> ((-. w' *. cos thumb_key_curve, -.w' *. sin thumb_key_curve, -.wall_h) <+> thumb_p);
+            M.cube (0.001, wall_t, wall_h +. h)
+            |>> (0., d, 0.)
+            |@> (0., 0., thumb_key_curve)
+            |>> ((-. w' *. cos thumb_key_curve, -.w' *. sin thumb_key_curve, -.wall_h) <+> thumb_p);
+        ] in
+        let ext10 = M.hull [
+            M.cube (0.001, wall_t, wall_h +. h)
+            |>> (0., d, 0.)
+            |@> (0., 0., thumb_key_curve)
+            |>> ((-. w' *. cos thumb_key_curve, -.w' *. sin thumb_key_curve, -.wall_h) <+> thumb_p);
+            M.cube (wall_t, 0.001, wall_h +. d *. sin bending)
+            |>> (-.wall_t, 0., -.wall_h -. d *. sin bending);
+            M.cube (wall_t, 0.001, h)
+            |@> (-.bending, 0., 0.)
+            |>> (-.wall_t, 0., 0.);
+        ] in
         M.union [
+            wall_near;
+            side_wall_l;
+            side_wall_r;
             pad;
             thumb1;
             thumb2;
@@ -257,5 +367,8 @@ module Key = struct
             ext5;
             ext6;
             ext7;
+            ext8;
+            ext9;
+            ext10;
         ]
 end
