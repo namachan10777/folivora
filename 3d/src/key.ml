@@ -291,7 +291,7 @@ module Key = struct
             M.union [
                 side_wall2_with_ext |>> (0., d, 0.);
                 side_wall1 |> M.mirror (0, 1, 0);
-                M.cube (wall_t, d, wall_h +. h) |>> (0., 0., -.wall_h);
+                M.cube (wall_t, d, h);
             ] |>> (-.wall_t, d *. cos bending, -. d *. sin bending) in
         let side_wall_r =
             let x = ((col_d +. w) *. float_of_int (List.length params)) -. col_d in
