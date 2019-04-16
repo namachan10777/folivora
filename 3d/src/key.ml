@@ -32,7 +32,7 @@ module Key = struct
 
     let col_d = 2.54
 
-    let col_impl block param =
+    let col ?(key_block=key_block)  param =
         let (w, d, h) = key_block_size in
         let rec f p_acc b_acc = function
             | 0 -> []
@@ -43,10 +43,8 @@ module Key = struct
                 model :: f p_acc b_acc (n-1)
         in M.union @@ f (0., 0., 0.) 0. param
 
-    let col = col_impl key_block
-
-    let wall_t = 3.0
-    let wall_clearance = 3.0
+    let wall_t = 2.0
+    let wall_clearance = 1.5
 
     let col_side_wall param wall_h_base =
         let (w, d, h) = key_block_size in
@@ -73,11 +71,39 @@ module Key = struct
             |>> (0., (get_y pos) -. h *. sin (bending *. float_of_int param), -.wall_h_base);
         ]
 
+    let screw_hole_r = 1.55
+    let screw_hole_clearance = 3.2
+    let screw_hole_r_large = 2.6
+    let screw_hole_clearance_large = 4.6
+
+    let screw_hole_ledge_impl screw_hole_r screw_hole_clearance = M.difference 
+        (M.union [
+            M.cube (2. *. screw_hole_clearance, screw_hole_clearance, wall_t);
+            M.cylinder screw_hole_clearance wall_t ~fn:30 |>> (screw_hole_clearance, screw_hole_clearance, 0.);
+        ])
+        [
+            M.cylinder screw_hole_r wall_t ~fn:30 |>> (screw_hole_clearance, screw_hole_clearance, 0.);
+        ]
+
+    let screw_hole_ledge = screw_hole_ledge_impl screw_hole_r screw_hole_clearance
+    let screw_hole_ledge_large = screw_hole_ledge_impl screw_hole_r_large screw_hole_clearance_large
+
+    let col_side_wall_with_ext_and_ledge param wall_h_base =
+        let (w, d, h) = key_block_size in
+        let pos = List.init param (fun n -> bending +. bending *. float_of_int n)
+            |> List.fold_left (fun p bend -> p <+> (0., d *. cos bend, d *. sin bend)) (0., 0., 0.) in
+        M.union [
+            col_side_wall_with_ext param wall_h_base;
+            screw_hole_ledge |>> (
+                wall_t -. 2. *. screw_hole_clearance,
+                (get_y pos) +. wall_clearance +. wall_t,
+                -.wall_h_base);
+        ]
+
     let col_wall param wall_h_base =
         let (w, d, h) = key_block_size in
         let pos = List.init param (fun n -> bending +. bending *. float_of_int n)
             |> List.fold_left (fun p bend -> p <+> (0., d *. cos bend, d *. sin bend)) (0., 0., 0.) in
-        let thick = h *. cos (bending *. float_of_int param) in
         let ext = M.hull [
             M.cube (w, 0.001, h) |@> (bending *. float_of_int param, 0., 0.) |>> pos;
             M.cube (w, wall_clearance, h *. cos (bending *. float_of_int param)) |>> pos;
@@ -147,14 +173,14 @@ module Key = struct
 
     let wall_h = 5.0
 
-    let key_pad params =
+    let key_pad ?(key_block=key_block) params =
         let (w, d, h) = key_block_size in
         let rec build x_acc =
             function
             | (n, dy, dz) :: ((n', dy', dz') as succ) :: tl ->
                 let middle = key_block in
-                let near = col 1 |> M.mirror (0, 1, 0) in
-                let far = col n |>> (0., d, 0.) in
+                let near = col 1 ~key_block:key_block |> M.mirror (0, 1, 0) in
+                let far = col n ~key_block:key_block |>> (0., d, 0.) in
                 let far_wall = col_wall n (wall_h +. dz) |>> (0., d, 0.) in
                 let bond_far = bond (n, n') (dy' -. dy, dz' -. dz) |>> (w, d, 0.) in
                 let bond_wall_far = bond_wall (wall_h +. dz) (n, n') (dy' -. dy, dz' -. dz) |>> (w, d, 0.) in
@@ -169,8 +195,8 @@ module Key = struct
                 packed :: build (x_acc +. w +. col_d) (succ :: tl)
             | (n, dy, dz) :: [] ->
                 let middle = key_block in
-                let near = col 1 |> M.mirror (0, 1, 0) in
-                let far = col n |>> (0., d, 0.) in
+                let near = col 1 ~key_block:key_block |> M.mirror (0, 1, 0) in
+                let far = col n ~key_block:key_block |>> (0., d, 0.) in
                 let far_wall = col_wall n (wall_h +. dz) |>> (0., d, 0.) in
                 [M.union [ near; middle; far; far_wall ] |>> (x_acc, dy, dz)]
             | [] -> [] in
@@ -181,10 +207,11 @@ module Key = struct
 
     let thumb_key_curve = pi /. 8.
 
+    let thumb_key_block_size = let (_, d, h) = key_block_size in (18., d, h)
+
     let thumb_key_block =
-        let (w, d, h) = key_block_size in
-        M.difference (M.cube (19.05, d, h)) [
-            key_hollowing |>> (19.05 /. 2., d/.2., 0.);
+        M.difference (M.cube thumb_key_block_size) [
+            key_hollowing |>> ((get_x thumb_key_block_size) /. 2., (get_y thumb_key_block_size)/.2., 0.);
         ]
 
     let thumb_p =
@@ -196,12 +223,50 @@ module Key = struct
         | [x] -> x
         | x :: tl -> last tl
 
-    let key_main params =
+
+    let key_main ?(key_block=key_block) params =
+        let (w, d, h) = key_block_size in
+        let pad = key_pad ~key_block:key_block params in
+        let (left_n, _, _) = List.hd params in
+        let side_wall_l =
+            let side_wall2_with_ext = col_side_wall_with_ext left_n wall_h in
+            let side_wall1 = col_side_wall 1 wall_h in
+            M.union [
+                side_wall2_with_ext |>> (0., d, 0.);
+                side_wall1 |> M.mirror (0, 1, 0);
+                M.cube (wall_t, d, h);
+            ] |>> (-.wall_t, d *. cos bending, -. d *. sin bending) in
+        let side_wall_r =
+            let x = ((col_d +. w) *. float_of_int (List.length params)) -. col_d in
+            let (_, dy, dz) = last params in
+            let side_wall1_with_ext = col_side_wall_with_ext_and_ledge 1 (wall_h +. dz) in
+            let side_wall1 = col_side_wall 1 (wall_h +. dz) in
+            M.union [
+                side_wall1_with_ext |>> (0., d, 0.);
+                side_wall1_with_ext |> M.mirror (0, 1, 0);
+                side_wall1 |> M.mirror (0, 1, 0);
+                M.cube (wall_t, d, wall_h +. h +. dz) |>> (0., 0., -.wall_h -. dz);
+            ] |>> (x, dy +. d *. cos bending, dz -. d *. sin bending) in
+        let wall_near = 
+            let (n, dy, dz) = List.nth params 4 in
+            let (n', dy', dz') = List.nth params 5 in
+            M.union [
+                col_wall 1 (wall_h +. dz);
+                col_wall 1 (wall_h +. dz') |>> (w +. col_d, dy -. dy', dz' -. dz);
+                bond_wall (wall_h +. dz) (1, 1) (dy -. dy', dz' -. dz) |>> (w, 0., 0.);
+            ] |> M.mirror (0, 1, 0) |>> ((w +. col_d) *. 4., dy +. d *. cos bending, dz -. d *. sin bending) in
+        M.union [
+            wall_near;
+            side_wall_l;
+            side_wall_r;
+            pad;
+        ]
+
+    let keypad_thumbkey ?(thumb_key_block=thumb_key_block) ?(key_block=key_block) params =
         let (_, oy, oz) = List.hd params in
         let orig = (0., oy, oz) in
         let (w, d, h) = key_block_size in
-        let w' = 19.05 in
-        let pad = key_pad params in
+        let (w', _, _) = thumb_key_block_size in
         let needle = M.cube(0.001, 0.001, h) in
         let key_side_face = M.cube (0.001, d, h) in
         let thumb_key_block = M.union [
@@ -220,6 +285,7 @@ module Key = struct
                 thumb_key_block;
                 M.cube (wall_t, d +. wall_t, wall_h +. h) |>> (-.wall_t, -. wall_t, -.wall_h);
                 M.cube (wall_t +. w', wall_t, wall_h +. h) |>> (-.wall_t, d, -.wall_h);
+                screw_hole_ledge_large |>> (screw_hole_clearance_large -. wall_t, d +. wall_t, -.wall_h);
             ]
             |>> (-.w', 0., 0.)
             |@> (0., 0., 2. *. thumb_key_curve)
@@ -285,33 +351,6 @@ module Key = struct
         let ext7 = make_ext_to_pad_bond 3 [
                 needle |>> (w', d, 0.) |@> (0., 0., -.thumb_key_curve) |>> ((w', 0., 0.) <+> thumb_p);
             ] in
-        let side_wall_l =
-            let side_wall2_with_ext = col_side_wall_with_ext 2 wall_h in
-            let side_wall1 = col_side_wall 1 wall_h in
-            M.union [
-                side_wall2_with_ext |>> (0., d, 0.);
-                side_wall1 |> M.mirror (0, 1, 0);
-                M.cube (wall_t, d, h);
-            ] |>> (-.wall_t, d *. cos bending, -. d *. sin bending) in
-        let side_wall_r =
-            let x = ((col_d +. w) *. float_of_int (List.length params)) -. col_d in
-            let (_, dy, dz) = last params in
-            let side_wall1_with_ext = col_side_wall_with_ext 1 (wall_h +. dz) in
-            let side_wall1 = col_side_wall 1 (wall_h +. dz) in
-            M.union [
-                side_wall1_with_ext |>> (0., d, 0.);
-                side_wall1_with_ext |> M.mirror (0, 1, 0);
-                side_wall1 |> M.mirror (0, 1, 0);
-                M.cube (wall_t, d, wall_h +. h +. dz) |>> (0., 0., -.wall_h -. dz);
-            ] |>> (x, dy +. d *. cos bending, dz -. d *. sin bending) in
-        let wall_near = 
-            let (n, dy, dz) = List.nth params 4 in
-            let (n', dy', dz') = List.nth params 5 in
-            M.union [
-                col_wall 1 (wall_h +. dz);
-                col_wall 1 (wall_h +. dz') |>> (w +. col_d, dy -. dy', dz' -. dz);
-                bond_wall (wall_h +. dz) (1, 1) (dy -. dy', dz' -. dz) |>> (w, 0., 0.);
-            ] |> M.mirror (0, 1, 0) |>> ((w +. col_d) *. 4., dy +. d *. cos bending, dz -. d *. sin bending) in
         let ext8 =
             let (_, dy, dz) = List.nth params 4 in
             M.hull [
@@ -348,17 +387,6 @@ module Key = struct
             |>> (-.wall_t, 0., 0.);
         ] in
         M.union [
-            wall_near;
-            side_wall_l;
-            side_wall_r;
-            pad;
-            thumb1;
-            thumb2;
-            thumb3;
-            thumb4;
-            bond1;
-            bond2;
-            bond3;
             ext0;
             ext1;
             ext2;
@@ -370,5 +398,40 @@ module Key = struct
             ext8;
             ext9;
             ext10;
+            thumb1;
+            thumb2;
+            thumb3;
+            thumb4;
+            bond1;
+            bond2;
+            bond3;
+            key_main ~key_block:key_block params;
         ]
-end
+
+    let pcb_size = (25.4, 76.2, 1.6)
+    let pcb_board = M.cube pcb_size
+
+    let key_plate params =
+        let (w, d, h) = key_block_size in
+        let (w', _, _) = thumb_key_block_size in
+        M.projection (
+            M.union [
+                keypad_thumbkey
+                    ~key_block:(M.cube key_block_size)
+                    ~thumb_key_block:(M.cube (w', get_y key_block_size, get_z key_block_size))
+                    params;
+                M.hull [
+                    pcb_board |>> (-. wall_t -. get_x pcb_size, 0., 0.);
+                    M.cube (0.001, 0.001, 0.001)
+                    |>> (0., d +. wall_t, 0.)
+                    |@> (0., 0., thumb_key_curve)
+                    |>> (-. w' *. cos thumb_key_curve, -. w' *. sin thumb_key_curve, 0.)
+                    |>> thumb_p;
+                    M.cube (0.001, 0.001, 0.001)
+                    |>> (0., d +. wall_t, 0.)
+                    |@> (0., 0., 2. *. thumb_key_curve)
+                    |>> (-. w' *. cos thumb_key_curve, -. w' *. sin thumb_key_curve, 0.)
+                    |>> thumb_p;
+                ]
+            ]);
+    end
