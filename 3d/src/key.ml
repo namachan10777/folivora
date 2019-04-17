@@ -35,7 +35,7 @@ module Key = struct
             groove_size=(15.5, 4.0);
             bottleneck_t;
             depression_size=(15.5, 15.5, depression_h);
-            stairwell_size=(14., 14., h -. depression_h -. bottleneck_t);
+            stairwell_size=(14., 14., h -. depression_h);
             block_size=(w, d);
         }
 end
