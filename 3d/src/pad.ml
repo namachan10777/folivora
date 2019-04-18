@@ -42,7 +42,7 @@ module Pad (C: PadConf) = struct
     let gen_bond_half (n, n') (dy, dz) bending =
         let side_face = M.cube (eps, d, h) in
         let focus = M.cube (eps, eps, h) |>> (0., d, 0.) in
-        let common = List.init (max n n') (fun i -> M.hull [
+        let common = List.init (min n n') (fun i -> M.hull [
                 mov_block_local bending i side_face;
                 mov_block_local bending i side_face |>> (C.col_d, dy, dz);
             ]) in
@@ -50,12 +50,12 @@ module Pad (C: PadConf) = struct
             if n > n'
             then List.init (abs (n-n')) (fun i -> M.hull [
                 mov_block_local bending (i+min n n') side_face;
-                mov_block_local bending (min n n') focus |>> (C.col_d, dy, dz)
+                mov_block_local bending ((min n n')-1) focus |>> (C.col_d, dy, dz)
             ])
             else
             if n' > n
             then List.init (abs (n-n')) (fun i -> M.hull [
-                mov_block_local bending (min n n') focus;
+                mov_block_local bending ((min n n')-1) focus;
                 mov_block_local bending (i+min n n') side_face |>> (C.col_d, dy, dz);
             ])
             else [] in
