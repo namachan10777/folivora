@@ -65,5 +65,14 @@ module Pad (C: PadConf) = struct
             | [] -> []
         in M.union @@ build 0.0 params
 
+    (* 0 <= x < List.length params *)
+    (* -1 <= y < get_x (List.nth params x) *)
+    let mov_block params x y scad =
+        let xp = (C.col_d +. w) *. float_of_int x in
+        let (n, dy, dz) = List.nth params x in
+        if y >= 0
+        then scad |> mov_bend C.far_curve n |>> (xp, dy +. d, dz)
+        else scad |> mov_bend C.near_curve 1 |> M.mirror (0, 1, 0) |>> (xp, dy, dz)
+
     let test = pad C.params
 end
