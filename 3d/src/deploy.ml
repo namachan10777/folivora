@@ -25,6 +25,11 @@ module KailhLPPad = Pad(struct
         (1, 2, -4.0, 1.0);
         (1, 2, -6.0, 2.0);
     ]
+    let wall = Some({
+        t=3.0;
+        h=2.0;
+        clearance=1.0;
+    })
 end)
 
 let () =
