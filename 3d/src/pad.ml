@@ -104,10 +104,23 @@ module Pad (C: PadConf) = struct
                 ) |>> (0., dy +. cfg.clearance +. get_y p, -.cfg.h) in
             function
             | (n, dy, dz) :: ((n', dy', dz') as succ) :: tl ->
-                let mk_bond f = M.hull [
-                    f 0.001 n dy dz |>> (w, 0., 0.);
-                    f 0.001 n' dy' dz' |>> (w +. C.col_d, 0., 0.);
-                ] in
+                let mk_bond f =
+                    if n > n'
+                    then M.hull [
+                        f 0.001 n dy dz |>> (w, 0., 0.);
+                        f 0.001 n dy dz |>> (w +. cfg.t, 0., 0.);
+                        f 0.001 n' dy' dz' |>> (w +. C.col_d, 0., 0.);
+                        f 0.001 n' dy' dz' |>> (w +. C.col_d +. cfg.t, 0., 0.);]
+                    else if n' > n then M.hull [
+                        f 0.001 n dy dz |>> (w, 0., 0.);
+                        f 0.001 n dy dz |>> (w -. cfg.t, 0., 0.);
+                        f 0.001 n' dy' dz' |>> (w +. C.col_d, 0., 0.);
+                        f 0.001 n' dy' dz' |>> (w +. C.col_d -. cfg.t, 0., 0.);]
+                    else  M.hull [
+                        f 0.001 n dy dz |>> (w, 0., 0.);
+                        f 0.001 n' dy' dz' |>> (w +. C.col_d, 0., 0.);
+                    ]
+                in
                 (M.union [gen_ext w n dy dz; mk_bond gen_ext; mk_bond gen_wall; gen_wall w n dy dz] |>> (x, 0., 0.))
                     :: build bending (x +. w +. C.col_d) (succ :: tl)
             | (n, dy, dz) :: [] ->
