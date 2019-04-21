@@ -1,5 +1,4 @@
 type wall_cfg = {
-    h: float;
     t: float;
     clearance: float;
 }
@@ -13,7 +12,9 @@ module type PadConf = sig
     val gen_len_wall: bool
     val col_d: float
     val params: (int * int * float * float) list
-    val wall: wall_cfg option
+    val len_wall: wall_cfg option
+    val wall_h: float
+    val row_wall: wall_cfg
     val prevent_near_wall: int
 end
 
@@ -105,8 +106,8 @@ module Pad (C: PadConf) = struct
                 M.cube (
                     t,
                     cfg.t,
-                    cfg.h +. dz +. (get_z p) +. h *. cos (bending *. float_of_int n)
-                ) |>> (0., dy +. cfg.clearance +. get_y p, -.cfg.h) in
+                    C.wall_h +. dz +. (get_z p) +. h *. cos (bending *. float_of_int n)
+                ) |>> (0., dy +. cfg.clearance +. get_y p, -.C.wall_h) in
             function
             | (n, dy, dz) :: ((n', dy', dz') as succ) :: tl ->
                 let mk_bond f =
@@ -140,10 +141,58 @@ module Pad (C: PadConf) = struct
             |>> ((w +. C.col_d) *. float_of_int C.prevent_near_wall, 0., 0.);
         ]
 
-    let test = match C.wall with
-        | None -> pad C.params;
+    let rec last = function
+        | [] -> invalid_arg ""
+        | [x] -> x
+        | x :: tl -> last tl
+
+    let row_wall =
+        let left = List.hd C.params in
+        let right = last C.params in
+        let build_half prevent_len_wall wall_h bending n =
+            let rec series = function
+            | 0 -> []
+            | n -> let p = block_local_p bending (n-1) in
+                (M.hull [
+                    M.cube (C.row_wall.t, d, h) |> mov_block_local bending (n-1);
+                    M.cube (C.row_wall.t, d *. cos (bending *. float_of_int n), 0.001) |>> (0., get_y p, -.wall_h);
+                ]) :: series (n-1) in
+            match C.len_wall with
+            | None -> M.union (series n)
+            | Some(cfg) ->
+                if prevent_len_wall
+                then M.union (series n)
+                else
+                    let p = block_local_p bending n in
+                    let seal = M.cube (
+                        C.row_wall.t,
+                        cfg.clearance +. cfg.t +. h *. sin (bending *. float_of_int n),
+                        (get_z p) +. wall_h +. h *. cos (bending *. float_of_int n)
+                    ) |>> (0., (get_y p) -. h *. sin (bending *. float_of_int n), -.wall_h) in
+                    M.union (seal :: series n) in
+        let build (prev_far, prev_near) (n, m, dy, dz) =
+            let wall_h = C.wall_h +. dz in
+            M.union [
+                build_half prev_far wall_h C.far_curve n |>> (0., d +. dy, dz);
+                build_half prev_near wall_h C.near_curve m |> M.mirror (0, 1, 0) |>> (0., dy, dz);
+                M.cube (C.row_wall.t, d, h +. wall_h) |>> (0., dy, -.C.wall_h);
+            ] in
+        let prev_far_wall = match C.len_wall with | Some(_) -> false | _ -> true in
+        M.union [
+            build (prev_far_wall, C.prevent_near_wall > 0) left
+            |>> (-.C.row_wall.t, 0., 0.);
+            build (prev_far_wall, false) right
+            |>> (-. C.col_d +. (w +. C.col_d) *. float_of_int (List.length C.params), 0., 0.);
+        ]
+
+    let test = match C.len_wall with
+        | None -> M.union [
+            pad C.params;
+            row_wall;
+        ]
         | Some(cfg) -> M.union [
             len_wall cfg;
+            row_wall;
             pad C.params;
         ]
 end

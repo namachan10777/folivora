@@ -25,11 +25,15 @@ module KailhLPPad = Pad(struct
         (1, 2, -4.0, 1.0);
         (1, 2, -6.0, 2.0);
     ]
-    let wall = Some({
+    let wall_h = 2.0
+    let len_wall = Some({
         t=3.0;
-        h=2.0;
         clearance=1.0;
     })
+    let row_wall = {
+        t=3.0;
+        clearance=1.0;
+    }
     let prevent_near_wall = 4
 end)
 
