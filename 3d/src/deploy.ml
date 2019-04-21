@@ -30,6 +30,7 @@ module KailhLPPad = Pad(struct
         h=2.0;
         clearance=1.0;
     })
+    let prevent_near_wall = 4
 end)
 
 let () =

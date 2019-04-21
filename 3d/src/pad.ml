@@ -14,6 +14,7 @@ module type PadConf = sig
     val col_d: float
     val params: (int * int * float * float) list
     val wall: wall_cfg option
+    val prevent_near_wall: int
 end
 
 module Pad (C: PadConf) = struct
@@ -87,6 +88,10 @@ module Pad (C: PadConf) = struct
             | [] -> []
         in M.union @@ build 0.0 params
 
+    let rec ignore_n n l = match n with 
+        | 0 -> l
+        | n -> ignore_n (n-1) (List.tl l)
+
     let len_wall cfg =
         let rec build bending x =
             let gen_ext t n dy dz = 
@@ -127,10 +132,12 @@ module Pad (C: PadConf) = struct
                 [M.union [gen_ext w n dy dz; gen_wall w n dy dz] |>> (x, 0., 0.)]
             | [] -> [] in
         let far_params = C.params |> List.map (fun (n, _, dy, dz) -> (n, dy, dz)) in
-        let near_params = C.params |> List.map (fun (_, m, dy, dz) -> (m, -.dy, dz)) in
+        let near_params = C.params |> ignore_n C.prevent_near_wall |> List.map (fun (_, m, dy, dz) -> (m, -.dy, dz)) in
         M.union [
             M.union (build C.far_curve 0. far_params) |>> (0., d, 0.);
-            M.union (build C.near_curve 0. near_params) |> M.mirror (0, 1, 0);
+            M.union (build C.near_curve 0. near_params)
+            |> M.mirror (0, 1, 0)
+            |>> ((w +. C.col_d) *. float_of_int C.prevent_near_wall, 0., 0.);
         ]
 
     let test = match C.wall with
