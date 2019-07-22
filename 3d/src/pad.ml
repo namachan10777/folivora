@@ -185,6 +185,24 @@ module Pad (C: PadConf) = struct
             |>> (-. C.col_d +. (w +. C.col_d) *. float_of_int (List.length C.params), 0., 0.);
         ]
 
+    let bond range =
+        let rec gen_domain col = function
+            | (n, m, dy, dz) :: tl ->
+                if col = 0
+                then []
+                else let local_p = List.init m (fun i -> C.near_curve *. float_of_int (i+1))
+                    |> List.map (fun t -> (0., -.d *. cos t, d *. sin t))
+                    |> List.fold_left (<+>) (0., 0., 0.) in
+                let bar = M.cube (0.001, 0.001, h) |@> (-.(float_of_int m) *. C.near_curve, 0., 0.) |>> local_p in
+                let base_x = (w +. C.col_d) *. float_of_int col in
+                (base_x, bar |>> (base_x, dy, dz)) :: (base_x +. w, bar |>> (base_x +. w, dy, dz))
+                :: gen_domain (col+1) tl
+            | [] -> [] in
+        let domain = gen_domain 0 C.params
+        in domain
+
+
+
     let test = match C.len_wall with
         | None -> M.union [
             pad C.params;
