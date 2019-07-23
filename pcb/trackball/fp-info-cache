@@ -1,4 +1,4 @@
-15792539219191037
+15792581360253037
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -44030,6 +44030,13 @@ BlackPill
 68
 34
 folivora
+Film_Switch_4X4X0.8MM
+
+
+0
+4
+4
+folivora
 Key_WirePad
 
 
@@ -44064,13 +44071,6 @@ SK6812MINI_rev
 0
 4
 4
-folivora
-SMINI-5DE
-
-
-0
-5
-5
 folivora
 SW_Cherry_MX1A_1.00u_PCB
 Cherry MX keyswitch, MX1A, 1.00u, PCB mount, http://cherryamericas.com/wp-content/uploads/2014/12/mx_cat.pdf
