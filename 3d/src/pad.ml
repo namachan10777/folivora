@@ -17,6 +17,7 @@ module type PadConf = sig
     val row_wall: wall_cfg
     val prevent_near_wall: int
     val thumb_angle_interval: float
+    val thumb_pos: (float * float * float)
 end
 
 module Pad (C: PadConf) = struct
@@ -223,25 +224,30 @@ module Pad (C: PadConf) = struct
         (* blockを一旦反転して展開し、展開後再度反転させる *)
         let left = ext (0., 0., 0.) 0.0 ([block; block] |> List.map (fun x -> x |> M.mirror (1, 0, 0) |>> (w, 0., 0.)))
             |> M.union |> M.mirror (1, 0, 0) in
-        M.union (left :: center :: right :: []) |>> (w, -.3.*.d, 0.)
+        M.union (left :: center :: right :: []) |>> C.thumb_pos
 
     let thumb_bridge =
+        let needle = M.cube (0.5, 0.5, h) in
         let matrix_edges =
-            let plate = M.cube (w, 0.0001, h) in
-            let needle = M.cube (0.0001, 0.0001, h) in
             let rec gen x = function
-                | (_, n, dy, dz) :: ((_, n', dy', dz') :: _ as rest) ->
-                    let plate = mov_block_local C.near_curve n (plate |>> (x, d-.dy, dz)) |> M.mirror (0, 1, 0) in
-                    let bond = M.hull [
-                        mov_block_local C.near_curve n  (needle |>> (x +. w           ,  d -. dy , dz ));
-                        mov_block_local C.near_curve n' (needle |>> (x +. w +. C.col_d,  d -. dy', dz'));
-                    ] |> M.mirror (0, 1, 0)
-                    in plate :: bond :: gen (x +. w +. C.col_d) rest
-                | (_, n, dy, dz) :: [] ->
-                    [mov_block_local C.near_curve n (plate |>> (x, d-.dy, dz)) |> M.mirror (0, 1, 0)]
+                | (_, n, dy, dz) ::  rest ->
+                    let needle1 = mov_block_local C.near_curve n (needle |>> (x, -.dy, dz)) |> M.mirror (0, 1, 0) in
+                    needle1 :: (needle1 |>> (w, 0., 0.)) :: gen (x +. w +. C.col_d) rest
                 | [] -> []
-            in gen 0.0 C.params
-        in M.union @@ matrix_edges
+            in gen 0.0 C.params in
+        let thumb_edges =
+            let rec gen p angle = function
+                | 0 -> []
+                | n ->
+                    let dp = (w *. cos angle, -. w *. sin angle, 0.) in
+                    let base = p <+> (d *. sin angle, d *. cos angle, 0.) in
+                    let far  = (base <+> dp) in
+                    base :: far :: gen (p <+> dp) (angle +. C.thumb_angle_interval) (n-1) in
+            let right = gen (0., 0., 0.) C.thumb_angle_interval 1 |> List.map (fun p -> p <+> (w, 0., 0.)) in
+            let left = gen (0., 0., 0.) C.thumb_angle_interval 2 |> List.map (fun (x, y, z) -> (-.x, y, z)) |> List.rev in
+            let center = [(0., d, 0.); (w, d, 0.)] in
+            List.map (fun p -> needle |>> (p <+> C.thumb_pos)) (left @ center @ right) in
+        M.union @@ matrix_edges @ thumb_edges
 
     let test = match C.len_wall with
         | None -> M.union [
