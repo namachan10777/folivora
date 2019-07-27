@@ -19,7 +19,7 @@ module KailhLPPad = Pad(struct
     let gen_len_wall = true
     let col_d = 2.54
     let thumb_angle_interval = pi /. 6.
-    let thumb_pos = (-16.51, -50., 0.)
+    let thumb_pos = (16.51, -50., 0.)
     let params = [
         (1, 1, -1.0, 1.0);
         (1, 1, 0.0, 0.0);

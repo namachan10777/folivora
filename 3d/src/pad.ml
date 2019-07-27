@@ -247,11 +247,19 @@ module Pad (C: PadConf) = struct
             let left = gen (0., 0., 0.) C.thumb_angle_interval 2 |> List.map (fun (x, y, z) -> (-.x, y, z)) |> List.rev in
             let center = [(0., d, 0.); (w, d, 0.)] in
             List.map (fun p -> needle |>> (p <+> C.thumb_pos)) (left @ center @ right) in
-        M.union @@ matrix_edges @ thumb_edges
+        [
+            (* heuristic bridge definition *)
+        ]
+        |> List.map (fun (a, b) ->
+            (List.map (fun i -> List.nth matrix_edges i) a)
+            @ (List.map (fun i -> List.nth thumb_edges i) b))
+        |> List.map M.hull
+        |> M.union
+
 
     let test = match C.len_wall with
         | None -> M.union [
-            (*pad C.params;*)
+            pad C.params;
             (*row_wall;*)
             thumb_bridge;
             thumb;
