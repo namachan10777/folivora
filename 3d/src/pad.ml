@@ -16,6 +16,7 @@ module type PadConf = sig
     val wall_h: float
     val row_wall: wall_cfg
     val prevent_near_wall: int
+    val thumb_angle_interval: float
 end
 
 module Pad (C: PadConf) = struct
@@ -29,6 +30,8 @@ module Pad (C: PadConf) = struct
 
     let block_local_p bending n = List.init n (fun i -> bending *. float_of_int (i+1))
         |> List.fold_left (fun p bending -> p <+> (0., d *. cos bending, d *.sin bending)) (0., 0., 0.)
+
+    let block_local_a bending n = bending *. float_of_int n
 
     let mov_block_local bending n scad = scad |@> (bending *. float_of_int (n+1), 0., 0.) |>> block_local_p bending n
 
@@ -201,12 +204,51 @@ module Pad (C: PadConf) = struct
         let domain = gen_domain 0 C.params
         in domain
 
+    (* 扇状に並べる *)
+    let thumb =
+        let rec ext p angle = function 
+            | block :: blocks ->
+                let side = M.cube (0.001, d, h) in
+                let angle' = angle -. C.thumb_angle_interval in
+                (M.hull [
+                    side |@> (0., 0., angle) |>> p;
+                    side |@> (0., 0., angle') |>> p;
+                ])
+                :: (block |@> (0., 0., angle') |>> p)
+                :: ext (p <+> (w *. cos angle', w *. sin angle', 0.)) angle' blocks
+            | [] -> [] in
+        let right = ext (0., 0., 0.) 0.0 [block]
+            |> M.union |>> (w, 0., 0.) in
+        let center = block in
+        (* blockを一旦反転して展開し、展開後再度反転させる *)
+        let left = ext (0., 0., 0.) 0.0 ([block; block] |> List.map (fun x -> x |> M.mirror (1, 0, 0) |>> (w, 0., 0.)))
+            |> M.union |> M.mirror (1, 0, 0) in
+        M.union (left :: center :: right :: []) |>> (w, -.3.*.d, 0.)
 
+    let thumb_bridge =
+        let matrix_edges =
+            let plate = M.cube (w, 0.0001, h) in
+            let needle = M.cube (0.0001, 0.0001, h) in
+            let rec gen x = function
+                | (_, n, dy, dz) :: ((_, n', dy', dz') :: _ as rest) ->
+                    let plate = mov_block_local C.near_curve n (plate |>> (x, d-.dy, dz)) |> M.mirror (0, 1, 0) in
+                    let bond = M.hull [
+                        mov_block_local C.near_curve n  (needle |>> (x +. w           ,  d -. dy , dz ));
+                        mov_block_local C.near_curve n' (needle |>> (x +. w +. C.col_d,  d -. dy', dz'));
+                    ] |> M.mirror (0, 1, 0)
+                    in plate :: bond :: gen (x +. w +. C.col_d) rest
+                | (_, n, dy, dz) :: [] ->
+                    [mov_block_local C.near_curve n (plate |>> (x, d-.dy, dz)) |> M.mirror (0, 1, 0)]
+                | [] -> []
+            in gen 0.0 C.params
+        in M.union @@ matrix_edges
 
     let test = match C.len_wall with
         | None -> M.union [
-            pad C.params;
-            row_wall;
+            (*pad C.params;*)
+            (*row_wall;*)
+            thumb_bridge;
+            thumb;
         ]
         | Some(cfg) -> M.union [
             len_wall cfg;
