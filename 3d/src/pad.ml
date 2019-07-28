@@ -205,8 +205,24 @@ module Pad (C: PadConf) = struct
         let domain = gen_domain 0 C.params
         in domain
 
+    let place_as_fan x block =
+        let rec p angle = function
+            | 0 -> (0., 0., 0.)
+            | n ->
+                let angle' = angle +. C.thumb_angle_interval in
+                (-.w *. cos angle', -. w *. sin angle', 0.) <+> p angle' (n-1)
+        in
+        if x < 0
+        then block
+            |>> (-.w, 0., 0.)
+            |@> (0., 0., C.thumb_angle_interval *. float_of_int x)
+            |>> ((-1., 1., 1.) <*> p 0.0 (-x) <+> (w, 0., 0.))
+        else block 
+            |@> (0., 0., C.thumb_angle_interval *. float_of_int x)
+            |>> (p 0.0 x)
+
     (* 扇状に並べる *)
-    let thumb =
+    (*let thumb =
         let rec ext p angle = function 
             | block :: blocks ->
                 let side = M.cube (0.001, d, h) in
@@ -218,23 +234,74 @@ module Pad (C: PadConf) = struct
                 :: (block |@> (0., 0., angle') |>> p)
                 :: ext (p <+> (w *. cos angle', w *. sin angle', 0.)) angle' blocks
             | [] -> [] in
+        let block = match C.len_wall with
+            | Some(cfg) -> M.union [block; M.cube (w, cfg.t, h +. C.wall_h) |>> (0., -.cfg.t, -.C.wall_h)]
+            | None -> block in
         let right = ext (0., 0., 0.) 0.0 [block]
             |> M.union |>> (w, 0., 0.) in
         let center = block in
         (* blockを一旦反転して展開し、展開後再度反転させる *)
         let left = ext (0., 0., 0.) 0.0 ([block; block] |> List.map (fun x -> x |> M.mirror (1, 0, 0) |>> (w, 0., 0.)))
             |> M.union |> M.mirror (1, 0, 0) in
-        M.union (left :: center :: right :: []) |>> C.thumb_pos
+        M.union (left :: center :: right :: []) |>> C.thumb_pos*)
+
+    let thumb =
+        let left = match C.len_wall with
+            | Some(cfg) -> M.union [
+                block;
+                M.cube (w, cfg.t, h +. C.wall_h) |>> (0., -.cfg.t, -.C.wall_h);
+                M.cube (w, cfg.t, h +. C.wall_h) |>> (0., d, -.C.wall_h);
+                M.cube (C.row_wall.t, d +. cfg.t *. 2., h +. C.wall_h) |>> (-.C.row_wall.t, -.cfg.t, -.C.wall_h);]
+            | None ->  M.union [
+                block;
+                M.cube (C.row_wall.t, d, h +. C.wall_h) |>> (-.C.row_wall.t, 0., -.C.wall_h);] in
+        let right = match C.len_wall with
+            | Some(cfg) -> M.union [
+                block;
+                M.cube (w, cfg.t, h +. C.wall_h) |>> (0., -.cfg.t, -.C.wall_h);
+                M.cube (C.row_wall.t, d +. cfg.t, h +. C.wall_h) |>> (w, -.cfg.t, -.C.wall_h);]
+            | None -> M.union [
+                block;
+                M.cube (C.row_wall.t, d, h +. C.wall_h) |>> (w, 0., -.C.wall_h);] in
+        let center = match C.len_wall with
+            | Some(cfg) -> M.union [
+                block;
+                M.cube (w, cfg.t, h +. C.wall_h) |>> (0., -.cfg.t, -.C.wall_h);]
+            | None -> block in
+        let plate_l = M.cube (0.001, d, h) in
+        let plate_r = M.cube (0.001, d, h) |>> (w, 0., 0.) in
+        M.union [
+            place_as_fan 2 left;
+            place_as_fan 1 center;
+            place_as_fan 0 center;
+            place_as_fan (-1) right;
+            M.hull [
+                place_as_fan 2 plate_r;
+                place_as_fan 1 plate_l;
+            ];
+            M.hull [
+                place_as_fan 1 plate_r;
+                place_as_fan 0 plate_l;
+            ];
+            M.hull [
+                place_as_fan 0 plate_r;
+                place_as_fan (-1) plate_l;
+            ];
+        ] |>> C.thumb_pos
 
     let thumb_bridge =
-        let needle = M.cube (0.5, 0.5, h) in
+        let needle = M.cube (0.0001, 0.0001, h) in
+        let long_needle = M.cube (0.0001, 0.0001, h +. C.wall_h) |>> (0., 0., -.C.wall_h) in
         let matrix_edges =
             let rec gen x = function
                 | (_, n, dy, dz) ::  rest ->
-                    let needle1 = mov_block_local C.near_curve n (needle |>> (x, -.dy, dz)) |> M.mirror (0, 1, 0) in
+                    let needle = needle |>> (0., d, 0.) in
+                    let needle1 = mov_block_local C.near_curve (n-1) needle |> M.mirror (0, 1, 0) |>> (x, dy, dz) in
                     needle1 :: (needle1 |>> (w, 0., 0.)) :: gen (x +. w +. C.col_d) rest
-                | [] -> []
-            in gen 0.0 C.params in
+                | [] -> [] in
+            let edges = gen 0.0 C.params in
+            let most_left = List.nth edges 0 |>> (-.C.row_wall.t, 0., 0.) in
+            most_left :: edges in
         let thumb_edges =
             let rec gen p angle = function
                 | 0 -> []
@@ -246,9 +313,27 @@ module Pad (C: PadConf) = struct
             let right = gen (0., 0., 0.) C.thumb_angle_interval 1 |> List.map (fun p -> p <+> (w, 0., 0.)) in
             let left = gen (0., 0., 0.) C.thumb_angle_interval 2 |> List.map (fun (x, y, z) -> (-.x, y, z)) |> List.rev in
             let center = [(0., d, 0.); (w, d, 0.)] in
-            List.map (fun p -> needle |>> (p <+> C.thumb_pos)) (left @ center @ right) in
+            let angle = C.thumb_angle_interval in
+            let most_right = (
+                w +. (w +. C.row_wall.t) *. (cos angle) +. d *. sin angle,
+                -. (w +. C.row_wall.t) *. (sin angle) +. d *. cos angle,
+                0.) in
+            let shorts = left @ center @ (right |> List.rev |> List.tl |> List.rev) in
+            let longs  = [right |> List.rev |> List.hd; most_right] in
+            let gen needle positions = 
+                List.map (fun p -> needle |>> (p <+> C.thumb_pos)) positions in
+            (gen needle shorts) @ (gen long_needle longs) in
         [
-            (* heuristic bridge definition *)
+            ([0;1], [2;3]);
+            ([1;2], [3]);
+            ([2;3], [3;4]);
+            ([3;4], [4;5]);
+            ([4;5], [5]);
+            ([5;6], [5;6]);
+            ([6;7], [6]);
+            ([6;7], [6;7]);
+            ([7;8], [7]);
+            ([8;9], [7;8]);
         ]
         |> List.map (fun (a, b) ->
             (List.map (fun i -> List.nth matrix_edges i) a)
@@ -260,7 +345,7 @@ module Pad (C: PadConf) = struct
     let test = match C.len_wall with
         | None -> M.union [
             pad C.params;
-            (*row_wall;*)
+            row_wall;
             thumb_bridge;
             thumb;
         ]
@@ -268,5 +353,7 @@ module Pad (C: PadConf) = struct
             len_wall cfg;
             row_wall;
             pad C.params;
+            thumb_bridge;
+            thumb;
         ]
 end
