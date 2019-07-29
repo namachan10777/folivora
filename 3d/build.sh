@@ -1,5 +1,7 @@
 #!/bin/bash
 
+eval $(opam env)
+
 cd $(dirname $0)
 
 echo "generation scad files..."
