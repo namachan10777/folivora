@@ -29,10 +29,10 @@ module KailhLPPad = Pad(struct
         (1, 1, -6.0, 2.0);
     ]
     let wall_h = 2.0
-    let len_wall = None (*Some({
+    let len_wall = Some({
         t=3.0;
         clearance=1.0;
-    })*)
+    })
     let row_wall = {
         t=3.0;
         clearance=1.0;
@@ -42,3 +42,4 @@ end)
 
 let () =
     build (KailhLPPad.test) "key.scad";
+    build (Model.projection KailhLPPad.test) "key_projection.scad";

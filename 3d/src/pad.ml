@@ -150,6 +150,14 @@ module Pad (C: PadConf) = struct
         | [x] -> x
         | x :: tl -> last tl
 
+    let screw_mount = 
+        M.difference (M.union [
+            M.cylinder 3.0 (C.wall_h +. h) ~fn:30;
+            M.cube (3.0, 6.0, (C.wall_h +. h)) |>> (0., -3., 0.);
+        ]) [
+            M.cylinder 1.6 (C.wall_h +. h) ~fn:30;
+        ]|>> (0., 0., -.C.wall_h)
+
     let row_wall =
         let left = List.hd C.params in
         let right = last C.params in
@@ -182,11 +190,24 @@ module Pad (C: PadConf) = struct
                 M.cube (C.row_wall.t, d, h +. wall_h) |>> (0., dy, -.C.wall_h);
             ] in
         let prev_far_wall = match C.len_wall with | Some(_) -> false | _ -> true in
+        let dy = function 
+            | (_, _, dy, _) :: _ -> dy
+            | _ -> 0. in
+        let dy_left = dy C.params in
+        let dy_right = dy (List.rev C.params) in
+        let mount_left_x = -3.0 -. C.row_wall.t in
+        let mount_left  = screw_mount in
+        let mount_right_x = ((w +. C.col_d) *. float_of_int (List.length C.params)) -. C.col_d +. C.row_wall.t +. 3.0 in
+        let mount_right = screw_mount |@> (0., 0., pi) in
         M.union [
             build (prev_far_wall, C.prevent_near_wall > 0) left
             |>> (-.C.row_wall.t, 0., 0.);
+            mount_left |>> (mount_left_x, dy_left +. d +. d *. (cos C.far_curve) -. 3.0, 0.);
+            mount_left |>> (mount_left_x, dy_left -. d *. (cos C.near_curve) +. 3.0, 0.);
             build (prev_far_wall, false) right
             |>> (-. C.col_d +. (w +. C.col_d) *. float_of_int (List.length C.params), 0., 0.);
+            mount_right |>> (mount_right_x, dy_right +. d +. d *. (cos C.far_curve) -. 3.0, 0.);
+            mount_right |>> (mount_right_x, dy_right -. d *. (cos C.near_curve) +. 3.0, 0.);
         ]
 
     let bond range =
@@ -221,30 +242,6 @@ module Pad (C: PadConf) = struct
             |@> (0., 0., C.thumb_angle_interval *. float_of_int x)
             |>> (p 0.0 x)
 
-    (* 扇状に並べる *)
-    (*let thumb =
-        let rec ext p angle = function 
-            | block :: blocks ->
-                let side = M.cube (0.001, d, h) in
-                let angle' = angle -. C.thumb_angle_interval in
-                (M.hull [
-                    side |@> (0., 0., angle) |>> p;
-                    side |@> (0., 0., angle') |>> p;
-                ])
-                :: (block |@> (0., 0., angle') |>> p)
-                :: ext (p <+> (w *. cos angle', w *. sin angle', 0.)) angle' blocks
-            | [] -> [] in
-        let block = match C.len_wall with
-            | Some(cfg) -> M.union [block; M.cube (w, cfg.t, h +. C.wall_h) |>> (0., -.cfg.t, -.C.wall_h)]
-            | None -> block in
-        let right = ext (0., 0., 0.) 0.0 [block]
-            |> M.union |>> (w, 0., 0.) in
-        let center = block in
-        (* blockを一旦反転して展開し、展開後再度反転させる *)
-        let left = ext (0., 0., 0.) 0.0 ([block; block] |> List.map (fun x -> x |> M.mirror (1, 0, 0) |>> (w, 0., 0.)))
-            |> M.union |> M.mirror (1, 0, 0) in
-        M.union (left :: center :: right :: []) |>> C.thumb_pos*)
-
     let thumb =
         let left = match C.len_wall with
             | Some(cfg) -> M.union [
@@ -270,11 +267,18 @@ module Pad (C: PadConf) = struct
             | None -> block in
         let plate_l = M.cube (0.001, d, h) in
         let plate_r = M.cube (0.001, d, h) |>> (w, 0., 0.) in
+        let mount_right = screw_mount |@> (0., 0., pi) |>> (w +. C.row_wall.t +. 3.0, 3.0, 0.) in
+        let mount_left = screw_mount |@> (0., 0., -.pi/.2.) |>>
+            match C.len_wall with
+            | Some(cfg) -> (3.0 -. C.row_wall.t, cfg.t +. d +. 3.0, 0.)
+            | None -> (3.0 -. C.row_wall.t, d +. 3.0, 0.) in
         M.union [
+            place_as_fan 2 mount_left;
             place_as_fan 2 left;
             place_as_fan 1 center;
             place_as_fan 0 center;
             place_as_fan (-1) right;
+            place_as_fan (-1) mount_right;
             M.hull [
                 place_as_fan 2 plate_r;
                 place_as_fan 1 plate_l;
