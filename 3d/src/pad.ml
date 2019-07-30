@@ -354,10 +354,6 @@ module Pad (C: PadConf) = struct
             -. w *. cos C.thumb_angle_interval,
             -. w *. sin C.thumb_angle_interval,
             0.) in
-        let thumb_p2 = thumb_p1 <+> (
-            -. w *. cos (C.thumb_angle_interval *. 2.),
-            -. w *. sin (C.thumb_angle_interval *. 2.),
-            0.) in
         let dy1 = match List.hd C.params with (_, _, dy, _) -> dy in
         let left_max = -30.0 in
         let top_max  = d *. 2.5 in
@@ -390,13 +386,12 @@ module Pad (C: PadConf) = struct
             M.cylinder fillet_r t ~fn:30 |>> (fillet_pos2 <+> (fillet_r, 0., 0.));
         ]
 
-    let test = match C.len_wall with
+    let body = match C.len_wall with
         | None -> M.union [
             pad C.params;
             row_wall;
             thumb_bridge;
             thumb;
-            plate 3.0;
         ]
         | Some(cfg) -> M.union [
             len_wall cfg;
@@ -404,6 +399,10 @@ module Pad (C: PadConf) = struct
             pad C.params;
             thumb_bridge;
             thumb;
-            plate 3.0;
         ]
+
+    let bottom = M.projection (M.union [
+        body;
+        plate 1.0;
+    ])
 end

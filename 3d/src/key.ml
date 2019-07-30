@@ -38,4 +38,7 @@ module Key = struct
             stairwell_size=(14., 14., h -. depression_h);
             block_size=(w, d);
         }
+
+    let dummy (w, d, h) =
+        M.cube (w, d, h) |>> (-.w/.2., -.d/.2., 0.)
 end
