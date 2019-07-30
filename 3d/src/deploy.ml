@@ -20,6 +20,8 @@ module KailhLPPad = Pad(struct
     let col_d = 2.54
     let thumb_angle_interval = pi /. 6.
     let thumb_pos = (16.51, -42., 0.)
+    let mount_size = 3.0
+    let screw_size = 1.6
     let params = [
         (1, 1, -1.0, 1.0);
         (1, 1, 0.0, 0.0);

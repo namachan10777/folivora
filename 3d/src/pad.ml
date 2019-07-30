@@ -15,6 +15,8 @@ module type PadConf = sig
     val len_wall: wall_cfg option
     val wall_h: float
     val row_wall: wall_cfg
+    val mount_size: float
+    val screw_size: float
     val prevent_near_wall: int
     val thumb_angle_interval: float
     val thumb_pos: (float * float * float)
@@ -152,10 +154,10 @@ module Pad (C: PadConf) = struct
 
     let screw_mount = 
         M.difference (M.union [
-            M.cylinder 3.0 (C.wall_h +. h) ~fn:30;
-            M.cube (3.0, 6.0, (C.wall_h +. h)) |>> (0., -3., 0.);
+            M.cylinder C.mount_size (C.wall_h +. h) ~fn:30;
+            M.cube (C.mount_size, C.mount_size *. 2., (C.wall_h +. h)) |>> (0., -3., 0.);
         ]) [
-            M.cylinder 1.6 (C.wall_h +. h) ~fn:30;
+            M.cylinder C.screw_size (C.wall_h +. h) ~fn:30;
         ]|>> (0., 0., -.C.wall_h)
 
     let row_wall =
@@ -195,19 +197,19 @@ module Pad (C: PadConf) = struct
             | _ -> 0. in
         let dy_left = dy C.params in
         let dy_right = dy (List.rev C.params) in
-        let mount_left_x = -3.0 -. C.row_wall.t in
+        let mount_left_x = -.C.mount_size -. C.row_wall.t in
         let mount_left  = screw_mount in
-        let mount_right_x = ((w +. C.col_d) *. float_of_int (List.length C.params)) -. C.col_d +. C.row_wall.t +. 3.0 in
+        let mount_right_x = ((w +. C.col_d) *. float_of_int (List.length C.params)) -. C.col_d +. C.row_wall.t +. C.mount_size in
         let mount_right = screw_mount |@> (0., 0., pi) in
         M.union [
             build (prev_far_wall, C.prevent_near_wall > 0) left
             |>> (-.C.row_wall.t, 0., 0.);
-            mount_left |>> (mount_left_x, dy_left +. d +. d *. (cos C.far_curve) -. 3.0, 0.);
-            mount_left |>> (mount_left_x, dy_left -. d *. (cos C.near_curve) +. 3.0, 0.);
+            mount_left |>> (mount_left_x, dy_left +. d +. d *. (cos C.far_curve) -. C.mount_size, 0.);
+            mount_left |>> (mount_left_x, dy_left -. d *. (cos C.near_curve) +. C.mount_size, 0.);
             build (prev_far_wall, false) right
             |>> (-. C.col_d +. (w +. C.col_d) *. float_of_int (List.length C.params), 0., 0.);
-            mount_right |>> (mount_right_x, dy_right +. d +. d *. (cos C.far_curve) -. 3.0, 0.);
-            mount_right |>> (mount_right_x, dy_right -. d *. (cos C.near_curve) +. 3.0, 0.);
+            mount_right |>> (mount_right_x, dy_right +. d +. d *. (cos C.far_curve) -. C.mount_size, 0.);
+            mount_right |>> (mount_right_x, dy_right -. d *. (cos C.near_curve) +. C.mount_size, 0.);
         ]
 
     let bond range =
@@ -346,12 +348,55 @@ module Pad (C: PadConf) = struct
         |> M.union
 
 
+    let plate t =
+        let needle = M.cube (0.0001, 0.0001, t) in
+        let thumb_p1 = C.thumb_pos <+> (
+            -. w *. cos C.thumb_angle_interval,
+            -. w *. sin C.thumb_angle_interval,
+            0.) in
+        let thumb_p2 = thumb_p1 <+> (
+            -. w *. cos (C.thumb_angle_interval *. 2.),
+            -. w *. sin (C.thumb_angle_interval *. 2.),
+            0.) in
+        let dy1 = match List.hd C.params with (_, _, dy, _) -> dy in
+        let left_max = -30.0 in
+        let top_max  = d *. 2.5 in
+        let fillet_r = 1.0 in
+        let base = M.hull [
+            needle |>> (-.C.row_wall.t, -.d *. cos C.near_curve +. dy1, 0.);
+            needle |>> (thumb_p1 <+> (-.d *. sin C.thumb_angle_interval, d *. cos C.thumb_angle_interval, 0.));
+            needle |>> (thumb_p1 <+> (-.d *. sin (2. *. C.thumb_angle_interval), d *. cos (2. *. C.thumb_angle_interval), 0.));
+            needle |>> (thumb_p1 <+> (
+                -.(d +. C.row_wall.t) *. sin (2. *. C.thumb_angle_interval),
+                (d+.C.row_wall.t) *. cos (2. *. C.thumb_angle_interval)
+                , 0.));
+            needle |>> (-.C.row_wall.t, top_max, 0.);
+            needle |>> (left_max, top_max, 0.);
+            needle |>> (left_max, -.d *. cos C.near_curve +. dy1, 0.);
+        ] in
+        let fillet_pos1 = (-.fillet_r -.C.row_wall.t, top_max -. fillet_r, 0.) in
+        let fillet_pos2 = (left_max,  top_max -. fillet_r, 0.) in
+        let cut = M.difference base [
+            M.cube (fillet_r +. 0.1, fillet_r +. 0.1, t) |>> fillet_pos1;
+            M.cube (fillet_r +. 0.1, fillet_r +. 0.1, t) |>> fillet_pos2;
+            M.cylinder C.screw_size t ~fn:30
+                |>> (-.C.row_wall.t -. C.mount_size, -.d *. cos C.near_curve +. dy1 +. C.mount_size, 0.);
+            M.cylinder C.screw_size t ~fn:30
+                |>> (-.C.row_wall.t -. C.mount_size, d *. (1. +. cos C.far_curve) +. dy1 -. C.mount_size, 0.);
+        ] in
+        M.union [
+            cut;
+            M.cylinder fillet_r t ~fn:30 |>> fillet_pos1;
+            M.cylinder fillet_r t ~fn:30 |>> (fillet_pos2 <+> (fillet_r, 0., 0.));
+        ]
+
     let test = match C.len_wall with
         | None -> M.union [
             pad C.params;
             row_wall;
             thumb_bridge;
             thumb;
+            plate 3.0;
         ]
         | Some(cfg) -> M.union [
             len_wall cfg;
@@ -359,5 +404,6 @@ module Pad (C: PadConf) = struct
             pad C.params;
             thumb_bridge;
             thumb;
+            plate 3.0;
         ]
 end
