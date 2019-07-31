@@ -21,6 +21,7 @@ module type PadConf = sig
     val prevent_near_wall: int
     val thumb_angle_interval: float
     val thumb_pos: (float * float * float)
+    val plate_size: (float * float)
 end
 
 module Pad (C: PadConf) = struct
@@ -360,8 +361,8 @@ module Pad (C: PadConf) = struct
             -. w *. sin C.thumb_angle_interval,
             0.) in
         let dy1 = match List.hd C.params with (_, _, dy, _) -> dy in
-        let left_max = -30.0 in
-        let top_max  = d *. 2.5 in
+        let left_max = -.C.row_wall.t -. fst C.plate_size in
+        let top_max  = snd C.plate_size -. d *. cos C.near_curve in
         let fillet_r = 1.0 in
         let base = M.hull [
             needle |>> (-.C.row_wall.t, -.d *. cos C.near_curve +. dy1, 0.);

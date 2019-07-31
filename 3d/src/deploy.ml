@@ -41,6 +41,7 @@ module KailhLPPadConfig = struct
         clearance=1.0;
     }
     let prevent_near_wall = 4
+    let plate_size = (40., 65.)
 end
 
 module ForProjection = Pad(struct
@@ -61,11 +62,14 @@ module ForProjection = Pad(struct
     let len_wall = KailhLPPadConfig.len_wall
     let row_wall = KailhLPPadConfig.row_wall
     let prevent_near_wall = KailhLPPadConfig.prevent_near_wall
+    let plate_size = KailhLPPadConfig.plate_size
 end)
 
 module KailhLPPad = Pad(KailhLPPadConfig)
 
 let () =
     build (KailhLPPad.body) "key.scad";
+    build (Model.union[KailhLPPad.body; KailhLPPad.plate 1.0]) "test.scad";
     build (Model.projection (KailhLPPad.plate 1.0)) "key_electrical.scad";
     build (ForProjection.bottom) "key_bottom.scad";
+    build (Model.linear_extrude ~height:1.5 ForProjection.bottom) "bottom_test.scad"
