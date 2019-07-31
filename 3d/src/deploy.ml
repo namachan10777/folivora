@@ -22,6 +22,7 @@ module KailhLPPadConfig = struct
     let thumb_pos = (16.51, -42., 0.)
     let mount_size = 3.0
     let screw_size = 1.6
+    let mount_screw_d = 50.0
     let params = [
         (1, 1, -1.0, 1.0);
         (1, 1, 0.0, 0.0);
@@ -54,6 +55,7 @@ module ForProjection = Pad(struct
     let thumb_pos = KailhLPPadConfig.thumb_pos
     let mount_size = KailhLPPadConfig.mount_size
     let screw_size = KailhLPPadConfig.screw_size
+    let mount_screw_d = KailhLPPadConfig.mount_screw_d
     let params = KailhLPPadConfig.params
     let wall_h = KailhLPPadConfig.wall_h
     let len_wall = KailhLPPadConfig.len_wall
