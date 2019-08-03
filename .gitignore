@@ -5,3 +5,7 @@
 *.net
 *.kicad_pcb-bak
 *.stl
+*.dxf
+*.scad
+*.zip
+fp-info-cache
