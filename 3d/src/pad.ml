@@ -196,11 +196,11 @@ module Pad (C: PadConf) = struct
                 M.cube (C.row_wall.t, d, h +. wall_h) |>> (0., dy, -.C.wall_h);
             ] in
         let prev_far_wall = match C.len_wall with | Some(_) -> false | _ -> true in
-        let dy = function 
-            | (_, _, dy, _) :: _ -> dy
-            | _ -> 0. in
-        let dy_left = dy C.params in
-        let dy_right = dy (List.rev C.params) in
+        let diff = function 
+            | (_, _, dy, dz) :: _ -> (dy, dz)
+            | _ -> (0., 0.) in
+        let (dy_left, dz_left) = diff C.params in
+        let (dy_right, dz_right) = diff (List.rev C.params) in
         let mount_left_x = -.C.mount_size -. C.row_wall.t in
         let mount_left  = screw_mount in
         let mount_right_x = ((w +. C.col_d) *. float_of_int (List.length C.params)) -. C.col_d +. C.row_wall.t +. C.mount_size in
@@ -209,7 +209,7 @@ module Pad (C: PadConf) = struct
         let len_wall_t = match C.len_wall with
             | Some(cfg) -> cfg.t +. cfg.clearance
             | None -> 0.0 in
-        M.union [
+        M.difference (M.union [
             build (prev_far_wall, C.prevent_near_wall > 0) left
             |>> (-.C.row_wall.t, 0., 0.);
             mount_left |>> (mount_left_x, mount_near_y, 0.);
@@ -218,6 +218,9 @@ module Pad (C: PadConf) = struct
             |>> (-. C.col_d +. (w +. C.col_d) *. float_of_int (List.length C.params), 0., 0.);
             mount_right |>> (mount_right_x, dy_right -. d *. cos C.near_curve +. C.mount_size -. len_wall_t, 0.);
             mount_right |>> (mount_right_x, dy_right +. d *. (cos C.far_curve +. 1.) -. C.mount_size +. len_wall_t, 0.);
+        ]) [
+            M.cube (C.row_wall.t, C.mount_screw_d -. 2. *. C.mount_size, C.wall_h +. dz_left)
+                |>> (-.C.row_wall.t, -.d *. cos C.near_curve +. dy_left +. 2. *. C.mount_size, -.C.wall_h)
         ]
 
     let bond range =
@@ -270,6 +273,7 @@ module Pad (C: PadConf) = struct
             | None -> M.union [
                 block;
                 M.cube (C.row_wall.t, d, h +. C.wall_h) |>> (w, 0., -.C.wall_h);] in
+
         let center = match C.len_wall with
             | Some(cfg) -> M.union [
                 block;
