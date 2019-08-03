@@ -43,7 +43,7 @@ module KailhLPPadConfig = struct
         clearance=1.0;
     }
     let prevent_near_wall = 4
-    let plate_size = (19.05 +. mount_size *. 2., 70.)
+    let plate_size = (19.05 +. mount_size *. 2., 65.)
 end
 
 module ForProjection = Pad(struct
