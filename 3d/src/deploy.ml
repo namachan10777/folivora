@@ -22,7 +22,7 @@ module KailhLPPadConfig = struct
     let thumb_pos = (16.51, -42., 0.)
     let mount_size = 3.0
     let screw_size = 1.6
-    let mount_screw_d = 50.0
+    let mount_screw_d = 52.07
     let params = [
         (1, 1, -1.0, 1.0);
         (1, 1, 0.0, 0.0);
@@ -32,6 +32,7 @@ module KailhLPPadConfig = struct
         (1, 1, -6.0, 2.0);
     ]
     let wall_h = 2.0
+    let plate_t = 1.8
     let len_wall = Some({
         t=3.0;
         clearance=1.0;
@@ -41,7 +42,7 @@ module KailhLPPadConfig = struct
         clearance=1.0;
     }
     let prevent_near_wall = 4
-    let plate_size = (40., 65.)
+    let plate_size = (19.05 +. mount_size *. 2., 70.)
 end
 
 module ForProjection = Pad(struct
@@ -63,6 +64,7 @@ module ForProjection = Pad(struct
     let row_wall = KailhLPPadConfig.row_wall
     let prevent_near_wall = KailhLPPadConfig.prevent_near_wall
     let plate_size = KailhLPPadConfig.plate_size
+    let plate_t = KailhLPPadConfig.plate_t
 end)
 
 module KailhLPPad = Pad(KailhLPPadConfig)
