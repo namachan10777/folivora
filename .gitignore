@@ -8,4 +8,6 @@
 *.dxf
 *.scad
 *.zip
+*.gbr
+*gerber/*
 fp-info-cache
