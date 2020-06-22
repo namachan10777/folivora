@@ -3,11 +3,13 @@ type wall_cfg = {
     clearance: float;
 }
 
+open Common
+
 module type PadConf = sig
     val far_curve: float
     val near_curve: float
     val block_size: (float * float * float)
-    val keygen: (float * float * float) -> Model.t
+    val keygen: (float * float * float) -> Scad.Model.t
     val len_wall_clearance: float
     val gen_len_wall: bool
     val col_d: float
@@ -27,7 +29,7 @@ module type PadConf = sig
 end
 
 module Pad (C: PadConf) = struct
-    module M = Model
+    module M = Scad.Model
 
     let eps = 0.0001
 
@@ -204,7 +206,7 @@ module Pad (C: PadConf) = struct
         let mount_left_x = -.C.mount_size -. C.row_wall.t in
         let mount_left  = screw_mount in
         let mount_right_x = ((w +. C.col_d) *. float_of_int (List.length C.params)) -. C.col_d +. C.row_wall.t +. C.mount_size in
-        let mount_right = screw_mount |@> (0., 0., pi) in
+        let mount_right = screw_mount |@> (0., 0., Scad.pi) in
         let mount_near_y = dy_left -. d *. cos C.near_curve +. C.mount_size in
         let len_wall_t = match C.len_wall with
             | Some(cfg) -> cfg.t +. cfg.clearance
@@ -281,8 +283,8 @@ module Pad (C: PadConf) = struct
             | None -> block in
         let plate_l = M.cube (0.001, d, h) in
         let plate_r = M.cube (0.001, d, h) |>> (w, 0., 0.) in
-        let mount_right = screw_mount |@> (0., 0., pi) |>> (w +. C.row_wall.t +. 3.0, 3.0, 0.) in
-        let mount_left = screw_mount |@> (0., 0., -.pi/.2.) |>>
+        let mount_right = screw_mount |@> (0., 0., Scad.pi) |>> (w +. C.row_wall.t +. 3.0, 3.0, 0.) in
+        let mount_left = screw_mount |@> (0., 0., -.Scad.pi/.2.) |>>
             match C.len_wall with
             | Some(cfg) -> (3.0 -. C.row_wall.t, cfg.t +. d +. 3.0, 0.)
             | None -> (3.0 -. C.row_wall.t, d +. 3.0, 0.) in

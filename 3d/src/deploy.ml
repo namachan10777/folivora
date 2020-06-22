@@ -1,24 +1,21 @@
-#use "./src/common.ml"
-#use "./src/key.ml"
-#use "./src/pad.ml"
-#use "./src/thumb.ml"
-
-let angle_unit = pi /. 18.
+let angle_unit = Scad.pi /. 18.
 
 let build scad filename = 
     let oc = open_out_gen [Open_wronly; Open_trunc; Open_creat] 0o666 filename in
-    Scad.write oc scad;
+    Scad.Scad.write oc scad;
     close_out oc
 
+open Pad
+
 module KailhLPPadConfig = struct
-    let far_curve = pi /. 10.
-    let near_curve = pi /. 20.
+    let far_curve = Scad.pi /. 10.
+    let near_curve = Scad.pi /. 20.
     let block_size = (16.51, 21., 4.5)
     let keygen = Key.kailh_lp
     let len_wall_clearance = 1.5
     let gen_len_wall = true
     let col_d = 2.54
-    let thumb_angle_interval = pi /. 6.
+    let thumb_angle_interval = Scad.pi /. 6.
     let thumb_pos = (16.51, -42., 0.)
     let mount_size = 3.0
     let screw_size = 1.6
@@ -73,7 +70,7 @@ module KailhLPPad = Pad(KailhLPPadConfig)
 
 let () =
     build (KailhLPPad.body) "key.scad";
-    build (Model.union[KailhLPPad.body; KailhLPPad.plate 1.0]) "test.scad";
-    build (Model.projection (KailhLPPad.plate 1.0)) "key_electrical.scad";
+    build (Scad.Model.union[KailhLPPad.body; KailhLPPad.plate 1.0]) "test.scad";
+    build (Scad.Model.projection (KailhLPPad.plate 1.0)) "key_electrical.scad";
     build (ForProjection.bottom) "key_bottom.scad";
-    build (Model.linear_extrude ~height:1.5 ForProjection.bottom) "bottom_test.scad"
+    build (Scad.Model.linear_extrude ~height:1.5 ForProjection.bottom) "bottom_test.scad"

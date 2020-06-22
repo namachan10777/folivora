@@ -1,10 +1,11 @@
 module type ThumbConf = sig
     val block_size: (float * float * float)
-    val keygen: (float * float * float) -> Model.t
+    val keygen: (float * float * float) -> Scad.Model.t
 end
 
 module Thumb (C: ThumbConf) = struct
-    module M = Model
+    open Common
+    module M = Scad.Model
 
     let breakout_size = (27.94, 21.59, 1.6)
     let hole_positions = [(2.54, 19.05); (25.4, 19.05)]
