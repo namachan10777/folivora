@@ -15,7 +15,7 @@ jobs:
           name: 3d parts build
           command: |
             mkdir -p ~/.local/share
-            make archive
+            make archive -C 3d
       - run:
           name: Zip pcb files
           command: ./zip-pcb-files.sh
