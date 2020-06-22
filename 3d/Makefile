@@ -32,7 +32,7 @@ deploy: src/deploy.cmo
 	ocamlc -o $@ $(LIB) src/common.cmo src/key.cmo src/pad.cmo src/thumb.cmo src/deploy.cmo 
 
 %.scad: deploy
-	deploy
+	ocamlrun deploy
 
 %.stl: %.scad
 	openscad $< -o $@
