@@ -37,6 +37,12 @@ deploy: src/deploy.cmo
 %.stl: %.scad
 	openscad $< -o $@
 
+.PHONY: archive
+archive: 3d.tar.zstd
+
+3d.tar.zstd: $(TARGETS)
+	tar --zstd -cf 3d.tar.zstd $(TARGETS)
+
 .PHONY: clean
 clean:
 	rm -f src/*.cmo src/*.cmi src/*.cmt
@@ -44,3 +50,4 @@ clean:
 	rm -f *.scad
 	rm -f *.stl
 	rm -f deploy
+	rm -f *.tar.zstd

@@ -2,3 +2,4 @@
 *.cmt
 *.cmi
 deploy
+*.tar.zstd
