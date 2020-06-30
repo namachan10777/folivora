@@ -20,6 +20,10 @@ RUN useradd -m folivora
 USER folivora
 
 RUN opam init -a -y --comp=$OCAML_VERSION --disable-sandboxing
-RUN echo "eval $(opam config env)" >> ~/.bashrc
+RUN eval $(opam config env)
+WORKDIR /tmp/
+RUN git clone https://github.com/namachan10777/scad-ml.git
+RUN opam pin add --yes scad-ml
+RUN rm -r scad-ml
 
 ENTRYPOINT ["/bin/bash"]
