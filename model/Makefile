@@ -1,5 +1,5 @@
 # Add output models
-MODELS := cherry_mx
+MODELS := cherry_mx kailh_lp
 
 SCAD_SOURCES := $(addsuffix .scad,$(MODELS))
 STL_FILES    := $(addsuffix .stl,$(MODELS))
