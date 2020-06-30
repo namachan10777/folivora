@@ -11,3 +11,4 @@
 *.gbr
 *gerber/*
 fp-info-cache
+*.tar.zst

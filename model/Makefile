@@ -11,8 +11,19 @@ DEPENDS := $(shell find . -name *.ml -type f)
 %.stl: %.scad
 	openscad $< -o $@
 
+archive.tar.gz: $(STL_FILES)
+	tar --zstd -cvf archive.tar.zst $(STL_FILES)
+
 .PHONY: preview
 preview: $(SCAD_SOURCES)
 
 .PHONY: rendering
 rendering: $(STL_FILES)
+
+.PHONY: archive
+archive: archive.tar.gz
+
+.PHONY: clean
+clean:
+	rm -f *.stl
+	rm -f *.zst
