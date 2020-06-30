@@ -20,10 +20,12 @@ RUN useradd -m folivora
 USER folivora
 
 RUN opam init -a -y --comp=$OCAML_VERSION --disable-sandboxing
-RUN eval $(opam config env)
+RUN opam install dune
 WORKDIR /tmp/
-RUN git clone https://github.com/namachan10777/scad-ml.git
-RUN opam pin add --yes scad-ml
-RUN rm -r scad-ml
+RUN git clone https://github.com/namachan10777/scad-ml
+WORKDIR scad-ml
+RUN eval $(opam config env) && \
+	dune build && \
+	opam pin add --yes .
 
 ENTRYPOINT ["/bin/bash"]
