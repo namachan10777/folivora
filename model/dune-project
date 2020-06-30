@@ -12,4 +12,5 @@
   (synopsis "3d model")
   (description "")
   (depends
-    (dune (> 2.0))))
+    (dune (> 2.0))
+    (scad_ml (> 0.0))))
