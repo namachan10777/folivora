@@ -4,5 +4,16 @@ let build scad filename =
     close_out oc
 
 let () =
-    build Key_unit.cherry_mx "cherry_mx.scad";
-    build Key_unit.kailh_lp "kailh_lp.scad";
+	let (model, _) = Thumb.f [
+		((19.0, 19.0, 5.0), Key_unit.cherry_mx, Scad_ml.Core.pi /. 12.);
+		((19.0, 19.0, 5.0), Key_unit.cherry_mx, Scad_ml.Core.pi /. 6.);
+		((19.0, 19.0, 5.0), Key_unit.cherry_mx, Scad_ml.Core.pi /. 12.);
+	]
+	((19.0, 19.0, 5.0), Key_unit.cherry_mx)
+	[
+		((19.0, 19.0, 5.0), Key_unit.cherry_mx, Scad_ml.Core.pi /. 12.);
+		((19.0, 19.0, 5.0), Key_unit.cherry_mx, Scad_ml.Core.pi /. 6.);
+		((19.0, 19.0, 5.0), Key_unit.cherry_mx, Scad_ml.Core.pi /. 12.);
+	]
+	in
+	build model "thumb.scad"
