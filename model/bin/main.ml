@@ -3,17 +3,37 @@ let build scad filename =
     Scad_ml.Util.write oc scad;
     close_out oc
 
+let key_size = (19.0, 19.0, 5.0)
+
+let cherry_mx = Key_unit.cherry_mx
+let pi = Scad_ml.Core.pi
+
 let () =
 	let (model, _) = Thumb.f [
-		((19.0, 19.0, 5.0), Key_unit.cherry_mx, Scad_ml.Core.pi /. 12.);
-		((19.0, 19.0, 5.0), Key_unit.cherry_mx, Scad_ml.Core.pi /. 6.);
-		((19.0, 19.0, 5.0), Key_unit.cherry_mx, Scad_ml.Core.pi /. 12.);
+		(key_size, cherry_mx, pi /. 12.);
+		(key_size, cherry_mx, pi /. 6.);
+		(key_size, cherry_mx, pi /. 12.);
 	]
 	((19.0, 19.0, 5.0), Key_unit.cherry_mx)
 	[
-		((19.0, 19.0, 5.0), Key_unit.cherry_mx, Scad_ml.Core.pi /. 12.);
-		((19.0, 19.0, 5.0), Key_unit.cherry_mx, Scad_ml.Core.pi /. 6.);
-		((19.0, 19.0, 5.0), Key_unit.cherry_mx, Scad_ml.Core.pi /. 12.);
+		(key_size, cherry_mx, pi /. 12.);
+		(key_size, cherry_mx, pi /. 6.);
+		(key_size, cherry_mx, pi /. 12.);
 	]
 	in
-	build model "thumb.scad"
+	let pad = Pad.f [
+		{
+			Pad.d = (0.0, 0.0, 0.0);
+			Pad.base = (key_size, cherry_mx);
+			Pad.far = [
+				(key_size, cherry_mx, pi /. 12.);
+				(key_size, cherry_mx, pi /. 12.);
+			];
+			Pad.near = [
+				(key_size, cherry_mx, pi /. 12.);
+			];
+		}
+	]
+	in
+	build pad "pad.scad";
+	build model "thumb.scad";
