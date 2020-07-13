@@ -26,13 +26,16 @@ let () =
 			Pad.d = (0.0, 0.0, 0.0);
 			Pad.base = (key_size, cherry_mx);
 			Pad.far = [
+				(key_size, cherry_mx, pi /. 6.);
 				(key_size, cherry_mx, pi /. 12.);
+				(key_size, cherry_mx, pi /. 24.);
 				(key_size, cherry_mx, pi /. 12.);
+				(key_size, cherry_mx, pi /. 6.);
 			];
 			Pad.near = [
 				(key_size, cherry_mx, pi /. 12.);
 			];
-		}
+		};
 	]
 	in
 	build pad "pad.scad";
