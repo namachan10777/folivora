@@ -13,4 +13,5 @@
   (description "")
   (depends
     (dune (> 2.0))
+    (core (>= 0.14.0))
     (scad_ml (> 0.0))))

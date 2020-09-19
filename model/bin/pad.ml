@@ -1,5 +1,7 @@
 module M = Scad_ml.Model
+
 open Scad_ml.Util
+open Core
 
 type size_t = float * float * float
 type column_t = (size_t * (size_t -> Scad_ml.Core.scad_t) * float) list
@@ -28,7 +30,7 @@ let gen_col c =
 				plate |@> (angle_acc+.angle, 0.0, 0.0) |>> p;
 			] in
 			let key = trans key_gen key_size  |>> (0., 0., -.h) |@> (angle_acc', 0.0, 0.0) |>> p in
-			key :: joint :: gen trans (x, y +. d *. cos angle_acc', z +. d *. sin angle_acc') angle_acc' remain
+			key :: joint :: gen trans (x, y +. d *. Float.cos angle_acc', z +. d *. Float.sin angle_acc') angle_acc' remain
 	in
 	let far = gen (fun gen size -> gen size) (0.0, d, 0.0) 0.0 c.far in
 	let near =
@@ -37,7 +39,18 @@ let gen_col c =
 	in
 	M.union (center :: near :: far)
 
-let f = function
-	| [] -> M.union []
-	| c :: []  -> gen_col c
-	| c1 :: _ :: _ -> gen_col c1
+let f conf =
+    let get_col_width c = match c.base with
+        ((w, _, _), _) -> w
+    in
+    let rec g p = function 
+        | [] -> []
+        | c :: []  -> [gen_col c |> M.translate p]
+        | c1 :: (c2 :: _ as remain) ->
+            (gen_col c1 |> M.translate p) :: g (p <+> c2.d <+> (get_col_width c1, 0., 0.)) remain
+    in
+    let p_start = List.hd conf
+        |> Option.map ~f:(fun c -> c.d)
+        |> Option.value ~default:(0., 0., 0.)
+    in
+    conf |> g p_start |> M.union

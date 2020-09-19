@@ -27,9 +27,27 @@ let () =
 			Pad.base = (key_size, cherry_mx);
 			Pad.far = [
 				(key_size, cherry_mx, pi /. 6.);
+			];
+			Pad.near = [
 				(key_size, cherry_mx, pi /. 12.);
-				(key_size, cherry_mx, pi /. 24.);
+			];
+		};
+		{
+			Pad.d = (1.0, 0.0, 0.0);
+			Pad.base = (key_size, cherry_mx);
+			Pad.far = [
+				(key_size, cherry_mx, pi /. 6.);
+				(key_size, cherry_mx, pi /. 6.);
+			];
+			Pad.near = [
 				(key_size, cherry_mx, pi /. 12.);
+			];
+		};
+		{
+			Pad.d = (1.0, 0.0, 0.0);
+			Pad.base = (key_size, cherry_mx);
+			Pad.far = [
+				(key_size, cherry_mx, pi /. 6.);
 				(key_size, cherry_mx, pi /. 6.);
 			];
 			Pad.near = [
