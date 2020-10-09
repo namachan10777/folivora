@@ -26,15 +26,24 @@ let calc_pos col n =
     in
     let (ax, p) = f 0.0 (0., 0., 0.) (List.take col.keys (n+1)) in
     let a = (ax, 0., 0.) <+> col.angle in
-    let p = Mat.trans (Mat.rot (get_x col.angle) (get_y col.angle) (get_z col.angle)) p in
+    let p = Mat.trans (Mat.rot (get_x col.angle, get_y col.angle, get_z col.angle)) p in
     (a, p)
 
 let gen_col t col =
     List.init (List.length col.keys) ~f:(fun i ->
         let (a, p) = calc_pos col i in
-        let gen = List.nth_exn col.keys i |> get_z in
-        let key = gen (col.w, List.nth_exn col.keys i |> get_x, t) |>> (0., 0., -.t) in
-        key |@> a |>> p)
+        let (d, _, gen) = List.nth_exn col.keys i in
+        let key = gen (col.w, d, t) |>> (0., 0., -.t) in
+        let key = key |@> a |>> p in
+        if i >= (List.length col.keys) - 1
+        then let () = Printf.printf "%d\n" i in [key]
+        else
+            let plate = M.cube (col.w, 0.01, t) |>> (0., 0., -.t) in
+            let near = plate |@> a |>> (p <+> Mat.trans (Mat.rot a) (0., d, 0.) ) in
+            let (a, p) = calc_pos col (i+1) in
+            let far = plate |@> a |>> p in
+            [key; M.hull [near; far]])
+    |> List.concat
 
 let f conf =
     let rec f = function

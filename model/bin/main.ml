@@ -15,7 +15,13 @@ let pad_conf = {
             Pad.w = 16.0;
             Pad.pos = (0.0, 0.0, 0.0);
             Pad.angle = (-.pi/.3.0, pi/.10., pi/.10.);
-            Pad.keys = [(16.0, pi/.6., cherry_mx);(16.0, pi/.6., cherry_mx);(16.0, pi/.6., cherry_mx)];
+            Pad.keys = [
+                (16.0, pi/.6., cherry_mx);
+                (16.0, pi/.6., cherry_mx);
+                (16.0, pi/.6., cherry_mx);
+                (16.0, pi/.6., cherry_mx);
+                (16.0, pi/.6., cherry_mx);
+            ];
         };
     ];
 }
