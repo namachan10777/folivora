@@ -32,6 +32,9 @@ let mul a b =
     done;
     ret
 
+let rot x y z =
+    rotx x |> mul (roty y) |> mul (rotz z)
+
 let trans mat vec =
     let dot r v =
         let (x, y, z) = v in

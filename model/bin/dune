@@ -1,4 +1,4 @@
 (executable
  (public_name model)
  (name main)
- (libraries model scad_ml))
+ (libraries model scad_ml core))

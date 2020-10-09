@@ -13,31 +13,9 @@ let pad_conf = {
     cols = [
         {
             Pad.w = 16.0;
-            Pad.near = [];
-            Pad.far = [];
-            Pad.diff = (0.0, 0.0, 0.0);
-            Pad.center = (16.0, cherry_mx)
-        };
-        {
-            Pad.w = 16.0;
-            Pad.near = [];
-            Pad.far = [];
-            Pad.diff = (2.0, 2.0, -1.0);
-            Pad.center = (16.0, cherry_mx)
-        };
-        {
-            Pad.w = 16.0;
-            Pad.near = [];
-            Pad.far = [];
-            Pad.diff = (2.0, 2.0, -2.0);
-            Pad.center = (16.0, cherry_mx)
-        };
-        {
-            Pad.w = 16.0;
-            Pad.near = [];
-            Pad.far = [];
-            Pad.diff = (2.0, -2.0, 2.0);
-            Pad.center = (16.0, cherry_mx)
+            Pad.pos = (0.0, 0.0, 0.0);
+            Pad.angle = (-.pi/.3.0, pi/.10., pi/.10.);
+            Pad.keys = [(16.0, pi/.6., cherry_mx);(16.0, pi/.6., cherry_mx);(16.0, pi/.6., cherry_mx)];
         };
     ];
 }
