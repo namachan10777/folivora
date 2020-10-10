@@ -36,9 +36,9 @@ let pad_conf = {
         };
         {
             Pad.w = 16.0;
-            Pad.pos = (32.0, 0.0, 0.0);
+            Pad.pos = (32.0, -16.0, 0.0);
             Pad.angle = (-.pi/.3.0, -.pi/.10., -.pi/.20.);
-            Pad.offset = 0;
+            Pad.offset = 1;
             Pad.keys = [
                 (16.0, pi/.6., cherry_mx);
                 (16.0, pi/.6., cherry_mx);
