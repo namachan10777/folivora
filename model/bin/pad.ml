@@ -7,6 +7,7 @@ type col_t = {
     w : float;
     pos : Scad_ml.Math.t;
     angle: Scad_ml.Math.t;
+    offset: int;
     keys : (float * float * (Scad_ml.Math.t -> Scad_ml.Core.scad_t)) list;
 }
 
@@ -44,9 +45,45 @@ let gen_col t col =
             let far = plate |@> a |>> p in
             [key; M.hull [near; far]])
     |> List.concat
+    |> List.map ~f:(M.translate col.pos)
+
+let gen_joint t coll colr =
+    let nr = (List.length colr.keys) - colr.offset in
+    let nl = (List.length coll.keys) - coll.offset in
+    let take_n = min nr nl in
+    List.init take_n ~f:(fun i ->
+        let il = i + coll.offset in
+        let ir = i + colr.offset in
+        let (dr, _, _) = List.nth_exn colr.keys ir in
+        let (dl, _, _) = List.nth_exn coll.keys il in
+        let sidel = M.cube (0.01, dl, t) |>> (coll.w, 0., -.t) in
+        let sider = M.cube (0.01, dr, t) |>> (0., 0., -.t) in
+        let (ar, pr) = calc_pos colr ir in
+        let (al, pl) = calc_pos coll il in
+        let joint = M.hull [sider |@> ar |>> pr |>> colr.pos; sidel |@> al |>> pl |>> coll.pos] in
+        if i >= take_n-1
+        then [joint]
+        else
+            let needle = M.cube (0.01, 0.01, t) |>> (0., 0., -.t) in
+            let (ar', pr') = calc_pos colr (ir+1) in
+            let (al', pl') = calc_pos coll (il+1) in
+            [joint;M.hull [
+                needle |@> ar' |>> pr' |>> colr.pos;
+                needle |>> (coll.w, 0., 0.) |@> al' |>> pl' |>> coll.pos;
+                needle |>> (0., dr, 0.) |@> ar |>> pr |>> colr.pos;
+                needle |>> (coll.w, 0., 0.) |>> (0., dl, 0.) |@> al |>> pl |>> coll.pos;
+            ]])
+    |> List.concat
+
 
 let f conf =
     let rec f = function
     | [] -> []
-    | col :: last -> List.append (gen_col conf.key_t col) (f last)
+    | coll :: colr :: last ->
+        (gen_col conf.key_t coll)
+        @ (gen_joint conf.key_t coll colr)
+        @ (f (colr :: last))
+    | col :: last ->
+        (gen_col conf.key_t col)
+        @ (f last)
     in f conf.cols |> M.union
