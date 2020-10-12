@@ -127,8 +127,7 @@ let gen_joint t coll colr =
     in
     join_center @ jointl_far @ jointl_near
 
-
-let f conf =
+let pad conf =
     let rec f = function
     | [] -> []
     | coll :: colr :: last ->
@@ -139,3 +138,5 @@ let f conf =
         (gen_col conf.key_t col)
         @ (f last)
     in f conf.cols |> M.union
+
+let f conf = pad conf

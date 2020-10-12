@@ -14,7 +14,7 @@ let pad_conf = {
         {
             Pad.w = 16.0;
             Pad.pos = (0.0, 0.0, 0.0);
-            Pad.angle = (-.pi/.3.0, pi/.10., pi/.20.);
+            Pad.angle = (-.pi/.3.0, pi/.20., pi/.20.);
             Pad.offset = 0;
             Pad.keys = [
                 (16.0, pi/.6., cherry_mx);
@@ -24,7 +24,19 @@ let pad_conf = {
         };
         {
             Pad.w = 16.0;
-            Pad.pos = (16.0, 0.0, 0.0);
+            Pad.pos = (17.0, 0.0, -2.5);
+            Pad.angle = (-.pi/.3.0, 0., pi/.40.);
+            Pad.offset = 0;
+            Pad.keys = [
+                (16.0, pi/.6., cherry_mx);
+                (16.0, pi/.6., cherry_mx);
+                (16.0, pi/.6., cherry_mx);
+                (16.0, pi/.6., cherry_mx);
+            ];
+        };
+        {
+            Pad.w = 16.0;
+            Pad.pos = (34.0, 3.0, -4.5);
             Pad.angle = (-.pi/.3.0, 0., 0.);
             Pad.offset = 0;
             Pad.keys = [
@@ -36,9 +48,32 @@ let pad_conf = {
         };
         {
             Pad.w = 16.0;
-            Pad.pos = (32.0, -16.0, 0.0);
-            Pad.angle = (-.pi/.3.0, -.pi/.10., -.pi/.20.);
-            Pad.offset = 1;
+            Pad.pos = (51.0, 2.0, -3.5);
+            Pad.angle = (-.pi/.3.0, 0., -.pi/.40.);
+            Pad.offset = 0;
+            Pad.keys = [
+                (16.0, pi/.6., cherry_mx);
+                (16.0, pi/.6., cherry_mx);
+                (16.0, pi/.6., cherry_mx);
+                (16.0, pi/.6., cherry_mx);
+            ];
+        };
+        {
+            Pad.w = 16.0;
+            Pad.pos = (68.0, -1.0, 1.0);
+            Pad.angle = (-.pi/.3.0, 0., -.pi/.20.);
+            Pad.offset = 0;
+            Pad.keys = [
+                (16.0, pi/.6., cherry_mx);
+                (16.0, pi/.6., cherry_mx);
+                (16.0, pi/.6., cherry_mx);
+            ];
+        };
+        {
+            Pad.w = 16.0;
+            Pad.pos = (85.0, -4.0, 1.0);
+            Pad.angle = (-.pi/.3.0, -.pi/.20., -.pi/.15.);
+            Pad.offset = 0;
             Pad.keys = [
                 (16.0, pi/.6., cherry_mx);
                 (16.0, pi/.6., cherry_mx);
