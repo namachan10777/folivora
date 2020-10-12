@@ -16,14 +16,36 @@ type pad_conf_t = {
     cols : col_t list;
 }
 
-let calc_pos col n =
-    let rec f a p = function
+type conf_t = {
+    main_pad : pad_conf_t;
+    pad_tilt : Scad_ml.Math.t;
+    thumb_pad : pad_conf_t;
+    thumb_tilt : Scad_ml.Math.t;
+    thumb_pos : Scad_ml.Math.t;
+}
+
+let calc_pos t col n =
+    let reverse_adjust bend a =
+        if Float.(<.) bend 0.
+        then
+            let y = t *. Float.sin (-.bend) in
+            let z = -. t +. t *. Float.cos bend in
+            (0., (y *. Float.cos a) -. (z *. Float.sin a), (y *. Float.sin a)  +. (z *. Float.cos a))
+        else (0., 0., 0.)
+
+    in
+    let () = Printf.printf "\n--------------\n" in
+    let rec f a p =function
     | [] -> (a, p)
-    | (_, bend, _) :: [] -> (a +. bend, p)
+    | (_, bend, _) :: [] ->
+        let () = Printf.printf "%f\n" a in
+        (a +. bend, p <+> reverse_adjust bend a)
     | (d, bend, _) :: last ->
+        let () = Printf.printf "pass %f\n" a in
         let (x, y, z) = p in
         let a = a +. bend in
-        f a (x, y +. d *. Float.cos a, z +. d *. Float.sin a) last
+        let p = (x, y +. d *. Float.cos a, z +. d *. Float.sin a) <+> reverse_adjust bend (a-.bend) in
+        f a p last
     in
     let (ax, p) = f 0.0 (0., 0., 0.) (List.take col.keys (n+1)) in
     let a = (ax, 0., 0.) <+> col.angle in
@@ -32,7 +54,7 @@ let calc_pos col n =
 
 let gen_col t col =
     List.init (List.length col.keys) ~f:(fun i ->
-        let (a, p) = calc_pos col i in
+        let (a, p) = calc_pos t col i in
         let (d, _, gen) = List.nth_exn col.keys i in
         let key = gen (col.w, d, t) |>> (0., 0., -.t) in
         let key = key |@> a |>> p in
@@ -41,7 +63,7 @@ let gen_col t col =
         else
             let plate = M.cube (col.w, 0.01, t) |>> (0., 0., -.t) in
             let near = plate |@> a |>> (p <+> Mat.trans (Mat.rot a) (0., d, 0.) ) in
-            let (a, p) = calc_pos col (i+1) in
+            let (a, p) = calc_pos t col (i+1) in
             let far = plate |@> a |>> p in
             [key; M.hull [near; far]])
     |> List.concat
@@ -61,9 +83,9 @@ let gen_joint t coll colr =
         let ir = colr.offset + nl + i in
         let (dl, _, _) = List.nth_exn coll.keys il in
         let (dr, _, _) = List.nth_exn colr.keys ir in
-        let (al, pl) = calc_pos coll il in
-        let (ar, pr) = calc_pos colr (ir-1) in
-        let (ar', pr') = calc_pos colr ir in
+        let (al, pl) = calc_pos t coll il in
+        let (ar, pr) = calc_pos t colr (ir-1) in
+        let (ar', pr') = calc_pos t colr ir in
         [
             M.hull [
                 needle |>> colld  |>> (0., dl, 0.)|@> al |>> pl;
@@ -85,9 +107,9 @@ let gen_joint t coll colr =
         let il = 0 in
         let ir = i + 1 in
         let (dr, _, _) = List.nth_exn colr.keys ir in
-        let (al, pl) = calc_pos coll il in
-        let (ar, pr) = calc_pos colr ir in
-        let (ar', pr') = calc_pos colr (ir-1) in
+        let (al, pl) = calc_pos t coll il in
+        let (ar, pr) = calc_pos t colr ir in
+        let (ar', pr') = calc_pos t colr (ir-1) in
         [
             M.hull [
                 needle |>> colld |@> al |>> pl;
@@ -108,15 +130,15 @@ let gen_joint t coll colr =
         let (dl, _, _) = List.nth_exn coll.keys il in
         let sidel = M.cube (0.01, dl, t) |>> (coll.w, 0., -.t) in
         let sider = M.cube (0.01, dr, t) |>> (0., 0., -.t) in
-        let (ar, pr) = calc_pos colr ir in
-        let (al, pl) = calc_pos coll il in
+        let (ar, pr) = calc_pos t colr ir in
+        let (al, pl) = calc_pos t coll il in
         let joint = M.hull [sider |@> ar |>> pr; sidel |@> al |>> pl] in
         if i >= take_n-1
         then [joint]
         else
             let needle = M.cube (0.01, 0.01, t) |>> (0., 0., -.t) in
-            let (ar', pr') = calc_pos colr (ir+1) in
-            let (al', pl') = calc_pos coll (il+1) in
+            let (ar', pr') = calc_pos t colr (ir+1) in
+            let (al', pl') = calc_pos t coll (il+1) in
             [joint;M.hull [
                 needle |@> ar' |>> pr';
                 needle |>> (coll.w, 0., 0.) |@> al' |>> pl';
@@ -139,4 +161,8 @@ let pad conf =
         @ (f last)
     in f conf.cols |> M.union
 
-let f conf = pad conf
+let f conf =
+    M.union [
+         pad conf.main_pad |@> conf.pad_tilt;
+         pad conf.thumb_pad |@> conf.thumb_tilt |>> conf.thumb_pos;
+    ]
