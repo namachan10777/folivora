@@ -83,5 +83,52 @@ let pad_conf = {
     ];
 }
 
+let thumb_conf = {
+    Pad.key_t = 6.0;
+    cols = [
+        {
+            Pad.w = 16.0;
+            Pad.pos = (-15.0, 0., 10.0);
+            Pad.angle = (0., 1.*.pi/.5., 0.);
+            Pad.offset = 0;
+            Pad.keys = [
+                (16.0, 0., cherry_mx);
+                (16.0, pi/.6., cherry_mx);
+            ];
+        };
+        {
+            Pad.w = 16.0;
+            Pad.pos = (0.0, 0.0, 0.0);
+            Pad.angle = (0., 0., 0.);
+            Pad.offset = 0;
+            Pad.keys = [
+                (16.0, 0., cherry_mx);
+            ];
+        };
+        {
+            Pad.w = 16.0;
+            Pad.pos = (27.0, -18.0, 2.0);
+            Pad.angle = (pi/.6., -2.*.pi/.5., 0.);
+            Pad.offset = 1;
+            Pad.keys = [
+                (16.0, 0., cherry_mx);
+                (16.0, -.pi/.6., cherry_mx);
+            ];
+        };
+    ];
+}
+
+let conf = {
+    Pad.main_pad = pad_conf;
+    Pad.pad_tilt = (0., pi/.20., 0.);
+    Pad.thumb_pad = thumb_conf;
+    Pad.thumb_tilt = (0., 0., 0.);
+    Pad.thumb_pos = (-10., -20., -20.);
+    Pad.wrist_switch = cherry_mx;
+    Pad.wrist_switch_size = (60., 40., 10.);
+    Pad.wrist_switch_offset = (30., 20.);
+    Pad.wrist_switch_pos = (30., -90., -30.);
+}
+
 let () =
-    build (Pad.f pad_conf) "pad.scad"
+    build (Pad.f conf) "pad.scad"

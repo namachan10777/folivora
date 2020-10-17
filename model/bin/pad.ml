@@ -22,6 +22,10 @@ type conf_t = {
     thumb_pad : pad_conf_t;
     thumb_tilt : Scad_ml.Math.t;
     thumb_pos : Scad_ml.Math.t;
+    wrist_switch_size : Scad_ml.Math.t;
+    wrist_switch : (Scad_ml.Math.t -> Scad_ml.Core.scad_t);
+    wrist_switch_offset : float * float;
+    wrist_switch_pos : Scad_ml.Math.t;
 }
 
 let calc_pos t col n =
@@ -161,8 +165,22 @@ let pad conf =
         @ (f last)
     in f conf.cols |> M.union
 
+let wrist_switch size key p =
+    let (w, d, h) = size in
+    let inner = (w-.10., d-.10., h-. 5.) in
+    let switch_size = ((get_x inner) -. Float.abs (w /. 2. -. fst p), (get_y inner) -. Float.abs (d /. 2. -. snd p), 5.) in
+    let switch = key switch_size in
+    M.union [
+        M.difference (M.cube size) [
+            M.cube inner |>> (5., 5., 0.);
+            M.cube switch_size |>> ((fst p) -. (get_x switch_size) /. 2., (snd p) -. (get_y switch_size) /. 2., 5.);
+        ];
+        switch |>> ((fst p) -. (get_x switch_size) /. 2., (snd p) -. (get_y switch_size) /. 2., 5.);
+    ]
+
 let f conf =
     M.union [
          pad conf.main_pad |@> conf.pad_tilt;
          pad conf.thumb_pad |@> conf.thumb_tilt |>> conf.thumb_pos;
+         wrist_switch conf.wrist_switch_size conf.wrist_switch conf.wrist_switch_offset |>> conf.wrist_switch_pos;
     ]
