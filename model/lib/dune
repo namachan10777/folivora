@@ -1,2 +1,3 @@
 (library
- (name model))
+ (name model)
+ (libraries scad_ml core))

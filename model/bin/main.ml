@@ -5,5 +5,5 @@ let build scad filename =
 
 let key_size = (19.0, 19.0, 5.0)
 
-let cherry_mx = Key_unit.cherry_mx
+let cherry_mx = Model.Key_unit.cherry_mx
 let pi = Scad_ml.Core.pi
