@@ -58,6 +58,14 @@ let rec hjoint_col c1 c2 = match (c1, c2) with
         (M.hull [rside k1; lside k2])
         :: (M.hull [barfr k1; barnr k1'; barfl k2; barnl k2'])
         :: hjoint_col (k1'::mat1) (k2'::mat2)
+    | (k1 :: k1' :: [], k2 :: []) ->
+        (M.hull [rside k1; lside k2])
+        :: (M.hull [barfr k1; barnr k1'; barfl k2])
+        :: []
+    | (k1 :: [], k2 :: k2' :: []) ->
+        (M.hull [rside k1; lside k2])
+        :: (M.hull [barfr k1; barnr k2'; barfl k2])
+        :: []
     | _ -> []
 
 let rec place_col = function
