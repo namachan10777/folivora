@@ -54,3 +54,5 @@ let cherry_mx (w, d, h) =
         stairwell_size=(14., 14., h -. depression_h);
         block_size=(w, d);
     } 
+
+let dummy = M.cube
