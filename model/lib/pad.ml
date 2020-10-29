@@ -24,6 +24,21 @@ let barnl k =
     let (_, _, h) = k.size in
     M.cube (0.001, 0.001, h) |@> k.a |>> k.p
 
+let bfside k =
+    let (w, d, _) = k.size in
+    M.cube (w, 0.001, 0.001) |>> (0., d, 0.) |@> k.a |>> k.p
+
+let bnside k =
+    let (w, _, _) = k.size in
+    M.cube (w, 0.001, 0.001) |@> k.a |>> k.p
+
+let blside k =
+    let (_, d, _) = k.size in
+    M.cube (0.001, d, 0.001) |@> k.a |>> k.p
+
+let brside k =
+    let (w, d, _) = k.size in
+    M.cube (0.001, d, 0.001) |>> (w, 0., 0.) |@> k.a |>> k.p
 
 let fside k =
     let (w, d, h) = k.size in
@@ -41,8 +56,19 @@ let rside k =
     let (w, d, h) = k.size in
     M.cube (0.001, d, h) |>> (w, 0., 0.) |@> k.a |>> k.p
 
+let bottom k =
+    let (w, d, _) = k.size in
+    M.cube (w, d, 0.001) |@> k.a |>> k.p
+
 let body k =
     k.f k.size |@> k.a |>> k.p
+
+let lhalf k =
+    let (w, d, h) = k.size in
+    {
+        k with
+        size = (w/.2., d, h);
+    }
 
 let rec vjoint_col = function
     | [] -> []

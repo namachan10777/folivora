@@ -55,8 +55,8 @@ let k13 = {
 let k200 = {
     P.a = (0., pi/.20., pi/.60.);
     P.f = Model.Key_unit.dummy;
-    P.p = (18., -29., 42.5);
-    P.size = (0., 0., 0.);
+    P.p = (18., -9., 40.5);
+    P.size = (16., 0., 3.);
 }
 
 
@@ -267,7 +267,6 @@ let mat_covered = [
 let gen_cover conf =
     conf
     |> List.map ~f:(List.map ~f:(under_cover 1.5 2.5 Model.Key_unit.dummy))
-    |> P.ortho
 
 let sub = M.union [
     M.hull [
@@ -379,6 +378,13 @@ let thumb =
         (M.union [P.ortho tmat])
         []
 
+let thumb_cover = gen_cover tmat
+let idx pad c r = List.nth_exn (List.nth_exn pad c) r
+let tcover11 = idx thumb_cover 0 0
+let tcover12 = idx thumb_cover 0 1
+let tcover21 = idx thumb_cover 1 0
+let tcover22 = idx thumb_cover 1 1
+
 let top =
     Patch.apply_patches
         { Patch.target = Patch.Top; }
@@ -386,7 +392,26 @@ let top =
             P.ortho mat;
             P.ortho tmat;
             sub;
-            gen_cover tmat;
+            P.ortho @@ gen_cover tmat;
+            M.hull [
+                P.bottom @@ P.lhalf tcover22;
+                P.lside k300;
+                P.nside k200;
+            ];
+            M.hull [
+                P.bnside @@ P.lhalf tcover22;
+                P.bfside @@ P.lhalf tcover21;
+                P.barnl k300;
+            ];
+            M.hull [
+                P.bottom @@ P.lhalf tcover21;
+                P.barnl k300;
+                P.barfl kp;
+            ];
+            M.hull [
+                P.bnside @@ P.lhalf tcover21;
+                P.lside kp;
+            ];
             P.ortho [[kp]];
             M.hull [
                 P.barfl kp;
@@ -407,7 +432,7 @@ let top =
 let bottom =
     Patch.apply_patches
         { Patch.target = Patch.Bottom; }
-        (M.union [gen_cover mat_covered])
+        (M.union [P.ortho @@ gen_cover mat_covered])
         screw_set
 
 let () =
