@@ -247,12 +247,12 @@ let under_cover d t f k =
     }
 
 let mat = [
-    [k100;k10; k11; k12; k13];
-    [k200;k20; k21; k22; k23];
-    [k300;k30; k31; k32; k33];
-    [k400;k40; k41; k42; k43];
-    [k500;k50; k51; k52];
-    [k600;k60; k61; k62];
+    [None;     None;      Some(k10); Some(k11); Some(k12); Some(k13)];
+    [None;     None;      Some(k20); Some(k21); Some(k22); Some(k23)];
+    [None;     Some(k300);Some(k30); Some(k31); Some(k32); Some(k33)];
+    [Some(kp); Some(k400);Some(k40); Some(k41); Some(k42); Some(k43)];
+    [None;     Some(k500);Some(k50); Some(k51); Some(k52); None];
+    [None;     None;      Some(k60); Some(k61); Some(k62); None];
 ]
 
 let mat_covered = [
@@ -266,7 +266,7 @@ let mat_covered = [
 
 let gen_cover conf =
     conf
-    |> List.map ~f:(List.map ~f:(under_cover 1.5 2.5 Model.Key_unit.dummy))
+    |> List.map ~f:(List.map ~f:(Option.map ~f:(under_cover 1.5 2.5 Model.Key_unit.dummy)))
 
 let sub = M.union [
     M.hull [
@@ -368,8 +368,8 @@ let kt22 = {
 }
 
 let tmat = [
-    [kt11; kt12];
-    [kt21; kt22];
+    [Some(kt11); Some(kt12)];
+    [Some(kt21); Some(kt22)];
 ]
 
 let thumb = 
@@ -394,20 +394,19 @@ let top =
             sub;
             P.ortho @@ gen_cover tmat;
             M.hull [
-                P.bnside @@ P.lhalf tcover22;
-                P.bfside @@ P.lhalf tcover21;
+                P.bnside @@ P.lhalf @@ Option.value_exn tcover22;
+                P.bfside @@ P.lhalf @@ Option.value_exn tcover21;
                 P.barnl k300;
             ];
             M.hull [
-                P.bottom @@ P.lhalf tcover21;
+                P.bottom @@ P.lhalf @@ Option.value_exn tcover21;
                 P.barnl k300;
                 P.barfl kp;
             ];
             M.hull [
-                P.bnside @@ P.lhalf tcover21;
+                P.bnside @@ P.lhalf @@ Option.value_exn tcover21;
                 P.lside kp;
             ];
-            P.ortho [[kp]];
             M.hull [
                 P.barfl kp;
                 P.nside k300;
@@ -417,10 +416,6 @@ let top =
                 P.barnl k400;
                 P.fside kp;
             ];
-            M.hull [
-                P.nside k400;
-                P.barfr kp;
-            ]
         ])
         screw_set
 
