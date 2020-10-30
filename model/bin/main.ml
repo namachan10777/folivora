@@ -25,9 +25,9 @@ let k100 = {
 }
 
 let k10 = {
-    P.a = (-.pi/.2., pi/.20. +. pi/.20., pi/.30.);
+    P.a = (-.pi/.5., pi/.20. +. pi/.20., pi/.30.);
     P.f = cherry_mx;
-    P.p = (1., -11., 47.5);
+    P.p = (1., -21., 35.5);
     P.size = (16., 16., 6.);
 }
 
@@ -55,15 +55,15 @@ let k13 = {
 let k200 = {
     P.a = (0., pi/.20., pi/.60.);
     P.f = Model.Key_unit.dummy;
-    P.p = (18., -9., 40.5);
+    P.p = (18., -20., 30.5);
     P.size = (16., 0., 3.);
 }
 
 
 let k20 = {
-    P.a = (-.pi/.2., pi/.20., pi/.60.);
+    P.a = (-.pi/.5., pi/.20., pi/.60.);
     P.f = cherry_mx;
-    P.p = (18., -9., 41.);
+    P.p = (18., -20., 31.);
     P.size = (16., 16., 6.);
 }
 
@@ -91,21 +91,21 @@ let k23 = {
 let kp = {
     P.a = (0., pi/.20., 0.);
     P.f = cherry_mx;
-    P.p = (45., -57., 29.0);
+    P.p = (45., -67., 19.0);
     P.size = (16., 16., 6.);
 }
 
 let k300 = {
     P.a = (0., pi/.20., 0.);
     P.f = cherry_mx;
-    P.p = (36., -32., 35.0);
+    P.p = (36., -37., 25.0);
     P.size = (16., 16., 6.);
 }
 
 let k30 = {
-    P.a = (-.pi/.2., pi/.20., 0.);
+    P.a = (-.pi/.5., pi/.20., 0.);
     P.f = cherry_mx;
-    P.p = (36., -4., 34.);
+    P.p = (36., -16., 24.);
     P.size = (16., 16., 6.);
 }
 
@@ -133,14 +133,14 @@ let k33 = {
 let k400 = {
     P.a = (0., pi/.20., -.pi/.30.);
     P.f = cherry_mx;
-    P.p = (54., -32., 33.5);
+    P.p = (54., -42., 23.5);
     P.size = (16., 16., 6.);
 }
 
 let k40 = {
-    P.a = (-.pi/.2., pi/.20., -.pi/.60.);
+    P.a = (-.pi/.5., pi/.20., -.pi/.60.);
     P.f = cherry_mx;
-    P.p = (54., -8., 33.);
+    P.p = (54., -20., 21.);
     P.size = (16., 16., 6.);
 }
 
@@ -169,14 +169,14 @@ let k43 = {
 let k500 = {
     P.a = (0., pi/.20., -.pi/.30.);
     P.f = cherry_mx;
-    P.p = (73., -34., 35.5);
+    P.p = (73., -39., 20.5);
     P.size = (16., 16., 6.);
 }
 
 let k50 = {
-    P.a = (-.pi/.2., pi/.20., -.pi/.30.);
+    P.a = (-.pi/.5., pi/.20., -.pi/.30.);
     P.f = cherry_mx;
-    P.p = (73., -13., 35.);
+    P.p = (73., -23., 22.);
     P.size = (16., 16., 6.);
 }
 
@@ -208,9 +208,9 @@ let k600 = {
     P.size = (0., 0., 0.);
 }
 let k60 = {
-    P.a = (-.pi/.2., pi/.20., -.pi/.10.);
+    P.a = (-.pi/.5., pi/.20., -.pi/.10.);
     P.f = cherry_mx;
-    P.p = (94., -16., 32.);
+    P.p = (90., -26., 20.);
     P.size = (16., 16., 6.);
 }
 
@@ -342,28 +342,28 @@ let screw_set = [
 let kt11 = {
     P.a = (0., -.1.*.pi/.2., 0.);
     P.f = cherry_mx;
-    P.p = (21., -51., 15.);
+    P.p = (21., -61., 5.);
     P.size = (16., 16., 6.);
 }
 
 let kt12 = {
     P.a = (0., -.1.*.pi/.2.,  pi/.6.);
     P.f = cherry_mx;
-    P.p = (20., -27., 15.);
+    P.p = (20., -37., 5.);
     P.size = (16., 16., 6.);
 }
 
 let kt21 = {
     P.a = (0., -.4.*.pi/.7., 0.);
     P.f = cherry_mx;
-    P.p = (21., -51., 35.);
+    P.p = (21., -61., 25.);
     P.size = (16., 16., 6.);
 }
 
 let kt22 = {
     P.a = (0., -.4.*.pi/.7., pi/.6.);
     P.f = cherry_mx;
-    P.p = (20., -27., 35.);
+    P.p = (20., -37., 25.);
     P.size = (16., 16., 6.);
 }
 
@@ -393,11 +393,6 @@ let top =
             P.ortho tmat;
             sub;
             P.ortho @@ gen_cover tmat;
-            M.hull [
-                P.bottom @@ P.lhalf tcover22;
-                P.lside k300;
-                P.nside k200;
-            ];
             M.hull [
                 P.bnside @@ P.lhalf tcover22;
                 P.bfside @@ P.lhalf tcover21;
@@ -432,7 +427,7 @@ let top =
 let bottom =
     Patch.apply_patches
         { Patch.target = Patch.Bottom; }
-        (M.union [P.ortho @@ gen_cover mat_covered])
+        (M.union [P.ortho @@ gen_cover mat])
         screw_set
 
 let () =
