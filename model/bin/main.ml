@@ -282,7 +282,6 @@ let screw1 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
-    Patch.bottom_h = 4.5;
 }
 
 let screw2 = {
@@ -291,7 +290,6 @@ let screw2 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
-    Patch.bottom_h = 4.;
 }
 
 let screw3 = {
@@ -300,7 +298,6 @@ let screw3 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =4.5;
-    Patch.bottom_h = 7.5;
 }
 
 let screw4 = {
@@ -309,7 +306,6 @@ let screw4 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =4.5;
-    Patch.bottom_h = 6.;
 }
 
 
@@ -319,7 +315,6 @@ let screw5 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =4.5;
-    Patch.bottom_h = 6.;
 }
 
 
@@ -329,7 +324,6 @@ let screw6 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =4.5;
-    Patch.bottom_h = 6.;
 }
 
 let screw_set = [

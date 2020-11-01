@@ -6,10 +6,13 @@ type screw_conf_t = {
     out_r: float;
     in_r: float;
     top_h: float;
-    bottom_h: float;
     p: Scad_ml.Math.t;
     a: Scad_ml.Math.t;
 }
+
+let insert_l = 3.3
+let insert_r = 1.5
+let insert_out_r = insert_r +. 2.0
 
 type patch_t =
     | Screw of screw_conf_t
@@ -36,14 +39,14 @@ let apply_patches conf target patches =
                 in
                 (outer, M.union [inner; top_cut])
             | (Screw screw, Bottom) ->
-                let outer = M.cylinder ~center:true ~fn:30 screw.out_r screw.bottom_h
-                    |>> (0., 0., -.screw.bottom_h /. 2.) |@> screw.a |>> screw.p
+                let outer = M.cylinder ~center:true ~fn:30 insert_out_r insert_l
+                    |>> (0., 0., -.insert_l /. 2.) |@> screw.a |>> screw.p
                 in
-                let bottom_cut = M.cylinder ~center:true ~fn:30 screw.out_r 3.0
-                    |>> (0., 0., -.screw.bottom_h -. 1.5) |@> screw.a |>> screw.p
+                let bottom_cut = M.cylinder ~center:true ~fn:30 insert_out_r 3.0
+                    |>> (0., 0., -.insert_l -. 1.5) |@> screw.a |>> screw.p
                 in
-                let inner = M.cylinder ~center:true ~fn:30 screw.in_r (screw.bottom_h +. 0.02)
-                    |>> (0., 0., -.screw.bottom_h /. 2. -. 0.01) |@> screw.a |>> screw.p
+                let inner = M.cylinder ~center:true ~fn:30 insert_r (insert_l +. 0.02)
+                    |>> (0., 0., -.insert_l /. 2. -. 0.01) |@> screw.a |>> screw.p
                 in
                 (outer, M.union [inner; bottom_cut])
         )
