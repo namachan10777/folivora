@@ -264,9 +264,9 @@ let mat_covered = [
     [k61; k62];
 ]
 
-let gen_cover conf =
+let gen_cover t conf =
     conf
-    |> List.map ~f:(List.map ~f:(Option.map ~f:(under_cover 1.5 2.5 Model.Key_unit.dummy)))
+    |> List.map ~f:(List.map ~f:(Option.map ~f:(under_cover 3.5 t Model.Key_unit.dummy)))
 
 let sub = M.union [
     M.hull [
@@ -342,28 +342,28 @@ let screw_set = [
 let kt11 = {
     P.a = (0., -.1.*.pi/.2., 0.);
     P.f = cherry_mx;
-    P.p = (21., -61., 5.);
+    P.p = (21., -61., 2.);
     P.size = (16., 16., 6.);
 }
 
 let kt12 = {
     P.a = (0., -.1.*.pi/.2.,  pi/.6.);
     P.f = cherry_mx;
-    P.p = (20., -37., 5.);
+    P.p = (20., -37., 2.);
     P.size = (16., 16., 6.);
 }
 
 let kt21 = {
     P.a = (0., -.4.*.pi/.7., 0.);
     P.f = cherry_mx;
-    P.p = (21., -61., 25.);
+    P.p = (21., -61., 22.);
     P.size = (16., 16., 6.);
 }
 
 let kt22 = {
     P.a = (0., -.4.*.pi/.7., pi/.6.);
     P.f = cherry_mx;
-    P.p = (20., -37., 25.);
+    P.p = (20., -37., 22.);
     P.size = (16., 16., 6.);
 }
 
@@ -378,7 +378,7 @@ let thumb =
         (M.union [P.ortho tmat])
         []
 
-let thumb_cover = gen_cover tmat
+let thumb_cover = gen_cover 3.5 tmat
 let idx pad c r = List.nth_exn (List.nth_exn pad c) r
 let tcover11 = idx thumb_cover 0 0
 let tcover12 = idx thumb_cover 0 1
@@ -392,7 +392,7 @@ let top =
             P.ortho mat;
             P.ortho tmat;
             sub;
-            P.ortho @@ gen_cover tmat;
+            P.ortho @@ gen_cover 3.5 [[Some(kt21);Some(kt22);]];
             M.hull [
                 P.bnside @@ P.lhalf @@ Option.value_exn tcover22;
                 P.bfside @@ P.lhalf @@ Option.value_exn tcover21;
@@ -419,11 +419,69 @@ let top =
         ])
         screw_set
 
+
+let dummy_key = {
+    P.a = (0., 0., 0.);
+    P.f = Model.Key_unit.dummy;
+    P.p = (0., 0., 0.);
+    P.size = (0., 0., 0.);
+}
+
 let bottom =
-    Patch.apply_patches
+    let mcover c r = idx (gen_cover 0.5 mat) c r |> Option.value ~default:dummy_key in
+    let tcover c r = idx (gen_cover 3.5 tmat) c r |> Option.value ~default:dummy_key in
+    let base = Patch.apply_patches
         { Patch.target = Patch.Bottom; }
-        (M.union [P.ortho @@ gen_cover mat])
+        (M.union [
+            P.ortho @@ gen_cover 0.5 mat;
+            P.proj @@ gen_cover 0.5 mat;
+            M.hull [
+                P.pbarfl @@ mcover 3 0;
+                P.pnside @@ mcover 2 1;
+                P.pbarnl @@ mcover 3 1;
+                P.barfl @@ mcover 3 0;
+                P.nside @@ mcover 2 1;
+                P.barnl @@ mcover 3 1;
+            ];
+            M.hull[
+                P.barnr @@ mcover 1 2;
+                P.barnl @@ mcover 2 2;
+                P.barfl @@ mcover 2 1;
+            ];
+            M.hull[
+                P.pbarnr @@ mcover 1 2;
+                P.pbarnl @@ mcover 2 2;
+                P.pbarfl @@ mcover 2 1;
+            ];
+            M.hull [
+                P.plside @@ mcover 2 1;
+                P.pnside @@ mcover 1 2;
+                P.barfl @@ mcover 2 1;
+                P.ortho @@ gen_cover 3.5 [[Some(kt12);]];
+            ];
+            M.hull [
+                P.ortho @@ gen_cover 3.5 [[Some(kt11);]];
+                P.plside @@ mcover 3 0;
+                P.lside @@ mcover 3 0;
+            ];
+            M.hull [
+                P.fside @@ tcover 0 0;
+                P.nside @@ tcover 0 1;
+                P.pbarnl @@ mcover 2 1;
+                P.pbarfl @@ mcover 3 0;
+            ];
+        ])
         screw_set
+    in M.union [
+        M.difference
+            (M.union [
+                base;
+            ]) [
+            Pcbmod.hollow |>> (-24.5, -17., 0.);
+            ];
+        Pcbmod.top |>> (-24.5, -17., 0.);
+    ]
 
 let () =
-    build (M.union [bottom; top]) "pad.scad"
+    build (M.union [bottom; top]) "pad.scad";
+    build (M.union [Pcbmod.top]) "pcbmod.scad";

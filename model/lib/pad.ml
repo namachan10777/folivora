@@ -129,3 +129,119 @@ let ortho mat =
     | col :: [] -> (vjoint_col col) @ (place_col col)
     | col1 :: col2 :: mat -> (hjoint_col col1 col2) @(vjoint_col col1) @ (place_col col1) @ f (col2 :: mat)
     in f mat |> M.union
+
+let pbody k =
+    let (w, d, _) = k.size in
+    let top = k.f (w, d, 0.001) |@> k.a |>> k.p in
+    let bottom = M.linear_extrude ~height:0.1 @@ M.projection top in
+    M.hull [top; bottom]
+
+let pfside k =
+    let (w, d, _) = k.size in
+    let top = M.cube (w, 0.001, 0.001) |>> (0., d, 0.) |@> k.a |>> k.p in
+    let bottom = M.linear_extrude ~height:0.1 @@ M.projection top in
+    M.hull [top; bottom]
+
+let pnside k =
+    let (w, _, _) = k.size in
+    let top = M.cube (w, 0.001, 0.001) |>> (0., 0., 0.) |@> k.a |>> k.p in
+    let bottom = M.linear_extrude ~height:0.1 @@ M.projection top in
+    M.hull [top; bottom]
+
+let prside k =
+    let (w, d, _) = k.size in
+    let top = M.cube (0.001, d, 0.001) |>> (w, 0., 0.) |@> k.a |>> k.p in
+    let bottom = M.linear_extrude ~height:0.1 @@ M.projection top in
+    M.hull [top; bottom]
+
+let plside k =
+    let (_, d, _) = k.size in
+    let top = M.cube (0.001, d, 0.001) |>> (0., 0., 0.) |@> k.a |>> k.p in
+    let bottom = M.linear_extrude ~height:0.1 @@ M.projection top in
+    M.hull [top; bottom]
+
+let pbarfl k =
+    let (_, d, _) = k.size in
+    let top = M.cube (0.001, 0.001, 0.001) |>> (0., d, 0.) |@> k.a |>> k.p in
+    let bottom = M.linear_extrude ~height:0.1 @@ M.projection top in
+    M.hull [top; bottom]
+
+let pbarfr k =
+    let (w, d, _) = k.size in
+    let top = M.cube (0.001, 0.001, 0.001) |>> (w, d, 0.) |@> k.a |>> k.p in
+    let bottom = M.linear_extrude ~height:0.1 @@ M.projection top in
+    M.hull [top; bottom]
+
+
+let pbarnl k =
+    let top = M.cube (0.001, 0.001, 0.001) |>> (0., 0., 0.) |@> k.a |>> k.p in
+    let bottom = M.linear_extrude ~height:0.1 @@ M.projection top in
+    M.hull [top; bottom]
+
+let pbarnr k =
+    let (w, _, _) = k.size in
+    let top = M.cube (0.001, 0.001, 0.001) |>> (w, 0., 0.) |@> k.a |>> k.p in
+    let bottom = M.linear_extrude ~height:0.1 @@ M.projection top in
+    M.hull [top; bottom]
+
+let rec vjoint_proj = function
+    | [] -> []
+    | _ :: [] -> []
+    | None :: mat -> vjoint_proj mat
+    | _ :: None :: mat -> vjoint_proj mat
+    | Some(k1) :: Some(k2) :: mat ->
+        (M.hull [pfside k1; pnside k2])
+        :: vjoint_proj (Some(k2) :: mat)
+
+let rec hjoint_proj c1 c2 = match (c1, c2) with
+    | ([], []) -> []
+    | (None :: c1, None :: c2) -> hjoint_proj c1 c2
+
+    | (None :: [], Some _ :: []) ->
+        []
+    | (Some _ :: [], None :: []) ->
+        []
+
+    | (Some(k1) :: [], Some(k2) :: []) ->
+        [M.hull [prside k1; plside k2]]
+
+    | (Some(k1) :: None :: c1, Some(k2) :: None :: c2) ->
+        (M.hull [prside k1; plside k2])
+        :: hjoint_proj c1 c2
+
+    | (Some(k1) :: Some(k1') :: mat1, Some(k2) :: Some(k2') :: mat2) ->
+        (M.hull [prside k1; plside k2])
+        :: (M.hull [pbarfr k1; pbarnr k1'; pbarfl k2; pbarnl k2'])
+        :: hjoint_proj (Some(k1')::mat1) (Some(k2')::mat2)
+
+    | (Some(k1) :: Some(k1') :: c1, Some(k2) :: None :: c2) ->
+        (M.hull [prside k1; plside k2])
+        :: (M.hull [pbarfr k1; pbarnr k1'; pbarfl k2])
+        :: hjoint_proj c1 c2
+
+    | (Some(k1) :: None :: c1, Some(k2) :: Some(k2') :: c2) ->
+        (M.hull [prside k1; plside k2])
+        :: (M.hull [pbarfr k1; pbarnr k2'; pbarfr k2])
+        :: hjoint_proj c1 c2
+
+    | (None :: c1, Some _ :: c2) -> hjoint_proj c1 c2
+    | (Some _ :: c1, None :: c2) -> hjoint_proj c1 c2
+    | (_ :: _, []) -> []
+    | ([], _ :: _) -> []
+    | (_ :: _, _ :: _ :: _ :: []) -> []
+    | (_ :: _ :: _ :: [],  _ :: _) -> []
+    | _ -> []
+
+let rec place_proj = function
+    | [] -> []
+    | Some(k) :: col ->(pbody k) :: place_proj col
+    | None :: col -> place_proj col
+
+let proj mat =
+    let rec f = function
+    | [] -> []
+    | col :: [] -> (vjoint_proj col) @ (place_proj col)
+    | col1 :: col2 :: mat -> (hjoint_proj col1 col2) @(vjoint_proj col1) @ (place_proj col1) @ f (col2 :: mat)
+    in f mat |> M.union
+
+
