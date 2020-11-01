@@ -42,13 +42,10 @@ let apply_patches conf target patches =
                 let outer = M.cylinder ~center:true ~fn:30 insert_out_r insert_l
                     |>> (0., 0., -.insert_l /. 2.) |@> screw.a |>> screw.p
                 in
-                let bottom_cut = M.cylinder ~center:true ~fn:30 insert_out_r 3.0
-                    |>> (0., 0., -.insert_l -. 1.5) |@> screw.a |>> screw.p
-                in
                 let inner = M.cylinder ~center:true ~fn:30 insert_r (insert_l +. 0.02)
                     |>> (0., 0., -.insert_l /. 2. -. 0.01) |@> screw.a |>> screw.p
                 in
-                (outer, M.union [inner; bottom_cut])
+                (outer, M.union [inner])
         )
         |> List.unzip
     in M.difference (M.union (target :: union)) diff
