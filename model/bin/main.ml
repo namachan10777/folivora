@@ -376,6 +376,39 @@ let screw10 = {
     Patch.top_h =5.5;
 }
 
+let screw11 = {
+    Patch.a = (0., pi/.20., 0.);
+    Patch.p = (65., -57., 14.0);
+    Patch.out_r = 2.5;
+    Patch.in_r = 1.1;
+    Patch.top_h =8.5;
+}
+
+
+let screw12 = {
+    Patch.a = (0., pi/.20., -.pi/.10.);
+    Patch.p = (95., -33., 14.);
+    Patch.out_r = 2.5;
+    Patch.in_r = 1.1;
+    Patch.top_h =8.5;
+}
+
+let screw13 = {
+    Patch.a = (0., -.1.*.pi/.2., pi/.6.);
+    Patch.p = (20., -32., 3.);
+    Patch.out_r = 2.5;
+    Patch.in_r = 1.1;
+    Patch.top_h =8.5;
+}
+
+let screw14 = {
+    Patch.a = (0., -.4.*.pi/.7., pi/.6.);
+    Patch.p = (17., -32., 46.);
+    Patch.out_r = 2.5;
+    Patch.in_r = 1.1;
+    Patch.top_h =8.5;
+}
+
 let screw_set = [
     Patch.Screw screw1; Patch.Screw screw2;
     Patch.Screw screw3;
@@ -385,6 +418,10 @@ let screw_set = [
     Patch.Screw screw8;
     Patch.Screw screw9;
     Patch.Screw screw10;
+    Patch.Screw screw11;
+    Patch.Screw screw12;
+    Patch.Screw screw13;
+    Patch.Screw screw14;
 ]
 
 
@@ -440,7 +477,7 @@ let kt22 = {
 let kt32 = {
     P.a = (0., -.4.*.pi/.7., pi/.6.);
     P.f = cherry_mx;
-    P.p = (15., -37., 46.);
+    P.p = (15., -37., 48.);
     P.size = (00.01, 5., 6.);
 }
 
@@ -452,14 +489,14 @@ let tmat = [
 ]
 
 let mat = [
-    [None;        None;      Some(k00); None;      None;      Some(k03); None];
+    [None;        None;      None;      None;      None;      None;      None];
     [None;        None;      Some(k10); Some(k11); Some(k12); Some(k13); None];
     [None;        Some(k200);Some(k20); Some(k21); Some(k22); Some(k23); None];
     [None;        Some(k300);Some(k30); Some(k31); Some(k32); Some(k33); None];
     [Some(kp);    Some(k400);Some(k40); Some(k41); Some(k42); Some(k43); None];
     [Some(kp_sc); Some(k500);Some(k50); Some(k51); Some(k52); None;      None];
     [None;        Some(k600);Some(k60); Some(k61); Some(k62); None;      None];
-    [None;        None;      Some(k70); None;      Some(k72); None;      None];
+    [None;        None;           None; None;           None; None;      None];
 ]
 
 let thumb = 
