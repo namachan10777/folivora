@@ -19,14 +19,10 @@ type patch_t =
 
 type patch_target_t = Bottom | Top
 
-type patch_conf_t = {
-    target: patch_target_t;
-}
-
-let apply_patches conf target patches =
+let apply_patches target patches =
     let (union, diff) =
         patches
-        |> List.map ~f:(fun patch -> match (patch, conf.target) with
+        |> List.map ~f:(function
             | (Screw screw, Top) ->
                 let outer = M.cylinder ~center:true ~fn:30 screw.out_r screw.top_h
                     |>> (0., 0., screw.top_h /. 2.) |@> screw.a |>> screw.p
