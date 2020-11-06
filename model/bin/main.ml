@@ -17,56 +17,35 @@ let cylinder_top = M.cylinder 3.0 3.0 ~center:true
 let cylinder_bottom = M.cylinder 3.0 3.0 ~center:true
     |>> (0., 0., -.3.)
 
-let k100 = {
-    P.a = (0., pi/.20. +. pi/.20., pi/.30.);
-    P.f = Model.Key_unit.dummy;
-    P.p = (1., -20., 47.5);
-    P.size = (0., 0., 0.);
-}
-
-let k00 = {
-    P.a = (-.pi/.5., pi/.20. +. pi/.20., pi/.30.);
-    P.f = Model.Key_unit.dummy;
-    P.p = (-6., -14., 31.5);
-    P.size = (0.001, 6., 6.);
-}
-
-let k10 = {
-    P.a = (-.pi/.5., pi/.20. +. pi/.20., pi/.30.);
-    P.f = cherry_mx;
-    P.p = (1., -21., 35.5);
-    P.size = (17., 17., 6.);
-}
-
 let k11 = {
-    P.a = (0., pi/.12. +. pi/.20., pi/.30.);
-    P.f = cherry_mx;
-    P.p = (-7., -1., 24.5);
-    P.size = (17., 17., 6.);
+    P.a = (-.pi/.5., pi/.20. +. pi/.20., pi/.30.);
+    P.f = cherry_mx (1.5, 1.5);
+    P.p = (-2., -23., 37.5);
+    P.size = (20., 20., 6.);
 }
 
 let k12 = {
-    P.a = (pi/.12., pi/.12. +. pi/.20., pi/.30.);
-    P.f = cherry_mx;
-    P.p = (-9., 18., 24.5);
-    P.size = (17., 17., 6.);
-}
-
-let k03 = {
-    P.a = (pi/.6., pi/.12. +. pi/.20., pi/.30.);
-    P.f = Model.Key_unit.dummy;
-    P.p = (-16., 40., 29.5);
-    P.size = (0.001, 5., 6.);
+    P.a = (0., pi/.12. +. pi/.20., pi/.30.);
+    P.f = cherry_mx (1.5, 0.);
+    P.p = (-10., -1., 25.5);
+    P.size = (20., 17., 6.);
 }
 
 let k13 = {
-    P.a = (pi/.6., pi/.12. +. pi/.20., pi/.30.);
-    P.f = cherry_mx;
-    P.p = (-9., 37., 29.5);
-    P.size = (17., 17., 6.);
+    P.a = (pi/.12., pi/.12. +. pi/.20., pi/.30.);
+    P.f = cherry_mx (1.5, 0.);
+    P.p = (-12., 18., 25.5);
+    P.size = (20., 17., 6.);
 }
 
-let k200 = {
+let k14 = {
+    P.a = (pi/.6., pi/.12. +. pi/.20., pi/.30.);
+    P.f = cherry_mx (1.5, -1.5);
+    P.p = (-12., 37., 30.5);
+    P.size = (20., 20., 6.);
+}
+
+let k20 = {
     P.a = (0., pi/.20., pi/.60.);
     P.f = Model.Key_unit.dummy;
     P.p = (22., -25., 30.5);
@@ -74,199 +53,172 @@ let k200 = {
 }
 
 
-let k20 = {
+let k21 = {
     P.a = (-.pi/.5., pi/.20., pi/.60.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., 0.);
     P.p = (18., -20., 31.);
     P.size = (17., 17., 6.);
 }
 
-let k21 = {
+let k22 = {
     P.a = (0., pi/.20., pi/.60.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., 0.);
     P.p = (14., 1., 16.);
     P.size = (17., 17., 6.);
 }
 
-let k22 = {
+let k23 = {
     P.a = (pi/.12., pi/.20., pi/.60.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., 0.);
     P.p = (12.5, 20., 16.);
     P.size = (17., 17., 6.);
 }
 
-let k23 = {
+let k24 = {
     P.a = (pi/.6., pi/.20., pi/.60.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., -1.5);
     P.p = (12., 39., 21.);
-    P.size = (17., 17., 6.);
+    P.size = (17., 20., 6.);
 }
 
 let kp = {
     P.a = (0., pi/.20., 0.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (-2., 0.);
     P.p = (45., -67., 19.0);
-    P.size = (17., 17., 6.);
+    P.size = (21., 17., 6.);
 }
 
-let kp_sc = {
+let k30 = {
     P.a = (0., pi/.20., 0.);
-    P.f = Model.Key_unit.dummy;
-    P.p = (70., -57., 17.0);
-    P.size = (0.001, 4., 6.);
-}
-
-let k300 = {
-    P.a = (0., pi/.20., 0.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., 0.);
     P.p = (36., -37., 25.0);
     P.size = (17., 17., 6.);
 }
 
-let k30 = {
+let k31 = {
     P.a = (-.pi/.5., pi/.20., 0.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., 0.);
     P.p = (36., -16., 24.);
     P.size = (17., 17., 6.);
 }
 
-let k31 = {
+let k32 = {
     P.a = (0., pi/.20., 0.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., 0.);
     P.p = (31., 6., 10.);
     P.size = (17., 17., 6.);
 }
 
-let k32 = {
+let k33 = {
     P.a = (pi/.12., pi/.20., 0.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., 0.);
     P.p = (31., 25., 10.);
     P.size = (17., 17., 6.);
 }
 
-let k33 = {
+let k34 = {
     P.a = (pi/.6., pi/.20., 0.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., -1.5);
     P.p = (31.5, 44., 15.);
-    P.size = (17., 17., 6.);
+    P.size = (17., 20., 6.);
 }
 
-let k400 = {
+let k40 = {
     P.a = (0., pi/.20., -.pi/.30.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., 0.);
     P.p = (54., -42., 23.5);
     P.size = (17., 17., 6.);
 }
 
-let k40 = {
+let k41 = {
     P.a = (-.pi/.5., pi/.20., -.pi/.60.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., 0.);
     P.p = (54., -20., 21.);
     P.size = (17., 17., 6.);
 }
 
 
-let k41 = {
+let k42 = {
     P.a = (0., pi/.20., -.pi/.60.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., 0.);
     P.p = (50., 2., 8.);
     P.size = (17., 17., 6.);
 }
 
-let k42 = {
+let k43 = {
     P.a = (pi/.12., pi/.20., -.pi/.60.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., 0.);
     P.p = (51., 21., 8.);
     P.size = (17., 17., 6.);
 }
 
-let k43 = {
+let k44 = {
     P.a = (pi/.6., pi/.20., -.pi/.60.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (-1.5, -1.5);
     P.p = (52., 40., 13.);
-    P.size = (17., 17., 6.);
-}
-
-let k500 = {
-    P.a = (0., pi/.20., -.pi/.30.);
-    P.f = cherry_mx;
-    P.p = (73., -39., 20.5);
-    P.size = (17., 17., 6.);
+    P.size = (20., 20., 6.);
 }
 
 let k50 = {
+    P.a = (0., pi/.20., -.pi/.30.);
+    P.f = cherry_mx (-1., 0.);
+    P.p = (73., -39., 20.5);
+    P.size = (19., 17., 6.);
+}
+
+let k51 = {
     P.a = (-.pi/.5., pi/.20., -.pi/.30.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., 0.);
     P.p = (73., -23., 22.);
     P.size = (17., 17., 6.);
 }
 
-let k51 = {
+let k52 = {
     P.a = (0., pi/.20., -.pi/.30.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (0., 0.);
     P.p = (71., -3., 10.);
     P.size = (17., 17., 6.);
 }
 
-let k52 = {
-    P.a = (pi/.12., pi/.20., -.pi/.30.);
-    P.f = cherry_mx;
-    P.p = (73., 16., 10.);
-    P.size = (17., 17., 6.);
-}
-
 let k53 = {
-    P.a = (pi/.6., pi/.20., -.pi/.30.);
-    P.f = cherry_mx;
-    P.p = (77., 35., 15.);
-    P.size = (17., 17., 6.);
+    P.a = (pi/.12., pi/.20., -.pi/.30.);
+    P.f = cherry_mx (-1.5, -1.5);
+    P.p = (73., 16., 10.);
+    P.size = (20., 20., 6.);
 }
 
-let k600 = {
+let k60 = {
     P.a = (0., pi/.20., -.pi/.10.);
     P.f = Model.Key_unit.dummy;
     P.p = (100., -36., 17.);
     P.size = (0.001, 5., 6.);
 }
-let k60 = {
-    P.a = (-.pi/.5., pi/.20., -.pi/.10.);
-    P.f = cherry_mx;
-    P.p = (90., -26., 20.);
-    P.size = (17., 17., 6.);
-}
-let k70 = {
-    P.a = (-.pi/.10., pi/.20., -.pi/.10.);
-    P.f = Model.Key_unit.dummy;
-    P.p = (115., -26., 13.);
-    P.size = (0.001, 5., 6.);
-}
-
 let k61 = {
-    P.a = (0., 0., -.pi/.10.);
-    P.f = cherry_mx;
-    P.p = (95., -6., 7.);
-    P.size = (17., 17., 6.);
+    P.a = (-.pi/.5., pi/.20., -.pi/.10.);
+    P.f = cherry_mx (-1.5, 0.);
+    P.p = (90., -26., 20.);
+    P.size = (20., 17., 6.);
 }
 
 let k62 = {
-    P.a = (pi/.12., 0., -.pi/.10.);
-    P.f = cherry_mx;
-    P.p = (101., 13., 7.);
-    P.size = (17., 17., 6.);
-}
-
-let k72 = {
-    P.a = (pi/.12., 0., -.pi/.10.);
-    P.f = Model.Key_unit.dummy;
-    P.p = (126., 13., 7.);
-    P.size = (0.001, 5., 6.);
+    P.a = (0., 0., -.pi/.10.);
+    P.f = cherry_mx (-1.5, 0.);
+    P.p = (95., -6., 7.);
+    P.size = (20., 17., 6.);
 }
 
 let k63 = {
+    P.a = (pi/.12., 0., -.pi/.10.);
+    P.f = cherry_mx (-1.5, -1.5);
+    P.p = (101., 13., 7.);
+    P.size = (20., 20., 6.);
+}
+
+let k64 = {
     P.a = (pi/.6., 0., -.pi/.10.);
-    P.f = cherry_mx;
+    P.f = cherry_mx (-3., 0.);
     P.p = (105., 32., 12.);
-    P.size = (17., 17., 6.);
+    P.size = (20., 17., 6.);
 }
 
 open Scad_ml.Util
@@ -288,7 +240,7 @@ let gen_cover t conf =
 let sub = M.union [
     M.hull [
         P.rside k43;
-        P.barfl k52;
+        P.barfl k53;
     ];
 ]
 
@@ -387,7 +339,7 @@ let screw11 = {
 
 let screw12 = {
     Patch.a = (0., pi/.20., -.pi/.10.);
-    Patch.p = (95., -33., 14.);
+    Patch.p = (92., -33., 14.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
@@ -403,7 +355,7 @@ let screw13 = {
 
 let screw14 = {
     Patch.a = (0., -.4.*.pi/.7., pi/.6.);
-    Patch.p = (17., -32., 46.);
+    Patch.p = (5., -42., 46.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
@@ -425,78 +377,50 @@ let screw_set = [
 ]
 
 
-let kt02 = {
-    P.a = (0., -.1.*.pi/.2., pi/.6.);
-    P.f = cherry_mx;
-    P.p = (20., -37., 0.);
-    P.size = (0.001, 8., 6.);
-}
-
-let kt10 = {
-    P.a = (0., -.1.*.pi/.2., 0.);
-    P.f = cherry_mx;
-    P.p = (21., -66., 2.);
-    P.size = (5., 0.001, 6.);
-}
-
 let kt11 = {
     P.a = (0., -.1.*.pi/.2., 0.);
-    P.f = cherry_mx;
-    P.p = (21., -61., 2.);
-    P.size = (17., 17., 6.);
+    P.f = cherry_mx (1., 1.5);
+    P.p = (11., -74., 0.);
+    P.size = (19., 20., 6.);
 }
 
 let kt12 = {
     P.a = (0., -.1.*.pi/.2.,  pi/.6.);
-    P.f = cherry_mx;
-    P.p = (20., -37., 6.);
-    P.size = (17., 17., 6.);
-}
-
-let kt20 = {
-    P.a = (0., -.4.*.pi/.7., 0.);
-    P.f = cherry_mx;
-    P.p = (21., -66., 32.);
-    P.size = (5., 0.001, 6.);
+    P.f = cherry_mx (3., 0.);
+    P.p = (10., -47., 0.);
+    P.size = (23., 17., 6.);
 }
 
 let kt21 = {
     P.a = (0., -.4.*.pi/.7., 0.);
-    P.f = cherry_mx;
-    P.p = (21., -61., 22.);
-    P.size = (17., 17., 6.);
+    P.f = cherry_mx (-1.5, 1.5);
+    P.p = (11., -74., 22.);
+    P.size = (20., 20., 6.);
 }
 
 let kt22 = {
     P.a = (0., -.4.*.pi/.7., pi/.6.);
-    P.f = cherry_mx;
-    P.p = (20., -37., 26.);
-    P.size = (17., 17., 6.);
-}
-
-let kt32 = {
-    P.a = (0., -.4.*.pi/.7., pi/.6.);
-    P.f = cherry_mx;
-    P.p = (15., -37., 48.);
-    P.size = (00.01, 5., 6.);
+    P.f = cherry_mx (-1.5, 0.);
+    P.p = (10., -47., 26.);
+    P.size = (20., 17., 6.);
 }
 
 let tmat = [
-    [None; None; Some(kt02); None;       ];
-    [Some(kt10); Some(kt11); Some(kt12); None];
-    [Some(kt20); Some(kt21); Some(kt22); None];
-    [None; None; Some(kt32);       None];
+    [None; None;       None;       None];
+    [None; Some(kt11); Some(kt12); None];
+    [None; Some(kt21); Some(kt22); None];
+    [None; None;       None;       None];
 ]
 
 let mat = [
-    [None;        None;      None;      None;      None;      None;      None];
-    [None;        None;      Some(k10); Some(k11); Some(k12); Some(k13); None];
-    [None;        Some(k200);Some(k20); Some(k21); Some(k22); Some(k23); None];
-    [None;        Some(k300);Some(k30); Some(k31); Some(k32); Some(k33); None];
-    [Some(kp);    Some(k400);Some(k40); Some(k41); Some(k42); Some(k43); None];
-    [Some(kp_sc); Some(k500);Some(k50); Some(k51); Some(k52); None;      None];
-    [None;        Some(k600);Some(k60); Some(k61); Some(k62); None;      None];
-    [None;        None;           None; None;           None; None;      None];
+    [None;    None;     None;     None;     None;     None;     None];
+    [None;    None;     Some(k11);Some(k12);Some(k13);Some(k14);None];
+    [None;    None;     Some(k21);Some(k22);Some(k23);Some(k24);None];
+    [None;    Some(k30);Some(k31);Some(k32);Some(k33);Some(k34);None];
+    [Some(kp);Some(k40);Some(k41);Some(k42);Some(k43);Some(k44);None];
+    [None;    Some(k50);Some(k51);Some(k52);Some(k53);None;     None];
+    [None;    None;     Some(k61);Some(k62);Some(k63);None;     None];
+    [None;    None;     None;     None;     None;     None;     None];
 ]
 
 let thumb = 
@@ -519,15 +443,15 @@ let top =
             P.ortho mat;
             P.ortho tmat;
             sub;
-            P.ortho @@ gen_cover 3.5 [[Some(kt21);Some(kt22);];[None; Some(kt32)];];
+            P.ortho @@ gen_cover 3.5 [[Some(kt21);Some(kt22);]];
             M.hull [
                 P.bnside @@ P.lhalf @@ Option.value_exn tcover22;
                 P.bfside @@ P.lhalf @@ Option.value_exn tcover21;
-                P.barnl k300;
+                P.barnl k30;
             ];
             M.hull [
                 P.bottom @@ P.lhalf @@ Option.value_exn tcover21;
-                P.barnl k300;
+                P.barnl k30;
                 P.barfl kp;
             ];
             M.hull [
@@ -536,11 +460,11 @@ let top =
             ];
             M.hull [
                 P.barfl kp;
-                P.nside k300;
+                P.nside k30;
             ];
             M.hull [
-                P.barnr k300;
-                P.barnl k400;
+                P.barnr k30;
+                P.barnl k40;
                 P.fside kp;
             ];
         ])
@@ -604,9 +528,9 @@ let bottom =
             (M.union [
                 base;
             ]) [
-            Pcbmod.hollow |>> (-24.5, -17., 0.);
+            Pcbmod.hollow |>> (-27.5, -17., 0.);
             ];
-        Pcbmod.top |>> (-24.5, -17., 0.);
+        Pcbmod.top |>> (-27.5, -17., 0.);
     ]
 
 let () =
