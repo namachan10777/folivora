@@ -48,7 +48,7 @@ let k14 = {
 let k20 = {
     P.a = (0., pi/.20., pi/.60.);
     P.f = cherry_mx (0., 0.);
-    P.p = (18., -37., 30.5);
+    P.p = (18., -39., 30.);
     P.size = (17., 17., 6.);
 }
 
@@ -245,7 +245,7 @@ let sub = M.union [
 ]
 
 module Patch = Model.Patch
-let screw1 = {
+let screw_k13 = {
     Patch.a = (pi/.6., pi/.15., pi/.60.);
     Patch.p = (9.2, 39., 21.5);
     Patch.out_r = 2.5;
@@ -253,7 +253,7 @@ let screw1 = {
     Patch.top_h =7.5;
 }
 
-let screw2 = {
+let screw_k12 = {
     Patch.a = (0., pi/.20., pi/.60.);
     Patch.p = (11.2, 4., 16.);
     Patch.out_r = 2.5;
@@ -261,57 +261,57 @@ let screw2 = {
     Patch.top_h =7.5;
 }
 
-let screw3 = {
+let screw_k33 = {
     Patch.a = (pi/.12., pi/.20., -.pi/.60.);
-    Patch.p = (50., 32., 13.);
+    Patch.p = (50., 32., 8.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
-    Patch.top_h =4.5;
+    Patch.top_h =9.5;
 }
 
-let screw4 = {
+let screw_k42 = {
     Patch.a = (0., pi/.20., -.pi/.30.);
-    Patch.p = (69.5, 10., 9.);
+    Patch.p = (69.5, 10., 5.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
-    Patch.top_h =4.5;
+    Patch.top_h =8.5;
 }
 
 
-let screw5 = {
+let screw_k52 = {
     Patch.a = (0., pi/.20., -.pi/.30.);
-    Patch.p = (92., -3., 9.);
+    Patch.p = (92., -3., 6.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
-    Patch.top_h =4.5;
+    Patch.top_h =7.5;
 }
 
 
-let screw6 = {
+let screw_k53 = {
     Patch.a = (pi/.12., pi/.20., -.pi/.30.);
-    Patch.p = (97., 24., 12.);
-    Patch.out_r = 2.5;
-    Patch.in_r = 1.1;
-    Patch.top_h =4.5;
-}
-
-let screw7 = {
-    Patch.a = (0., pi/.20., 0.);
-    Patch.p = (35., -57., 20.0);
+    Patch.p = (97., 24., 9.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
 }
 
-let screw8 = {
+let screw_thumb_bridge2 = {
     Patch.a = (0., pi/.20., 0.);
-    Patch.p = (35., -47., 20.0);
+    Patch.p = (30., -62., 20.0);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
 }
 
-let screw9 = {
+let screw_thumb_bridge1 = {
+    Patch.a = (0., pi/.20., 0.);
+    Patch.p = (20., -47., 24.0);
+    Patch.out_r = 2.5;
+    Patch.in_r = 1.1;
+    Patch.top_h =9.5;
+}
+
+let screw_k30 = {
     Patch.a = (0., pi/.20., 0.);
     Patch.p = (46., -17., 23.0);
     Patch.out_r = 2.5;
@@ -320,15 +320,15 @@ let screw9 = {
 }
 
 
-let screw10 = {
+let screw_k40 = {
     Patch.a = (0., pi/.20., -.pi/.30.);
-    Patch.p = (64., -22., 20.5);
+    Patch.p = (64., -22., 18.5);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
-    Patch.top_h =5.5;
+    Patch.top_h =7.5;
 }
 
-let screw11 = {
+let screw_kp = {
     Patch.a = (0., pi/.20., 0.);
     Patch.p = (65., -57., 14.0);
     Patch.out_r = 2.5;
@@ -337,7 +337,7 @@ let screw11 = {
 }
 
 
-let screw12 = {
+let screw_k50 = {
     Patch.a = (0., pi/.20., -.pi/.10.);
     Patch.p = (92., -33., 14.);
     Patch.out_r = 2.5;
@@ -345,7 +345,15 @@ let screw12 = {
     Patch.top_h =8.5;
 }
 
-let screw13 = {
+let screw_kt11 = {
+    Patch.a = (0., -.1.*.pi/.2., 0.);
+    Patch.p = (13.5, -73., 4.0);
+    Patch.out_r = 2.5;
+    Patch.in_r = 1.1;
+    Patch.top_h =8.5;
+}
+
+let screw_kt12 = {
     Patch.a = (0., -.1.*.pi/.2., pi/.6.);
     Patch.p = (5., -32., 3.5);
     Patch.out_r = 2.5;
@@ -353,33 +361,54 @@ let screw13 = {
     Patch.top_h =8.5;
 }
 
-let screw14 = {
+let screw_k20 = {
+    Patch.a = (0., pi/.20., pi/.60.);
+    Patch.p = (25., -20., 26.5);
+    Patch.out_r = 2.5;
+    Patch.in_r = 1.1;
+    Patch.top_h =8.5;
+}
+
+let screw_kt22 = {
     Patch.a = (0., -.4.*.pi/.7., pi/.6.);
-    Patch.p = (5., -42., 46.);
+    Patch.p = (4.5, -42., 46.);
+    Patch.out_r = 2.5;
+    Patch.in_r = 1.1;
+    Patch.top_h =8.5;
+}
+
+let screw_kt21 = {
+    Patch.a = (0., -.4.*.pi/.7., 0.);
+    Patch.p = (11., -74., 32.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
 }
 
 let screw_top_bottom = [
-    Patch.Screw screw1; Patch.Screw screw2;
-    Patch.Screw screw3;
-    Patch.Screw screw4;
-    Patch.Screw screw5; Patch.Screw screw6;
-    Patch.Screw screw7;
-    Patch.Screw screw8;
-    Patch.Screw screw9;
-    Patch.Screw screw10;
-    Patch.Screw screw11;
-    Patch.Screw screw12;
+    Patch.Screw screw_k13;
+    Patch.Screw screw_k12;
+    Patch.Screw screw_k33;
+    Patch.Screw screw_k42;
+    Patch.Screw screw_k52;
+    Patch.Screw screw_k53;
+    Patch.Screw screw_thumb_bridge2;
+    Patch.Screw screw_thumb_bridge1;
+    Patch.Screw screw_k30;
+    Patch.Screw screw_k40;
+    Patch.Screw screw_kp;
+    Patch.Screw screw_k50;
+    Patch.Screw screw_k20;
 ]
 
 let screw_thumb_top = [
-    Patch.Screw screw14;
+    Patch.Screw screw_kt22;
+    Patch.Screw screw_kt21;
 ]
 
 let screw_thumb_bottom = [
-    Patch.Screw screw13;
+    Patch.Screw screw_kt12;
+    Patch.Screw screw_kt11;
 ]
 
 let kt11 = {
@@ -555,3 +584,4 @@ let () =
     build (M.union [bottom]) "bottom.scad";
     build (M.union [top]) "top.scad";
     build (M.union [thumb]) "thumb.scad";
+    build (M.union [top; bottom; thumb]) "assembly.scad";
