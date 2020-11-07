@@ -5,7 +5,8 @@ let build scad filename =
 
 let key_size = (19.0, 19.0, 5.0)
 
-let cherry_mx = Model.Key_unit.cherry_mx
+let kailh_box = Model.Key_unit.kailh_box
+let kailh_choc = Model.Key_unit.kailh_choc
 let pi = Scad_ml.Core.pi
 
 module P = Model.Pad
@@ -19,35 +20,35 @@ let cylinder_bottom = M.cylinder 3.0 3.0 ~center:true
 
 let k11 = {
     P.a = (-.pi/.5., pi/.20. +. pi/.20., pi/.30.);
-    P.f = cherry_mx (1.5, 1.5);
+    P.f = kailh_box (1.5, 1.5);
     P.p = (-2., -23., 37.5);
     P.size = (20., 20., 6.);
 }
 
 let k12 = {
     P.a = (0., pi/.12. +. pi/.20., pi/.30.);
-    P.f = cherry_mx (1.5, 0.);
+    P.f = kailh_box (1.5, 0.);
     P.p = (-10., -1., 25.5);
     P.size = (20., 17., 6.);
 }
 
 let k13 = {
     P.a = (pi/.12., pi/.12. +. pi/.20., pi/.30.);
-    P.f = cherry_mx (1.5, 0.);
+    P.f = kailh_box (1.5, 0.);
     P.p = (-12., 18., 25.5);
     P.size = (20., 17., 6.);
 }
 
 let k14 = {
     P.a = (pi/.6., pi/.12. +. pi/.20., pi/.30.);
-    P.f = cherry_mx (1.5, -1.5);
+    P.f = kailh_box (1.5, -1.5);
     P.p = (-12., 37., 30.5);
     P.size = (20., 20., 6.);
 }
 
 let k20 = {
     P.a = (0., pi/.20., pi/.60.);
-    P.f = cherry_mx (0., 0.);
+    P.f = kailh_choc (0., 0.);
     P.p = (18., -39., 30.);
     P.size = (17., 17., 6.);
 }
@@ -55,84 +56,84 @@ let k20 = {
 
 let k21 = {
     P.a = (-.pi/.5., pi/.20., pi/.60.);
-    P.f = cherry_mx (0., 0.);
+    P.f = kailh_box (0., 0.);
     P.p = (18., -20., 31.);
     P.size = (17., 17., 6.);
 }
 
 let k22 = {
     P.a = (0., pi/.20., pi/.60.);
-    P.f = cherry_mx (0., 0.);
+    P.f = kailh_box (0., 0.);
     P.p = (14., 1., 16.);
     P.size = (17., 17., 6.);
 }
 
 let k23 = {
     P.a = (pi/.12., pi/.20., pi/.60.);
-    P.f = cherry_mx (0., 0.);
+    P.f = kailh_box (0., 0.);
     P.p = (12.5, 20., 16.);
     P.size = (17., 17., 6.);
 }
 
 let k24 = {
     P.a = (pi/.6., pi/.20., pi/.60.);
-    P.f = cherry_mx (0., -1.5);
+    P.f = kailh_box (0., -1.5);
     P.p = (12., 39., 21.);
     P.size = (17., 20., 6.);
 }
 
 let kp = {
     P.a = (0., pi/.20., 0.);
-    P.f = cherry_mx (-2., 0.);
+    P.f = kailh_choc (-2., 0.);
     P.p = (45., -67., 19.0);
     P.size = (21., 17., 6.);
 }
 
 let k30 = {
     P.a = (0., pi/.20., 0.);
-    P.f = cherry_mx (0., 0.);
+    P.f = kailh_choc (0., 0.);
     P.p = (36., -37., 25.0);
     P.size = (17., 17., 6.);
 }
 
 let k31 = {
     P.a = (-.pi/.5., pi/.20., 0.);
-    P.f = cherry_mx (0., 0.);
+    P.f = kailh_box (0., 0.);
     P.p = (36., -16., 24.);
     P.size = (17., 17., 6.);
 }
 
 let k32 = {
     P.a = (0., pi/.20., 0.);
-    P.f = cherry_mx (0., 0.);
+    P.f = kailh_box (0., 0.);
     P.p = (31., 6., 10.);
     P.size = (17., 17., 6.);
 }
 
 let k33 = {
     P.a = (pi/.12., pi/.20., 0.);
-    P.f = cherry_mx (0., 0.);
+    P.f = kailh_box (0., 0.);
     P.p = (31., 25., 10.);
     P.size = (17., 17., 6.);
 }
 
 let k34 = {
     P.a = (pi/.6., pi/.20., 0.);
-    P.f = cherry_mx (0., -1.5);
+    P.f = kailh_box (0., -1.5);
     P.p = (31.5, 44., 15.);
     P.size = (17., 20., 6.);
 }
 
 let k40 = {
     P.a = (0., pi/.20., -.pi/.30.);
-    P.f = cherry_mx (0., 0.);
+    P.f = kailh_choc (0., 0.);
     P.p = (54., -42., 23.5);
     P.size = (17., 17., 6.);
 }
 
 let k41 = {
     P.a = (-.pi/.5., pi/.20., -.pi/.60.);
-    P.f = cherry_mx (0., 0.);
+    P.f = kailh_box (0., 0.);
     P.p = (54., -20., 21.);
     P.size = (17., 17., 6.);
 }
@@ -140,83 +141,77 @@ let k41 = {
 
 let k42 = {
     P.a = (0., pi/.20., -.pi/.60.);
-    P.f = cherry_mx (0., 0.);
+    P.f = kailh_box (0., 0.);
     P.p = (50., 2., 8.);
     P.size = (17., 17., 6.);
 }
 
 let k43 = {
     P.a = (pi/.12., pi/.20., -.pi/.60.);
-    P.f = cherry_mx (0., 0.);
+    P.f = kailh_box (0., 0.);
     P.p = (51., 21., 8.);
     P.size = (17., 17., 6.);
 }
 
 let k44 = {
     P.a = (pi/.6., pi/.20., -.pi/.60.);
-    P.f = cherry_mx (-1.5, -1.5);
+    P.f = kailh_box (-1.5, -1.5);
     P.p = (52., 40., 13.);
     P.size = (20., 20., 6.);
 }
 
 let k50 = {
     P.a = (0., pi/.20., -.pi/.30.);
-    P.f = cherry_mx (-1., 0.);
+    P.f = kailh_choc (-1., 0.);
     P.p = (73., -39., 20.5);
     P.size = (19., 17., 6.);
 }
 
 let k51 = {
     P.a = (-.pi/.5., pi/.20., -.pi/.30.);
-    P.f = cherry_mx (0., 0.);
+    P.f = kailh_box (0., 0.);
     P.p = (73., -23., 22.);
     P.size = (17., 17., 6.);
 }
 
 let k52 = {
     P.a = (0., pi/.20., -.pi/.30.);
-    P.f = cherry_mx (0., 0.);
+    P.f = kailh_box (0., 0.);
     P.p = (71., -3., 10.);
     P.size = (17., 17., 6.);
 }
 
 let k53 = {
     P.a = (pi/.12., pi/.20., -.pi/.30.);
-    P.f = cherry_mx (-1.5, -1.5);
+    P.f = kailh_box (-1.5, -1.5);
     P.p = (73., 16., 10.);
     P.size = (20., 20., 6.);
 }
 
-let k60 = {
-    P.a = (0., pi/.20., -.pi/.10.);
-    P.f = Model.Key_unit.dummy;
-    P.p = (100., -36., 17.);
-    P.size = (0.001, 5., 6.);
-}
 let k61 = {
     P.a = (-.pi/.5., pi/.20., -.pi/.10.);
-    P.f = cherry_mx (-1.5, 0.);
+    P.f = kailh_box (-1.5, 0.);
     P.p = (90., -26., 20.);
     P.size = (20., 17., 6.);
 }
 
 let k62 = {
     P.a = (0., 0., -.pi/.10.);
-    P.f = cherry_mx (-1.5, 0.);
+    P.f = kailh_box (-1.5, 0.);
     P.p = (95., -6., 7.);
     P.size = (20., 17., 6.);
 }
 
 let k63 = {
     P.a = (pi/.12., 0., -.pi/.10.);
-    P.f = cherry_mx (-1.5, -1.5);
+    P.f = kailh_box (-1.5, -1.5);
     P.p = (101., 13., 7.);
     P.size = (20., 20., 6.);
 }
 
 let k64 = {
     P.a = (pi/.6., 0., -.pi/.10.);
-    P.f = cherry_mx (-3., 0.);
+    P.f = kailh_box (-3., 0.);
     P.p = (105., 32., 12.);
     P.size = (20., 17., 6.);
 }
@@ -347,10 +342,10 @@ let screw_k50 = {
 
 let screw_kt11 = {
     Patch.a = (0., -.1.*.pi/.2., 0.);
-    Patch.p = (13.5, -73., 4.0);
+    Patch.p = (13.5, -76., 4.0);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
-    Patch.top_h =8.5;
+    Patch.top_h =14.5;
 }
 
 let screw_kt12 = {
@@ -413,28 +408,28 @@ let screw_thumb_bottom = [
 
 let kt11 = {
     P.a = (0., -.1.*.pi/.2., 0.);
-    P.f = cherry_mx (1., 1.5);
-    P.p = (11., -74., 0.);
-    P.size = (19., 20., 6.);
+    P.f = Model.Key_unit.bittradeone_trackball (0., 0.);
+    P.p = (11., -76., 0.);
+    P.size = (19., 22., 6.);
 }
 
 let kt12 = {
     P.a = (0., -.1.*.pi/.2.,  pi/.6.);
-    P.f = cherry_mx (3., 0.);
+    P.f = kailh_choc (3., 0.);
     P.p = (10., -47., 0.);
     P.size = (23., 17., 6.);
 }
 
 let kt21 = {
     P.a = (0., -.4.*.pi/.7., 0.);
-    P.f = cherry_mx (-1.5, 1.5);
+    P.f = kailh_choc (-1.5, 1.5);
     P.p = (11., -74., 22.);
     P.size = (20., 20., 6.);
 }
 
 let kt22 = {
     P.a = (0., -.4.*.pi/.7., pi/.6.);
-    P.f = cherry_mx (-1.5, 0.);
+    P.f = kailh_choc (-1.5, 0.);
     P.p = (10., -47., 26.);
     P.size = (20., 17., 6.);
 }
