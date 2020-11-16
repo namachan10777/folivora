@@ -56,9 +56,9 @@ let k20 = {
 
 let k21 = {
     P.a = (-.pi/.5., pi/.20., pi/.60.);
-    P.f = kailh_box (0., 0.);
-    P.p = (18., -20., 31.);
-    P.size = (17., 17., 6.);
+    P.f = kailh_box (0., 1.5);
+    P.p = (18., -22., 31.5);
+    P.size = (17., 20., 6.);
 }
 
 let k22 = {
@@ -169,9 +169,9 @@ let k50 = {
 
 let k51 = {
     P.a = (-.pi/.5., pi/.20., -.pi/.30.);
-    P.f = kailh_box (0., 0.);
-    P.p = (73., -23., 22.);
-    P.size = (17., 17., 6.);
+    P.f = kailh_box (0., 1.5);
+    P.p = (73., -26., 23.);
+    P.size = (17., 20., 6.);
 }
 
 let k52 = {
@@ -190,9 +190,9 @@ let k53 = {
 
 let k61 = {
     P.a = (-.pi/.5., pi/.20., -.pi/.10.);
-    P.f = kailh_box (-1.5, 0.);
-    P.p = (90., -26., 20.);
-    P.size = (20., 17., 6.);
+    P.f = kailh_box (-1.5, 1.5);
+    P.p = (90., -29., 21.);
+    P.size = (20., 20., 6.);
 }
 
 let k62 = {
@@ -241,8 +241,8 @@ let sub = M.union [
 
 module Patch = Model.Patch
 let screw_k13 = {
-    Patch.a = (pi/.6., pi/.15., pi/.60.);
-    Patch.p = (9.2, 39., 21.5);
+    Patch.a = (0., pi/.15., pi/.60.);
+    Patch.p = (10., 34., 18.5);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
@@ -323,18 +323,26 @@ let screw_k40 = {
     Patch.top_h =7.5;
 }
 
-let screw_kp = {
+let screw_kp_l = {
     Patch.a = (0., pi/.20., 0.);
-    Patch.p = (65., -57., 14.0);
+    Patch.p = (45., -62., 27.0);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
-    Patch.top_h =8.5;
+    Patch.top_h =9.;
+}
+
+let screw_kp_r = {
+    Patch.a = (0., pi/.20., 0.);
+    Patch.p = (69., -62., 23.0);
+    Patch.out_r = 2.5;
+    Patch.in_r = 1.1;
+    Patch.top_h =9.;
 }
 
 
 let screw_k50 = {
     Patch.a = (0., pi/.20., -.pi/.10.);
-    Patch.p = (92., -33., 14.);
+    Patch.p = (92., -28.5, 17.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
@@ -365,16 +373,16 @@ let screw_k20 = {
 }
 
 let screw_kt22 = {
-    Patch.a = (0., -.4.*.pi/.7., pi/.6.);
-    Patch.p = (4.5, -42., 46.);
+    Patch.a = (0., -.3.*.pi/.7., pi/.6.);
+    Patch.p = (10.5, -33., 45.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
 }
 
 let screw_kt21 = {
-    Patch.a = (0., -.4.*.pi/.7., 0.);
-    Patch.p = (11., -74., 32.);
+    Patch.a = (0., -.3.*.pi/.7., 0.);
+    Patch.p = (16., -74., 32.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
@@ -391,7 +399,8 @@ let screw_top_bottom = [
     Patch.Screw screw_thumb_bridge1;
     Patch.Screw screw_k30;
     Patch.Screw screw_k40;
-    Patch.Screw screw_kp;
+    Patch.Screw screw_kp_l;
+    Patch.Screw screw_kp_r;
     Patch.Screw screw_k50;
     Patch.Screw screw_k20;
 ]
@@ -421,24 +430,17 @@ let kt12 = {
 }
 
 let kt21 = {
-    P.a = (0., -.4.*.pi/.7., 0.);
+    P.a = (0., -.3.*.pi/.7., 0.);
     P.f = kailh_choc (-1.5, 1.5);
     P.p = (11., -74., 22.);
     P.size = (20., 20., 6.);
 }
 
 let kt22 = {
-    P.a = (0., -.4.*.pi/.7., pi/.6.);
+    P.a = (0., -.3.*.pi/.7., pi/.6.);
     P.f = kailh_choc (-1.5, 0.);
     P.p = (10., -47., 26.);
     P.size = (20., 17., 6.);
-}
-
-let k0 = {
-    P.a = (0., pi/.20., 0.);
-    P.f = kailh_choc (0., 0.);
-    P.p = (38., -120., 10.0);
-    P.size = (40., 24., 6.);
 }
 
 let tmat = [
@@ -453,7 +455,7 @@ let mat = [
     [None;    None;     Some(k11);Some(k12);Some(k13);None;     None];
     [None;    None;     Some(k21);Some(k22);Some(k23);None;     None];
     [None;    None;     Some(k31);Some(k32);Some(k33);None;     None];
-    [Some(k0);Some(kp); Some(k41);Some(k42);Some(k43);None;     None];
+    [None;    Some(kp); Some(k41);Some(k42);Some(k43);None;     None];
     [None;    None;     Some(k51);Some(k52);Some(k53);None;     None];
     [None;    None;     Some(k61);Some(k62);Some(k63);None;     None];
     [None;    None;     None;     None;     None;     None;     None];
@@ -505,7 +507,6 @@ let bottom =
     let ortho = gen_cover 0.5 mat in
     let tidx = idx tcover in
     let kp_bottom = idx ortho 4 1 in
-    let k0_bottom = idx ortho 4 0 in
     let base = Patch.apply_patches
         (M.union [
             P.ortho ortho;
@@ -570,13 +571,6 @@ let bottom =
                 P.bbarnl @@ tidx 2 2;
                 P.bbarnr @@ tidx 1 2;
                 P.barfl kp_bottom;
-            ];
-            M.hull [
-                P.barfl k0_bottom;
-                P.pbarfl k0_bottom;
-                P.barnl kp_bottom;
-                P.pbarnl kp_bottom;
-                P.bnside @@ tidx 1 1;
             ];
         ])
         ((screw_top_bottom |> List.map ~f:(fun p -> (p, Patch.Bottom)))
