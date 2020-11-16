@@ -84,9 +84,9 @@ let k24 = {
 
 let kp = {
     P.a = (0., pi/.20., 0.);
-    P.f = kailh_choc (-2., 0.);
-    P.p = (45., -67., 19.0);
-    P.size = (21., 17., 6.);
+    P.f = kailh_choc (0., 0.);
+    P.p = (45., -67., 30.0);
+    P.size = (24., 24., 6.);
 }
 
 let k30 = {
@@ -434,6 +434,13 @@ let kt22 = {
     P.size = (20., 17., 6.);
 }
 
+let k0 = {
+    P.a = (0., pi/.20., 0.);
+    P.f = kailh_choc (0., 0.);
+    P.p = (38., -120., 10.0);
+    P.size = (40., 24., 6.);
+}
+
 let tmat = [
     [None; None;       None;       None];
     [None; Some(kt11); Some(kt12); None];
@@ -443,11 +450,11 @@ let tmat = [
 
 let mat = [
     [None;    None;     None;     None;     None;     None;     None];
-    [None;    None;     Some(k11);Some(k12);Some(k13);Some(k14);None];
-    [None;    Some(k20);Some(k21);Some(k22);Some(k23);Some(k24);None];
-    [None;    Some(k30);Some(k31);Some(k32);Some(k33);Some(k34);None];
-    [Some(kp);Some(k40);Some(k41);Some(k42);Some(k43);Some(k44);None];
-    [None;    Some(k50);Some(k51);Some(k52);Some(k53);None;     None];
+    [None;    None;     Some(k11);Some(k12);Some(k13);None;     None];
+    [None;    None;     Some(k21);Some(k22);Some(k23);None;     None];
+    [None;    None;     Some(k31);Some(k32);Some(k33);None;     None];
+    [Some(k0);Some(kp); Some(k41);Some(k42);Some(k43);None;     None];
+    [None;    None;     Some(k51);Some(k52);Some(k53);None;     None];
     [None;    None;     Some(k61);Some(k62);Some(k63);None;     None];
     [None;    None;     None;     None;     None;     None;     None];
 ]
@@ -458,8 +465,15 @@ let thumb =
         ((screw_thumb_top |> List.map ~f:(fun p -> (p, Patch.Top)))
         @ (screw_thumb_bottom |> List.map ~f:(fun p -> (p, Patch.Top))))
 
+let dummy_key = {
+    P.a = (0., 0., 0.);
+    P.f = Model.Key_unit.dummy;
+    P.p = (0., 0., 0.);
+    P.size = (0., 0., 0.);
+}
+
 let thumb_cover = gen_cover 3.5 tmat
-let idx pad c r = List.nth_exn (List.nth_exn pad c) r
+let idx pad c r = List.nth_exn (List.nth_exn pad c) r |> Option.value ~default:dummy_key
 let tcover11 = idx thumb_cover 1 1
 let tcover12 = idx thumb_cover 1 2
 let tcover21 = idx thumb_cover 2 1
@@ -472,95 +486,97 @@ let top =
             sub;
             P.ortho @@ gen_cover 3.5 [[Some(kt21);Some(kt22);]];
             M.hull [
-                P.bottom @@ P.lhalf @@ Option.value_exn tcover22;
-                P.lside @@ k20;
-            ];
-            M.hull [
-                P.nside @@ k20;
-                P.bnside @@ P.lhalf @@ Option.value_exn tcover22;
-                P.bfside @@ P.lhalf @@ Option.value_exn tcover21;
-                P.barnl k30;
-            ];
-            M.hull [
-                P.bottom @@ P.lhalf @@ Option.value_exn tcover21;
-                P.barnl k30;
                 P.barfl kp;
-            ];
-            M.hull [
-                P.bnside @@ P.lhalf @@ Option.value_exn tcover21;
-                P.lside kp;
+                P.barnl k41;
+                P.barnr k31;
             ];
             M.hull [
                 P.barfl kp;
-                P.nside k30;
-            ];
-            M.hull [
-                P.barnr k30;
-                P.barnl k40;
-                P.fside kp;
+                P.nside k31;
             ];
         ])
         ((screw_top_bottom |> List.map ~f:(fun p -> (p, Patch.Top)))
         @ (screw_thumb_top |> List.map ~f:(fun p -> (p, Patch.Bottom))))
 
 
-let dummy_key = {
-    P.a = (0., 0., 0.);
-    P.f = Model.Key_unit.dummy;
-    P.p = (0., 0., 0.);
-    P.size = (0., 0., 0.);
-}
 
 let bottom =
-    let mcover c r = idx (gen_cover 0.5 mat) c r |> Option.value ~default:dummy_key in
-    let tcover c r = idx (gen_cover 3.5 tmat) c r |> Option.value ~default:dummy_key in
+    let tcover = gen_cover 3.5 tmat in
+    let ortho = gen_cover 0.5 mat in
+    let tidx = idx tcover in
+    let kp_bottom = idx ortho 4 1 in
+    let k0_bottom = idx ortho 4 0 in
     let base = Patch.apply_patches
         (M.union [
-            P.ortho @@ gen_cover 0.5 mat;
+            P.ortho ortho;
             P.proj @@ gen_cover 0.5 mat;
+            P.ortho @@ tcover;
             M.hull [
-                P.pbarfl @@ mcover 4 0;
-                P.pnside @@ mcover 3 1;
-                P.pbarnl @@ mcover 4 1;
-                P.barfl @@ mcover 4 0;
-                P.nside @@ mcover 3 1;
-                P.barnl @@ mcover 4 1;
-            ];
-            M.hull[
-                P.barnr @@ mcover 2 2;
-                P.barnl @@ mcover 3 2;
-                P.barfl @@ mcover 3 1;
-            ];
-            M.hull[
-                P.pbarnr @@ mcover 2 2;
-                P.pbarnl @@ mcover 3 2;
-                P.pbarfl @@ mcover 3 1;
+                P.barfl kp_bottom;
+                P.pbarfl kp_bottom;
+                P.barnl @@ idx ortho 4 2;
+                P.pbarnl @@ idx ortho 4 2;
+                P.barnr @@ idx ortho 3 2;
+                P.pbarnr @@ idx ortho 3 2;
             ];
             M.hull [
-                P.ortho @@ gen_cover 3.5 [[Some(kt11);]];
-                P.plside @@ mcover 4 0;
-                P.lside @@ mcover 4 0;
+                P.barfl kp_bottom;
+                P.pbarfl kp_bottom;
+                P.nside @@ idx ortho 3 2;
+                P.pnside @@ idx ortho 3 2;
             ];
             M.hull [
-                P.fside @@ tcover 1 1;
-                P.nside @@ tcover 1 2;
-                P.pbarnl @@ mcover 3 1;
-                P.pbarfl @@ mcover 4 0;
+                P.bottom @@ tidx 1 1;
+                P.lside kp_bottom;
+                P.plside kp_bottom;
             ];
             M.hull [
-                P.bnside @@ tcover 1 2;
-                P.nside @@ mcover 2 1;
-                P.pnside @@ mcover 2 1;
-                P.barnl @@ mcover 3 1;
-                P.pbarnl @@ mcover 3 1;
+                P.brside @@ tidx 1 1;
+                P.blside @@ tidx 2 1;
+                P.lside kp_bottom;
             ];
             M.hull [
-                P.bottom @@ tcover 1 2;
-                P.lside @@ mcover 2 1;
-                P.plside @@ mcover 2 1;
+                P.bottom @@ tidx 2 1;
+                P.lside kp_bottom;
             ];
             M.hull [
-                P.ortho @@ gen_cover 3.5 [[Some(kt12)]];
+                P.bfside @@ tidx 2 1;
+                P.bnside @@ tidx 2 2;
+                P.barfl kp_bottom;
+            ];
+            M.hull [
+                P.bfside @@ tidx 1 1;
+                P.bnside @@ tidx 1 2;
+                P.barfl kp_bottom;
+                P.pbarfl kp_bottom;
+            ];
+            M.hull [
+                P.bottom @@ tidx 1 2;
+                P.barfl kp_bottom;
+                P.pbarfl kp_bottom;
+            ];
+            M.hull [
+                P.bottom @@ tidx 2 2;
+                P.barfl kp_bottom;
+            ];
+            M.hull [
+                P.blside @@ tidx 2 2;
+                P.brside @@ tidx 1 2;
+                P.barfl kp_bottom;
+            ];
+            M.hull [
+                P.bbarfr @@ tidx 1 1;
+                P.bbarfl @@ tidx 2 1;
+                P.bbarnl @@ tidx 2 2;
+                P.bbarnr @@ tidx 1 2;
+                P.barfl kp_bottom;
+            ];
+            M.hull [
+                P.barfl k0_bottom;
+                P.pbarfl k0_bottom;
+                P.barnl kp_bottom;
+                P.pbarnl kp_bottom;
+                P.bnside @@ tidx 1 1;
             ];
         ])
         ((screw_top_bottom |> List.map ~f:(fun p -> (p, Patch.Bottom)))
