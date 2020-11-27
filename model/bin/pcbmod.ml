@@ -3,22 +3,28 @@ open Core
 open Scad_ml.Util
 
 let screwes = [
-    (17.78, 31.115);
-    (48.26, 45.72);
-    (28.26, 2.54);
-    (48.26, 2.54);
+    (16.51, 55.245);
+    (38.1, 52.07);
+    (20.955, 2.54);
+    (38.1, 2.54);
 ]
 
-let w = 50.8
-let d = 52.705
+let w = 40.64
+let d = 64.135
+let t = 6.
 let pcb_t = 1.8
 let plate_t = 2.6
 let space_t = 2.0
-let rj45 = M.cube (16.51, 18.451, 13.72) |>> (13.335, 33.655, plate_t +. space_t +. pcb_t)
-let wire_hole = M.cube (50.8-.34.29, 41.91-.27.94, 50.) |>> (34.29, 27.94, plate_t +. space_t +. pcb_t)
+let rj45 = M.cube (18.451, 16.51, 13.72) |>> (0., 0., plate_t +. space_t +. pcb_t)
+let wire_hole = M.cube (40.64-.23., 45.72-.31.75, 50.) |>> (23., 31.75, plate_t +. space_t +. pcb_t)
 
 let top =
-    M.union []
+    M.union [
+        M.difference
+            (M.cube (w-.13.335, d, t) |>> (13.335, 0., pcb_t +. plate_t +. 2.*.space_t))
+            [M.cube (0.676, 0.676, t+.0.02) |>> (13.334, d -. 0.675, pcb_t+.plate_t+.2.*.space_t -. 0.01)];
+        M.cylinder 0.675 t ~fn:30 |>> (13.335 +. 0.675, d -. 0.675, pcb_t+.plate_t+.2.*.space_t);
+    ]
 
 let hollow =
     M.union ([

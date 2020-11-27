@@ -575,15 +575,14 @@ let bottom =
         ])
         ((screw_top_bottom |> List.map ~f:(fun p -> (p, Patch.Bottom)))
         @ (screw_thumb_bottom |> List.map ~f:(fun p -> (p, Patch.Bottom))))
-    in M.union [
+    in
         M.difference
             (M.union [
                 base;
+                Pcbmod.top |>> (-27.5, -25.5, 0.);
             ]) [
-            Pcbmod.hollow |>> (-27.5, -14.5, 0.);
-            ];
-        Pcbmod.top |>> (-27.5, -14., 0.);
-    ]
+            Pcbmod.hollow |>> (-27.5, -25.5, 0.);
+            ]
 
 let () =
     build (M.union [bottom]) "bottom.scad";
