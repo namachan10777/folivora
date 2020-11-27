@@ -250,7 +250,7 @@ let screw_k13 = {
 
 let screw_k12 = {
     Patch.a = (0., pi/.20., pi/.60.);
-    Patch.p = (11.2, 4., 16.);
+    Patch.p = (11.2, 2., 16.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
@@ -395,8 +395,6 @@ let screw_top_bottom = [
     Patch.Screw screw_k42;
     Patch.Screw screw_k52;
     Patch.Screw screw_k53;
-    Patch.Screw screw_thumb_bridge2;
-    Patch.Screw screw_thumb_bridge1;
     Patch.Screw screw_k30;
     Patch.Screw screw_k40;
     Patch.Screw screw_kp_l;
@@ -406,11 +404,12 @@ let screw_top_bottom = [
 ]
 
 let screw_thumb_top = [
-    Patch.Screw screw_kt22;
-    Patch.Screw screw_kt21;
+
 ]
 
 let screw_thumb_bottom = [
+    Patch.Screw screw_kt22;
+    Patch.Screw screw_kt21;
     Patch.Screw screw_kt12;
     Patch.Screw screw_kt11;
 ]
@@ -486,7 +485,6 @@ let top =
         (M.union [
             P.ortho mat;
             sub;
-            P.ortho @@ gen_cover 3.5 [[Some(kt21);Some(kt22);]];
             M.hull [
                 P.barfl kp;
                 P.barnl k41;

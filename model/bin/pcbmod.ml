@@ -11,7 +11,7 @@ let screwes = [
 
 let w = 40.64
 let d = 64.135
-let t = 6.
+let t = 4.
 let pcb_t = 1.8
 let plate_t = 2.6
 let space_t = 2.0
