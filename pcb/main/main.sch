@@ -433,17 +433,6 @@ F 3 "~" V 6800 1175 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 $Comp
-L power:VBUS #PWR0111
-U 1 1 5FAC214A
-P 6300 1150
-F 0 "#PWR0111" H 6300 1000 50  0001 C CNN
-F 1 "VBUS" V 6315 1278 50  0000 L CNN
-F 2 "" H 6300 1150 50  0001 C CNN
-F 3 "" H 6300 1150 50  0001 C CNN
-	1    6300 1150
-	0    -1   -1   0   
-$EndComp
-$Comp
 L power:VBUS #PWR0112
 U 1 1 5FAC8831
 P 6300 1250
@@ -454,23 +443,6 @@ F 3 "" H 6300 1250 50  0001 C CNN
 	1    6300 1250
 	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	6300 1150 6400 1150
-Wire Wire Line
-	6400 1250 6300 1250
-$Comp
-L power:GND #PWR0113
-U 1 1 5FACC0BA
-P 6300 1450
-F 0 "#PWR0113" H 6300 1200 50  0001 C CNN
-F 1 "GND" V 6305 1322 50  0000 R CNN
-F 2 "" H 6300 1450 50  0001 C CNN
-F 3 "" H 6300 1450 50  0001 C CNN
-	1    6300 1450
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	6300 1450 6400 1450
 $Comp
 L power:GND #PWR0114
 U 1 1 5FAD34FF
@@ -484,14 +456,12 @@ F 3 "" H 6300 1550 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	6300 1550 6400 1550
-Text Label 6400 850  2    50   ~ 0
+Text Label 6400 1150 2    50   ~ 0
 SCLK
-Text Label 6400 950  2    50   ~ 0
+Text Label 6400 850  2    50   ~ 0
 MISO
 Text Label 6400 1050 2    50   ~ 0
 MOSI
-Text Label 6400 1350 2    50   ~ 0
-SS
 NoConn ~ 3050 2050
 NoConn ~ 3050 2150
 Text Label 3550 1450 0    50   ~ 0
@@ -788,66 +758,6 @@ F 3 "~" V 6800 2225 50  0001 C CNN
 	1    6800 2200
 	-1   0    0    1   
 $EndComp
-$Comp
-L power:VBUS #PWR0125
-U 1 1 5FC1DEA6
-P 6300 2200
-F 0 "#PWR0125" H 6300 2050 50  0001 C CNN
-F 1 "VBUS" V 6315 2328 50  0000 L CNN
-F 2 "" H 6300 2200 50  0001 C CNN
-F 3 "" H 6300 2200 50  0001 C CNN
-	1    6300 2200
-	0    -1   -1   0   
-$EndComp
-$Comp
-L power:VBUS #PWR0126
-U 1 1 5FC1DEB0
-P 6300 2300
-F 0 "#PWR0126" H 6300 2150 50  0001 C CNN
-F 1 "VBUS" V 6315 2427 50  0000 L CNN
-F 2 "" H 6300 2300 50  0001 C CNN
-F 3 "" H 6300 2300 50  0001 C CNN
-	1    6300 2300
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	6300 2200 6400 2200
-Wire Wire Line
-	6400 2300 6300 2300
-$Comp
-L power:GND #PWR0127
-U 1 1 5FC1DEBC
-P 6300 2500
-F 0 "#PWR0127" H 6300 2250 50  0001 C CNN
-F 1 "GND" V 6305 2372 50  0000 R CNN
-F 2 "" H 6300 2500 50  0001 C CNN
-F 3 "" H 6300 2500 50  0001 C CNN
-	1    6300 2500
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	6300 2500 6400 2500
-$Comp
-L power:GND #PWR0128
-U 1 1 5FC1DEC7
-P 6300 2600
-F 0 "#PWR0128" H 6300 2350 50  0001 C CNN
-F 1 "GND" V 6305 2472 50  0000 R CNN
-F 2 "" H 6300 2600 50  0001 C CNN
-F 3 "" H 6300 2600 50  0001 C CNN
-	1    6300 2600
-	0    1    1    0   
-$EndComp
-Wire Wire Line
-	6300 2600 6400 2600
-Text Label 6400 1900 2    50   ~ 0
-SCLK
-Text Label 6400 2100 2    50   ~ 0
-MISO
-Text Label 6400 2000 2    50   ~ 0
-MOSI
-Text Label 6400 2400 2    50   ~ 0
-SS
 Text Label 5400 8550 0    50   ~ 0
 D+
 Text Label 5400 8650 0    50   ~ 0
@@ -1965,4 +1875,50 @@ Text Label 5400 7650 0    50   ~ 0
 TX
 Text Label 5400 7750 0    50   ~ 0
 RX
+Wire Wire Line
+	6400 1250 6300 1250
+Text Label 6400 1450 2    50   ~ 0
+SS
+Text Label 6400 950  2    50   ~ 0
+MISO
+Text Label 6400 1350 2    50   ~ 0
+MOSI
+$Comp
+L power:VBUS #PWR?
+U 1 1 5FD68C38
+P 6300 2300
+F 0 "#PWR?" H 6300 2150 50  0001 C CNN
+F 1 "VBUS" V 6315 2427 50  0000 L CNN
+F 2 "" H 6300 2300 50  0001 C CNN
+F 3 "" H 6300 2300 50  0001 C CNN
+	1    6300 2300
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5FD68E82
+P 6300 2600
+F 0 "#PWR?" H 6300 2350 50  0001 C CNN
+F 1 "GND" V 6305 2472 50  0000 R CNN
+F 2 "" H 6300 2600 50  0001 C CNN
+F 3 "" H 6300 2600 50  0001 C CNN
+	1    6300 2600
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	6300 2600 6400 2600
+Text Label 6400 2200 2    50   ~ 0
+SCLK
+Text Label 6400 1900 2    50   ~ 0
+MISO
+Text Label 6400 2100 2    50   ~ 0
+MOSI
+Wire Wire Line
+	6400 2300 6300 2300
+Text Label 6400 2500 2    50   ~ 0
+SS
+Text Label 6400 2000 2    50   ~ 0
+MISO
+Text Label 6400 2400 2    50   ~ 0
+MOSI
 $EndSCHEMATC

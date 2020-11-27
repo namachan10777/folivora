@@ -580,9 +580,9 @@ let bottom =
             (M.union [
                 base;
             ]) [
-            Pcbmod.hollow |>> (-27.5, -17., 0.);
+            Pcbmod.hollow |>> (-27.5, -14.5, 0.);
             ];
-        Pcbmod.top |>> (-27.5, -17., 0.);
+        Pcbmod.top |>> (-27.5, -14., 0.);
     ]
 
 let () =
