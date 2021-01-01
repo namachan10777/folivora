@@ -8,6 +8,21 @@ type key_conf_t = {
     f : Scad_ml.Math.t -> Scad_ml.Core.scad_t;
 }
 
+let bbarfr k =
+    let (w, d, _) = k.size in
+    M.cube (0.001, 0.001, 0.001) |>> (w, d, 0.) |@> k.a |>> k.p
+
+let bbarfl k =
+    let (_, d, _) = k.size in
+    M.cube (0.001, 0.001, 0.001) |>> (0., d, 0.) |@> k.a |>> k.p
+
+let bbarnr k =
+    let (w, _, _) = k.size in
+    M.cube (0.001, 0.001, 0.001) |>> (w, 0., 0.) |@> k.a |>> k.p
+
+let bbarnl k =
+    M.cube (0.001, 0.001, 0.001) |@> k.a |>> k.p
+
 let barfr k =
     let (w, d, h) = k.size in
     M.cube (0.001, 0.001, h) |>> (w, d, 0.) |@> k.a |>> k.p
