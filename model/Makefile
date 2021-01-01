@@ -4,6 +4,7 @@ MODELS := thumb top bottom
 SCAD_SOURCES := $(addsuffix .scad,$(MODELS))
 STL_FILES    := $(addsuffix .stl,$(MODELS))
 DEPENDS := $(shell find . -name *.ml -type f)
+MODEL_BIN := _build/install/default/bin/model
 
 .PHONY: preview
 preview: $(SCAD_SOURCES)
@@ -18,15 +19,19 @@ archive: archive.tar.gz
 clean:
 	rm -f *.stl
 	rm -f *.zst
+	rm -f *.scad
 	rm -fr _build/
 
-%.scad: $(DEPENDS) Makefile
-	dune exec model
+$(MODEL_BIN): $(DEPENDS) Makefile
+	dune build
 
-%.stl: %.scad
+$(SCAD_SOURCES): $(MODEL_BIN) Makefile
+	./$(MODEL_BIN)
+
+%.stl: %.scad Makefile
 	openscad $< -o $@
 
-archive.tar.gz: $(STL_FILES)
+archive.tar.gz: $(STL_FILES) Makefile
 	tar --zstd -cvf archive.tar.zst $(STL_FILES)
 
 
