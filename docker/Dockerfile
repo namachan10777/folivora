@@ -20,7 +20,7 @@ RUN useradd -m folivora
 USER folivora
 
 RUN opam init -a -y --comp=$OCAML_VERSION --disable-sandboxing
-RUN opam install dune
+RUN opam install -y dune core
 WORKDIR /tmp/
 RUN git clone https://github.com/namachan10777/scad-ml
 WORKDIR scad-ml
