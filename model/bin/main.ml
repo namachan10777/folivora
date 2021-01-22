@@ -460,7 +460,7 @@ let mat = [
     [None;    None;     None;     None;     None;     None;     None];
 ]
 
-let thumb = 
+let thumb_trackball =
     Patch.apply_patches
         (M.union [P.ortho tmat])
         ((screw_thumb_top |> List.map ~f:(fun p -> (p, Patch.Top)))
@@ -583,7 +583,7 @@ let bottom =
             ]
 
 let () =
-    build (M.union [bottom]) "bottom.scad";
-    build (M.union [top]) "top.scad";
-    build (M.union [thumb]) "thumb.scad";
-    build (M.union [top; bottom; thumb]) "assembly.scad";
+    build bottom "bottom.scad";
+    build top "top.scad";
+    build thumb_trackball "thumb.scad";
+    build (M.union [top; bottom; thumb_trackball]) "assembly.scad";
