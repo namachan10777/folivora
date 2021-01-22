@@ -308,7 +308,7 @@ let screw_thumb_bridge1 = {
 
 let screw_k30 = {
     Patch.a = (0., pi/.20., 0.);
-    Patch.p = (46., -17., 23.0);
+    Patch.p = (46., -20., 22.0);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =5.5;
@@ -317,7 +317,7 @@ let screw_k30 = {
 
 let screw_k40 = {
     Patch.a = (0., pi/.20., -.pi/.30.);
-    Patch.p = (64., -22., 18.5);
+    Patch.p = (64., -23., 18.5);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
@@ -366,7 +366,7 @@ let screw_kt12 = {
 
 let screw_k20 = {
     Patch.a = (0., pi/.20., pi/.60.);
-    Patch.p = (25., -20., 26.5);
+    Patch.p = (20., -21., 26.5);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
