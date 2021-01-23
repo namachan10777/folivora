@@ -21,7 +21,7 @@ let cylinder_bottom = M.cylinder 3.0 3.0 ~center:true
 let k11 = {
     P.a = (-.pi/.5., pi/.20. +. pi/.20., pi/.30.);
     P.f = kailh_box (1.5, 1.5);
-    P.p = (-2., -23., 37.5);
+    P.p = (-3., -23., 37.5);
     P.size = (20., 20., 6.);
 }
 
@@ -213,7 +213,7 @@ let sub = M.union [
 module Patch = Model.Patch
 let screw_k13 = {
     Patch.a = (0., pi/.15., pi/.60.);
-    Patch.p = (10., 34., 18.5);
+    Patch.p = (10., 34., 17.0);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
@@ -229,15 +229,15 @@ let screw_k12 = {
 
 let screw_k33 = {
     Patch.a = (pi/.12., pi/.20., -.pi/.60.);
-    Patch.p = (50., 32., 8.);
+    Patch.p = (49.5, 32., 7.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
-    Patch.top_h =9.5;
+    Patch.top_h =6.5;
 }
 
 let screw_k42 = {
     Patch.a = (0., pi/.20., -.pi/.30.);
-    Patch.p = (69.5, 10., 5.);
+    Patch.p = (69.5, 10., 4.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
@@ -255,10 +255,10 @@ let screw_k52 = {
 
 let screw_k53 = {
     Patch.a = (pi/.12., pi/.20., -.pi/.30.);
-    Patch.p = (97., 24., 9.);
+    Patch.p = (97., 24., 7.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
-    Patch.top_h =7.5;
+    Patch.top_h =7.0;
 }
 
 let screw_thumb_bridge2 = {
