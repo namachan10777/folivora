@@ -71,7 +71,7 @@ let kp = {
     P.a = (0., pi/.20., 0.);
     P.f = kailh_choc (0., 0.);
     P.p = (45., -64., 38.0);
-    P.size = (24., 24., 6.);
+    P.size = (24., 24., 3.5);
 }
 
 let k30 = {
@@ -299,7 +299,7 @@ let screw_kp_l = {
     Patch.p = (45., -59., 35.0);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
-    Patch.top_h =9.;
+    Patch.top_h =6.5;
 }
 
 let screw_kp_r = {
@@ -307,7 +307,7 @@ let screw_kp_r = {
     Patch.p = (69., -59., 31.0);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
-    Patch.top_h =9.;
+    Patch.top_h =6.5;
 }
 
 
