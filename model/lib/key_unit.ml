@@ -3,13 +3,20 @@ open Scad_ml.Util
 
 let kailh_box (dx, dy) (w, d, h) =
     let lump = M.cube (w, d, h) in
-    M.difference lump [
+    M.difference (
+        M.union [
+            M.difference lump [
+                M.cube (16., 16., 1.001)
+                |>> ((w -. 16.)/.2. +. dx, (d -. 16.)/.2. +. dy, h -. 1.);
+                M.cube (6., 16., h -. 1.0 -. 1.5 +. 0.001)
+                |>> ((w -. 6.)/.2. +. dx, (d -. 16.)/.2. +. dy, -0.001);
+            ];
+            M.cube (16., 10., 1.)
+            |>> ((w -. 16.)/.2. +. dx, (d -. 10.)/.2. +. dy, h -. 1.);
+        ])
+    [
         M.cube (14., 14., h +. 0.02)
         |>> ((w -. 14.)/.2. +. dx, (d -. 14.)/.2. +. dy, -0.01);
-        M.cube (14., 16., 1.001)
-        |>> ((w -. 14.)/.2. +. dx, (d -. 16.)/.2. +. dy, h -. 1.);
-        M.cube (6., 16., h -. 1.0 -. 1.5 +. 0.001)
-        |>> ((w -. 6.)/.2. +. dx, (d -. 16.)/.2. +. dy, -0.001);
     ]
 
 let kailh_choc (dx, dy) (w, d, h) =
@@ -26,8 +33,8 @@ let kailh_choc (dx, dy) (w, d, h) =
         cut;
         M.difference (
             M.union [
-                M.cube (16., 12., 1.)
-                |>> ((w -. 16.)/.2. +. dx, (d -. 12.)/.2. +. dy, h -. 1.);
+                M.cube (16., 10., 1.)
+                |>> ((w -. 16.)/.2. +. dx, (d -. 10.)/.2. +. dy, h -. 1.);
                 M.cube (16., 3., h)
                 |>> ((w -. 16.)/.2. +. dx, (d -. 3.)/.2. +. dy, 0.);
             ]
