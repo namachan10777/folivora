@@ -27,8 +27,8 @@ let apply_patches target patches =
                 let outer = M.cylinder ~center:true ~fn:30 screw.out_r screw.top_h
                     |>> (0., 0., screw.top_h /. 2.) |@> screw.a |>> screw.p
                 in
-                let top_cut = M.cylinder ~center:true ~fn:30 screw.out_r 3.0
-                    |>> (0., 0., screw.top_h +. 1.5) |@> screw.a |>> screw.p
+                let top_cut = M.cylinder ~center:true ~fn:30 screw.out_r 5.0
+                    |>> (0., 0., screw.top_h +. 2.5) |@> screw.a |>> screw.p
                 in
                 let inner = M.cylinder ~center:true ~fn:30 screw.in_r (screw.top_h +. 0.2)
                     |>> (0., 0., screw.top_h /. 2.) |@> screw.a |>> screw.p

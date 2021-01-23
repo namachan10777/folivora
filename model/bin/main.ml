@@ -70,7 +70,7 @@ let k23 = {
 let kp = {
     P.a = (0., pi/.20., 0.);
     P.f = kailh_choc (0., 0.);
-    P.p = (45., -67., 30.0);
+    P.p = (45., -64., 38.0);
     P.size = (24., 24., 6.);
 }
 
@@ -162,21 +162,21 @@ let k53 = {
 let k61 = {
     P.a = (-.pi/.5., pi/.20., -.pi/.10.);
     P.f = kailh_box (-1.5, 1.5);
-    P.p = (90., -29., 21.);
+    P.p = (93., -23., 21.);
     P.size = (20., 20., 6.);
 }
 
 let k62 = {
     P.a = (0., 0., -.pi/.10.);
-    P.f = kailh_box (-1.5, 0.);
-    P.p = (95., -3., 7.);
-    P.size = (20., 17., 6.);
+    P.f = Model.Key_unit.dummy;
+    P.p = (95., 2., 7.);
+    P.size = (20., 3., 6.);
 }
 
 let k63 = {
     P.a = (pi/.12., 0., -.pi/.10.);
     P.f = kailh_box (-1.5, -1.5);
-    P.p = (101., 19., 7.);
+    P.p = (97., 9., 7.);
     P.size = (20., 20., 6.);
 }
 
@@ -246,7 +246,7 @@ let screw_k42 = {
 
 let screw_k52 = {
     Patch.a = (0., pi/.20., -.pi/.30.);
-    Patch.p = (92., -3., 6.);
+    Patch.p = (92., 0., 6.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
@@ -255,7 +255,7 @@ let screw_k52 = {
 
 let screw_k53 = {
     Patch.a = (pi/.12., pi/.20., -.pi/.30.);
-    Patch.p = (97., 24., 7.);
+    Patch.p = (96., 24., 7.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.0;
@@ -282,7 +282,7 @@ let screw_k30 = {
     Patch.p = (46., -20., 22.0);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
-    Patch.top_h =5.5;
+    Patch.top_h =7.5;
 }
 
 
@@ -291,12 +291,12 @@ let screw_k40 = {
     Patch.p = (64., -23., 18.5);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
-    Patch.top_h =7.5;
+    Patch.top_h =9.5;
 }
 
 let screw_kp_l = {
     Patch.a = (0., pi/.20., 0.);
-    Patch.p = (45., -62., 27.0);
+    Patch.p = (45., -59., 35.0);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =9.;
@@ -304,7 +304,7 @@ let screw_kp_l = {
 
 let screw_kp_r = {
     Patch.a = (0., pi/.20., 0.);
-    Patch.p = (69., -62., 23.0);
+    Patch.p = (69., -59., 31.0);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =9.;
@@ -313,7 +313,7 @@ let screw_kp_r = {
 
 let screw_k50 = {
     Patch.a = (0., pi/.20., -.pi/.10.);
-    Patch.p = (92., -28.5, 17.);
+    Patch.p = (92., -22.5, 15.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
