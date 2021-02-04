@@ -189,6 +189,7 @@ let screw_k13 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
+    Patch.insert_r = 1.5;
 }
 
 let screw_k12 = {
@@ -197,6 +198,7 @@ let screw_k12 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
+    Patch.insert_r = 1.5;
 }
 
 let screw_k33 = {
@@ -205,6 +207,7 @@ let screw_k33 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =6.5;
+    Patch.insert_r = 1.5;
 }
 
 let screw_k42 = {
@@ -213,6 +216,7 @@ let screw_k42 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
+    Patch.insert_r = 1.5;
 }
 
 
@@ -222,6 +226,7 @@ let screw_k52 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
+    Patch.insert_r = 1.5;
 }
 
 
@@ -231,6 +236,7 @@ let screw_k53 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.0;
+    Patch.insert_r = 1.5;
 }
 
 let screw_thumb_bridge2 = {
@@ -239,6 +245,7 @@ let screw_thumb_bridge2 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
+    Patch.insert_r = 1.5;
 }
 
 let screw_thumb_bridge1 = {
@@ -247,6 +254,7 @@ let screw_thumb_bridge1 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =9.5;
+    Patch.insert_r = 1.5;
 }
 
 let screw_k30 = {
@@ -255,6 +263,7 @@ let screw_k30 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
+    Patch.insert_r = 1.5;
 }
 
 
@@ -264,6 +273,7 @@ let screw_k40 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =9.5;
+    Patch.insert_r = 1.5;
 }
 
 let screw_kp_l = {
@@ -272,6 +282,7 @@ let screw_kp_l = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =6.5;
+    Patch.insert_r = 1.5;
 }
 
 let screw_kp_r = {
@@ -280,6 +291,7 @@ let screw_kp_r = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =6.5;
+    Patch.insert_r = 1.5;
 }
 
 
@@ -289,6 +301,7 @@ let screw_k50 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
+    Patch.insert_r = 1.5;
 }
 
 let screw_kt11 = {
@@ -297,6 +310,7 @@ let screw_kt11 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =14.5;
+    Patch.insert_r = 1.5;
 }
 
 let screw_kt12 = {
@@ -305,6 +319,7 @@ let screw_kt12 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
+    Patch.insert_r = 1.5;
 }
 
 let screw_k20 = {
@@ -313,6 +328,7 @@ let screw_k20 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
+    Patch.insert_r = 1.5;
 }
 
 let screw_kt22 = {
@@ -321,6 +337,7 @@ let screw_kt22 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
+    Patch.insert_r = 1.5;
 }
 
 let screw_kt21 = {
@@ -329,6 +346,7 @@ let screw_kt21 = {
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
+    Patch.insert_r = 1.5;
 }
 
 let screw_top_bottom = [
