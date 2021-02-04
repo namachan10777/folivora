@@ -1,0 +1,9 @@
+profile = ocamlformat
+break-cases = fit
+margin = 80
+parse-docstrings = false
+wrap-comments = true
+function-indent = 4
+let-binding-indent = 4
+type-decl-indent = 4
+extension-indent = 4
