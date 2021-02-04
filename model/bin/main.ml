@@ -60,7 +60,7 @@ let k23 =
 let kp =
     { P.a= (0., pi /. 20., 0.)
     ; P.f= kailh_choc (0., 0.)
-    ; P.p= (45., -64., 34.0)
+    ; P.p= (45., -68., 30.0)
     ; P.size= (24., 24., 3.5) }
 
 let k31 =
@@ -244,7 +244,7 @@ let screw_k40 =
 
 let screw_kp_l =
     { Patch.a= (0., pi /. 20., 0.)
-    ; Patch.p= (45., -59., 30.5)
+    ; Patch.p= (45., -63., 26.5)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 6.5
@@ -252,7 +252,7 @@ let screw_kp_l =
 
 let screw_kp_r =
     { Patch.a= (0., pi /. 20., 0.)
-    ; Patch.p= (69., -59., 26.5)
+    ; Patch.p= (69., -63., 22.5)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 6.5
@@ -268,7 +268,7 @@ let screw_k50 =
 
 let screw_kt11 =
     { Patch.a= (0., -1. *. pi /. 2., 0.)
-    ; Patch.p= (13.5, -76., 4.0)
+    ; Patch.p= (26.5, -76., 4.0)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 14.5
@@ -276,7 +276,7 @@ let screw_kt11 =
 
 let screw_kt12 =
     { Patch.a= (0., -1. *. pi /. 2., pi /. 6.)
-    ; Patch.p= (5., -32., 3.5)
+    ; Patch.p= (18., -32., 3.5)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 8.5
@@ -292,7 +292,7 @@ let screw_k20 =
 
 let screw_kt22 =
     { Patch.a= (0., -3. *. pi /. 7., pi /. 6.)
-    ; Patch.p= (10.5, -33., 45.)
+    ; Patch.p= (23.5, -33., 45.)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 8.5
@@ -300,7 +300,7 @@ let screw_kt22 =
 
 let screw_kt21 =
     { Patch.a= (0., -3. *. pi /. 7., 0.)
-    ; Patch.p= (16., -74., 32.)
+    ; Patch.p= (29., -74., 32.)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 8.5
@@ -331,25 +331,25 @@ let screw_thumb_bottom =
 let kt11 =
     { P.a= (0., -1. *. pi /. 2., 0.)
     ; P.f= Model.Key_unit.bittradeone_trackball (0., 0.)
-    ; P.p= (11., -76., 0.)
+    ; P.p= (23., -76., 0.)
     ; P.size= (19., 22., 6.) }
 
 let kt12 =
     { P.a= (0., -1. *. pi /. 2., pi /. 6.)
     ; P.f= kailh_choc (3., 0.)
-    ; P.p= (10., -47., 0.)
+    ; P.p= (22., -47., 0.)
     ; P.size= (23., 17., 6.) }
 
 let kt21 =
     { P.a= (0., -3. *. pi /. 7., 0.)
     ; P.f= kailh_choc (-1.5, 1.5)
-    ; P.p= (11., -74., 22.)
+    ; P.p= (23., -74., 22.)
     ; P.size= (20., 20., 6.) }
 
 let kt22 =
     { P.a= (0., -3. *. pi /. 7., pi /. 6.)
     ; P.f= kailh_choc (-1.5, 0.)
-    ; P.p= (10., -47., 26.)
+    ; P.p= (22., -47., 26.)
     ; P.size= (20., 17., 6.) }
 
 let tmat =
