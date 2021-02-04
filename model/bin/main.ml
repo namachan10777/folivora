@@ -28,22 +28,15 @@ let k11 = {
 let k12 = {
     P.a = (pi/.8., pi/.12. +. pi/.20., pi/.30.);
     P.f = kailh_box (1.5, 0.);
-    P.p = (-10., 4.5, 27.5);
+    P.p = (-10., 5.5, 27.5);
     P.size = (20., 17., 6.);
 }
 
 let k13 = {
     P.a = (pi/.4., pi/.12. +. pi/.20., pi/.20.);
     P.f = kailh_box (1.5, 0.);
-    P.p = (-9., 23., 37.5);
+    P.p = (-9., 25., 37.5);
     P.size = (20., 17., 6.);
-}
-
-let k20 = {
-    P.a = (-.pi/.10., pi/.20., pi/.60.);
-    P.f = kailh_choc (0., 0.);
-    P.p = (18., -39., 26.);
-    P.size = (17., 17., 6.);
 }
 
 let k21 = {
@@ -56,14 +49,14 @@ let k21 = {
 let k22 = {
     P.a = (pi/.8., pi/.20., pi/.60.);
     P.f = kailh_box (0., 0.);
-    P.p = (14., 8., 18.);
+    P.p = (14., 9., 18.);
     P.size = (17., 17., 6.);
 }
 
 let k23 = {
     P.a = (pi/.4., pi/.20., pi/.60.);
     P.f = kailh_box (0., 0.);
-    P.p = (14.5, 28., 27.);
+    P.p = (14.5, 30., 27.);
     P.size = (17., 17., 6.);
 }
 
@@ -72,13 +65,6 @@ let kp = {
     P.f = kailh_choc (0., 0.);
     P.p = (45., -64., 34.0);
     P.size = (24., 24., 3.5);
-}
-
-let k30 = {
-    P.a = (0., pi/.20., 0.);
-    P.f = kailh_choc (0., 0.);
-    P.p = (36., -37., 21.0);
-    P.size = (17., 17., 6.);
 }
 
 let k31 = {
@@ -91,23 +77,17 @@ let k31 = {
 let k32 = {
     P.a = (pi/.8., pi/.20., 0.);
     P.f = kailh_box (0., 0.);
-    P.p = (35., 9., 10.);
+    P.p = (35., 10., 10.);
     P.size = (17., 17., 6.);
 }
 
 let k33 = {
     P.a = (pi/.4., pi/.20., 0.);
     P.f = kailh_box (0., 0.);
-    P.p = (36., 30., 21.);
+    P.p = (36., 32., 21.);
     P.size = (17., 17., 6.);
 }
 
-let k40 = {
-    P.a = (0., pi/.20., -.pi/.30.);
-    P.f = kailh_choc (0., 0.);
-    P.p = (54., -42., 19.5);
-    P.size = (17., 17., 6.);
-}
 
 let k41 = {
     P.a = (-.pi/.10., pi/.20., -.pi/.60.);
@@ -116,11 +96,10 @@ let k41 = {
     P.size = (17., 17., 6.);
 }
 
-
 let k42 = {
-    P.a = (pi/.8., pi/.20., -.pi/.60.);
+    P.a = (pi/.10., pi/.20., -.pi/.60.);
     P.f = kailh_box (0., 0.);
-    P.p = (56., 6., 8.);
+    P.p = (56., 6., 9.);
     P.size = (17., 17., 6.);
 }
 
@@ -131,13 +110,6 @@ let k43 = {
     P.size = (17., 17., 6.);
 }
 
-let k50 = {
-    P.a = (0., pi/.20., -.pi/.30.);
-    P.f = kailh_choc (-1., 0.);
-    P.p = (73., -39., 16.5);
-    P.size = (19., 17., 6.);
-}
-
 let k51 = {
     P.a = (-.pi/.10., pi/.20., -.pi/.30.);
     P.f = kailh_box (0., 1.5);
@@ -146,16 +118,16 @@ let k51 = {
 }
 
 let k52 = {
-    P.a = (pi/.8., pi/.20., -.pi/.30.);
+    P.a = (pi/.10., pi/.20., -.pi/.30.);
     P.f = kailh_box (0., 0.);
-    P.p = (75.5, 2., 8.);
+    P.p = (75.5, 2., 9.5);
     P.size = (17., 17., 6.);
 }
 
 let k53 = {
     P.a = (pi/.4., pi/.20., -.pi/.30.);
     P.f = kailh_box (-1.5, -1.5);
-    P.p = (78., 22., 18.);
+    P.p = (78., 24., 18.);
     P.size = (20., 20., 6.);
 }
 
@@ -169,14 +141,14 @@ let k61 = {
 let k62 = {
     P.a = (pi/.8., 0., -.pi/.15.);
     P.f = Model.Key_unit.dummy;
-    P.p = (98., 4., 5.);
+    P.p = (97., 4., 5.);
     P.size = (20., 3., 6.);
 }
 
 let k63 = {
     P.a = (pi/.6., 0., -.pi/.10.);
     P.f = kailh_box (-1.5, -1.5);
-    P.p = (102., 12., 8.);
+    P.p = (99.5, 12., 9.);
     P.size = (20., 20., 6.);
 }
 
@@ -212,16 +184,16 @@ let sub = M.union [
 
 module Patch = Model.Patch
 let screw_k13 = {
-    Patch.a = (0., pi/.15., pi/.60.);
-    Patch.p = (10., 34., 17.0);
+    Patch.a = (pi/.5., pi/.15., pi/.60.);
+    Patch.p = (11.8, 28.5, 25.0);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
 }
 
 let screw_k12 = {
-    Patch.a = (0., pi/.20., pi/.60.);
-    Patch.p = (11.2, 2., 16.);
+    Patch.a = (pi/.12., pi/.20., pi/.60.);
+    Patch.p = (11.2, 5., 15.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
@@ -229,15 +201,15 @@ let screw_k12 = {
 
 let screw_k33 = {
     Patch.a = (pi/.12., pi/.20., -.pi/.60.);
-    Patch.p = (49.5, 32., 7.);
+    Patch.p = (49.5, 28., 14.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =6.5;
 }
 
 let screw_k42 = {
-    Patch.a = (0., pi/.20., -.pi/.30.);
-    Patch.p = (69.5, 10., 4.);
+    Patch.a = (pi/.6., pi/.20., -.pi/.30.);
+    Patch.p = (69.5, 26., 12.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
@@ -245,8 +217,8 @@ let screw_k42 = {
 
 
 let screw_k52 = {
-    Patch.a = (0., pi/.20., -.pi/.30.);
-    Patch.p = (92., 0., 6.);
+    Patch.a = (pi/.6., pi/.20., -.pi/.30.);
+    Patch.p = (100., 28., 16.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
@@ -255,7 +227,7 @@ let screw_k52 = {
 
 let screw_k53 = {
     Patch.a = (pi/.12., pi/.20., -.pi/.30.);
-    Patch.p = (96., 24., 7.);
+    Patch.p = (110., 0., 3.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.0;
@@ -279,7 +251,7 @@ let screw_thumb_bridge1 = {
 
 let screw_k30 = {
     Patch.a = (0., pi/.20., 0.);
-    Patch.p = (46., -20., 22.0);
+    Patch.p = (46., -20., 14.0);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =7.5;
@@ -288,7 +260,7 @@ let screw_k30 = {
 
 let screw_k40 = {
     Patch.a = (0., pi/.20., -.pi/.30.);
-    Patch.p = (64., -23., 18.5);
+    Patch.p = (64., -23., 12.5);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =9.5;
@@ -296,7 +268,7 @@ let screw_k40 = {
 
 let screw_kp_l = {
     Patch.a = (0., pi/.20., 0.);
-    Patch.p = (45., -59., 35.0);
+    Patch.p = (45., -59., 30.5);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =6.5;
@@ -304,7 +276,7 @@ let screw_kp_l = {
 
 let screw_kp_r = {
     Patch.a = (0., pi/.20., 0.);
-    Patch.p = (69., -59., 31.0);
+    Patch.p = (69., -59., 26.5);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =6.5;
@@ -313,7 +285,7 @@ let screw_kp_r = {
 
 let screw_k50 = {
     Patch.a = (0., pi/.20., -.pi/.10.);
-    Patch.p = (92., -22.5, 15.);
+    Patch.p = (94., -22.5, 8.);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
@@ -337,7 +309,7 @@ let screw_kt12 = {
 
 let screw_k20 = {
     Patch.a = (0., pi/.20., pi/.60.);
-    Patch.p = (20., -21., 26.5);
+    Patch.p = (16., -20., 18.5);
     Patch.out_r = 2.5;
     Patch.in_r = 1.1;
     Patch.top_h =8.5;
