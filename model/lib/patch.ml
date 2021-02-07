@@ -31,13 +31,17 @@ let apply_patches target patches =
                      |>> (0., 0., screw.top_h +. 2.5)
                      |@> screw.a |>> screw.p
                  in
+                 let bottom_cut =
+                     M.cylinder ~center:true ~fn:30 screw.out_r 5.0
+                     |>> (0., 0., -2.5) |@> screw.a |>> screw.p
+                 in
                  let inner =
                      M.cylinder ~center:true ~fn:30 screw.in_r
                        (screw.top_h +. 0.2)
                      |>> (0., 0., screw.top_h /. 2.)
                      |@> screw.a |>> screw.p
                  in
-                 (outer, M.union [inner; top_cut])
+                 (outer, M.union [inner; top_cut; bottom_cut])
              | Screw screw, Bottom ->
                  let outer =
                      M.cylinder ~center:true ~fn:30 screw.out_r insert_l

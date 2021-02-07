@@ -135,7 +135,6 @@ let k63 =
     ; P.p= (98.5, 9., 10.)
     ; P.size= (20., 20., 6.) }
 
-
 open Scad_ml.Util
 
 let under_cover d t f k =
@@ -159,106 +158,98 @@ module Patch = Model.Patch
 
 let screw_k13 =
     { Patch.a= (pi /. 5., pi /. 15., pi /. 60.)
-    ; Patch.p= (11.8, 28.5, 25.0)
+    ; Patch.p= (12.8, 20.5, 30.0)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
-    ; Patch.top_h= 7.5
+    ; Patch.top_h= 6.5
     ; Patch.insert_r= 1.5 }
 
 let screw_k12 =
     { Patch.a= (pi /. 12., pi /. 20., pi /. 60.)
-    ; Patch.p= (11.2, 5., 15.)
+    ; Patch.p= (11.2, 5., 19.5)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
-    ; Patch.top_h= 7.5
+    ; Patch.top_h= 5.5
+    ; Patch.insert_r= 1.5 }
+
+let screw_k20 =
+    { Patch.a= (0., pi /. 20., pi /. 60.)
+    ; Patch.p= (16., -25., 21.5)
+    ; Patch.out_r= 2.5
+    ; Patch.in_r= 1.1
+    ; Patch.top_h= 5.5
     ; Patch.insert_r= 1.5 }
 
 let screw_k33 =
     { Patch.a= (pi /. 12., pi /. 20., -.pi /. 60.)
-    ; Patch.p= (49.5, 28., 14.)
+    ; Patch.p= (49.5, 28., 15.)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
-    ; Patch.top_h= 6.5
+    ; Patch.top_h= 5.5
     ; Patch.insert_r= 1.5 }
 
 let screw_k42 =
     { Patch.a= (pi /. 6., pi /. 20., -.pi /. 30.)
-    ; Patch.p= (69.5, 26., 12.)
+    ; Patch.p= (69.5, 26., 15.)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
-    ; Patch.top_h= 8.5
-    ; Patch.insert_r= 1.5 }
-
-let screw_k52 =
-    { Patch.a= (pi /. 6., pi /. 20., -.pi /. 30.)
-    ; Patch.p= (100., 28., 16.)
-    ; Patch.out_r= 2.5
-    ; Patch.in_r= 1.1
-    ; Patch.top_h= 7.5
+    ; Patch.top_h= 5.5
     ; Patch.insert_r= 1.5 }
 
 let screw_k53 =
+    { Patch.a= (pi /. 6., pi /. 20., -.pi /. 30.)
+    ; Patch.p= (100., 25., 23.)
+    ; Patch.out_r= 2.5
+    ; Patch.in_r= 1.1
+    ; Patch.top_h= 5.5
+    ; Patch.insert_r= 1.5 }
+
+let screw_k52 =
     { Patch.a= (pi /. 12., pi /. 20., -.pi /. 30.)
-    ; Patch.p= (110., 0., 3.)
+    ; Patch.p= (110., 0., 6.)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
-    ; Patch.top_h= 7.0
-    ; Patch.insert_r= 1.5 }
-
-let screw_thumb_bridge2 =
-    { Patch.a= (0., pi /. 20., 0.)
-    ; Patch.p= (30., -62., 20.0)
-    ; Patch.out_r= 2.5
-    ; Patch.in_r= 1.1
-    ; Patch.top_h= 7.5
-    ; Patch.insert_r= 1.5 }
-
-let screw_thumb_bridge1 =
-    { Patch.a= (0., pi /. 20., 0.)
-    ; Patch.p= (20., -47., 24.0)
-    ; Patch.out_r= 2.5
-    ; Patch.in_r= 1.1
-    ; Patch.top_h= 9.5
-    ; Patch.insert_r= 1.5 }
-
-let screw_k30 =
-    { Patch.a= (0., pi /. 20., 0.)
-    ; Patch.p= (46., -20., 14.0)
-    ; Patch.out_r= 2.5
-    ; Patch.in_r= 1.1
-    ; Patch.top_h= 7.5
-    ; Patch.insert_r= 1.5 }
-
-let screw_k40 =
-    { Patch.a= (0., pi /. 20., -.pi /. 30.)
-    ; Patch.p= (64., -23., 12.5)
-    ; Patch.out_r= 2.5
-    ; Patch.in_r= 1.1
-    ; Patch.top_h= 9.5
-    ; Patch.insert_r= 1.5 }
-
-let screw_kp_l =
-    { Patch.a= (0., pi /. 20., 0.)
-    ; Patch.p= (45., -63., 26.5)
-    ; Patch.out_r= 2.5
-    ; Patch.in_r= 1.1
-    ; Patch.top_h= 6.5
-    ; Patch.insert_r= 1.5 }
-
-let screw_kp_r =
-    { Patch.a= (0., pi /. 20., 0.)
-    ; Patch.p= (69., -63., 22.5)
-    ; Patch.out_r= 2.5
-    ; Patch.in_r= 1.1
-    ; Patch.top_h= 6.5
+    ; Patch.top_h= 6.0
     ; Patch.insert_r= 1.5 }
 
 let screw_k50 =
     { Patch.a= (0., pi /. 20., -.pi /. 10.)
-    ; Patch.p= (94., -22.5, 8.)
+    ; Patch.p= (94., -26.5, 10.)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
-    ; Patch.top_h= 8.5
+    ; Patch.top_h= 6.5
+    ; Patch.insert_r= 1.5 }
+
+let screw_k30 =
+    { Patch.a= (0., pi /. 20., 0.)
+    ; Patch.p= (46., -20., 16.0)
+    ; Patch.out_r= 2.5
+    ; Patch.in_r= 1.1
+    ; Patch.top_h= 5.5
+    ; Patch.insert_r= 1.5 }
+
+let screw_k40 =
+    { Patch.a= (0., pi /. 20., -.pi /. 30.)
+    ; Patch.p= (64., -23., 16.5)
+    ; Patch.out_r= 2.5
+    ; Patch.in_r= 1.1
+    ; Patch.top_h= 5.5
+    ; Patch.insert_r= 1.5 }
+
+let screw_kp_l =
+    { Patch.a= (0., pi /. 20., 0.)
+    ; Patch.p= (47., -63., 31.5)
+    ; Patch.out_r= 2.5
+    ; Patch.in_r= 1.1
+    ; Patch.top_h= 4.5
+    ; Patch.insert_r= 1.5 }
+
+let screw_kp_r =
+    { Patch.a= (0., pi /. 20., 0.)
+    ; Patch.p= (67., -63., 28.5)
+    ; Patch.out_r= 2.5
+    ; Patch.in_r= 1.1
+    ; Patch.top_h= 4.5
     ; Patch.insert_r= 1.5 }
 
 let screw_kt11 =
@@ -272,14 +263,6 @@ let screw_kt11 =
 let screw_kt12 =
     { Patch.a= (0., -1. *. pi /. 2., pi /. 6.)
     ; Patch.p= (18., -32., 3.5)
-    ; Patch.out_r= 2.5
-    ; Patch.in_r= 1.1
-    ; Patch.top_h= 8.5
-    ; Patch.insert_r= 1.5 }
-
-let screw_k20 =
-    { Patch.a= (0., pi /. 20., pi /. 60.)
-    ; Patch.p= (16., -20., 18.5)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 8.5
