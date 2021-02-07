@@ -158,7 +158,7 @@ module Patch = Model.Patch
 
 let screw_k13 =
     { Patch.a= (pi /. 5., pi /. 15., pi /. 60.)
-    ; Patch.p= (12.8, 20.5, 30.0)
+    ; Patch.p= (13.5, 32., 43.0)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 6.5
@@ -166,7 +166,7 @@ let screw_k13 =
 
 let screw_k12 =
     { Patch.a= (pi /. 12., pi /. 20., pi /. 60.)
-    ; Patch.p= (11.2, 5., 19.5)
+    ; Patch.p= (11.8, 0., 19.5)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 5.5
@@ -254,7 +254,7 @@ let screw_kp_r =
 
 let screw_kt11 =
     { Patch.a= (0., -1. *. pi /. 2., 0.)
-    ; Patch.p= (26.5, -76., 4.0)
+    ; Patch.p= (26.5, -56., 4.0)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 14.5
@@ -278,7 +278,7 @@ let screw_kt22 =
 
 let screw_kt21 =
     { Patch.a= (0., -3. *. pi /. 7., 0.)
-    ; Patch.p= (29., -74., 32.)
+    ; Patch.p= (29., -54., 32.)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 8.5
