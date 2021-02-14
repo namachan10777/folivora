@@ -256,8 +256,7 @@ let screw_kt11 =
     { Patch.a= (0., -1. *. pi /. 2., 0.)
     ; Patch.p= (26.5, -56., 4.0)
     ; Patch.out_r= 2.5
-    ; Patch.in_r= 1.1
-    ; Patch.top_h= 14.5
+    ; Patch.in_r= 1.1 ; Patch.top_h= 8.5
     ; Patch.insert_r= 1.5 }
 
 let screw_kt12 =
@@ -308,7 +307,7 @@ let screw_thumb_bottom =
 
 let kt11 =
     { P.a= (0., -1. *. pi /. 2., 0.)
-    ; P.f= Model.Key_unit.bittradeone_trackball (0., 0.)
+    ; P.f= Model.Key_unit.dummy
     ; P.p= (23., -56., 0.)
     ; P.size= (19., 2., 6.) }
 
@@ -320,7 +319,7 @@ let kt12 =
 
 let kt21 =
     { P.a= (0., -3. *. pi /. 7., 0.)
-    ; P.f= kailh_choc (-1.5, 1.5)
+    ; P.f= Model.Key_unit.dummy
     ; P.p= (23., -54., 22.)
     ; P.size= (20., 2., 6.) }
 
