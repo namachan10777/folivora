@@ -179,7 +179,7 @@ module Patch = Model.Patch
 
 let screw_k13 =
     { Patch.a= (pi /. 5., pi /. 15., pi /. 60.)
-    ; Patch.p= (13.5, 32., 43.0)
+    ; Patch.p= (13.5, 36., 37.0)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 6.5
@@ -283,7 +283,7 @@ let screw_kt11 =
 
 let screw_kt12 =
     { Patch.a= (0., -1. *. pi /. 2., pi /. 6.)
-    ; Patch.p= (18., -32., 3.5)
+    ; Patch.p= (15., -29.0, 3.5)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 8.5
@@ -291,7 +291,7 @@ let screw_kt12 =
 
 let screw_kt22 =
     { Patch.a= (0., -3. *. pi /. 7., pi /. 6.)
-    ; Patch.p= (23.5, -33., 45.)
+    ; Patch.p= (22.0, -33., 36.)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 8.5
@@ -332,28 +332,28 @@ let kt11 =
     ; P.f= Model.Key_unit.dummy
     ; P.cap= None
     ; P.p= (23., -56., 0.)
-    ; P.size= (19., 2., 6.) }
+    ; P.size= (18., 2., 6.) }
 
 let kt12 =
     { P.a= (0., -1. *. pi /. 2., pi /. 6.)
-    ; P.f= kailh_choc (3., 0.)
+    ; P.f= kailh_choc (1., -1.)
     ; P.cap= Some K.keycap_choc
     ; P.p= (22., -47., 0.)
-    ; P.size= (23., 17., 6.) }
+    ; P.size= (18., 19., 6.) }
 
 let kt21 =
     { P.a= (0., -3. *. pi /. 7., 0.)
     ; P.f= Model.Key_unit.dummy
     ; P.cap= None
-    ; P.p= (23., -54., 22.)
+    ; P.p= (23., -54., 18.)
     ; P.size= (20., 2., 6.) }
 
 let kt22 =
     { P.a= (0., -3. *. pi /. 7., pi /. 6.)
-    ; P.f= kailh_choc (-1.5, 0.)
+    ; P.f= kailh_choc (-1.5, -1.)
     ; P.cap= Some K.keycap_choc
-    ; P.p= (22., -47., 26.)
-    ; P.size= (20., 17., 6.) }
+    ; P.p= (22., -47., 18.)
+    ; P.size= (20., 19., 6.) }
 
 let tmat =
     [ [None; None; None; None]
@@ -371,7 +371,7 @@ let mat =
     ; [None; None; Some k61; Some k62; Some k63; None; None]
     ; [None; None; None; None; None; None; None] ]
 
-let thumb_trackball =
+let thumb_trackball tmat =
     Patch.apply_patches
       (M.union [P.ortho tmat])
       ( (screw_thumb_top |> List.map ~f:(fun p -> (p, Patch.Top)))
@@ -397,7 +397,7 @@ let tcover21 = idx thumb_cover 2 1
 
 let tcover22 = idx thumb_cover 2 2
 
-let top =
+let top mat =
     Patch.apply_patches
       (M.union
          [ P.ortho mat
@@ -407,7 +407,7 @@ let top =
       ( (screw_top_bottom |> List.map ~f:(fun p -> (p, Patch.Top)))
       @ (screw_thumb_top |> List.map ~f:(fun p -> (p, Patch.Bottom))) )
 
-let bottom =
+let bottom tmat mat =
     let tcover = gen_cover 3.5 tmat in
     let ortho = gen_cover 0.5 mat in
     let tidx = idx tcover in
@@ -460,8 +460,17 @@ let bottom =
       (M.union [base; Pcbmod.top |>> (-27.5, -25.5, 0.)])
       [Pcbmod.hollow |>> (-27.5, -25.5, 0.)]
 
+let remove_cap =
+    List.map
+      ~f:
+        (List.map ~f:(function
+          | Some k -> Some {k with P.cap= None}
+          | None -> None))
+
 let () =
-    build bottom "bottom.scad" ;
-    build top "top.scad" ;
-    build thumb_trackball "thumb.scad" ;
-    build (M.union [top; bottom; thumb_trackball]) "assembly.scad"
+    build (bottom (remove_cap tmat) (remove_cap mat)) "bottom.scad" ;
+    build (top (remove_cap mat)) "top.scad" ;
+    build (thumb_trackball (remove_cap tmat)) "thumb.scad" ;
+    build
+      (M.union [top mat; bottom tmat mat; thumb_trackball tmat])
+      "assembly.scad"
