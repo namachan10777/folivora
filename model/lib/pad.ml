@@ -5,7 +5,8 @@ type key_conf_t =
     { p: Scad_ml.Math.t
     ; a: Scad_ml.Math.t
     ; size: Scad_ml.Math.t
-    ; f: Scad_ml.Math.t -> Scad_ml.Core.scad_t }
+    ; cap: Key_unit.cap_t option
+    ; f: Scad_ml.Math.t -> Key_unit.cap_t option -> Scad_ml.Core.scad_t }
 
 let bbarfr k =
     let w, d, _ = k.size in
@@ -73,7 +74,7 @@ let bottom k =
     let w, d, _ = k.size in
     M.cube (w, d, 0.001) |@> k.a |>> k.p
 
-let body k = k.f k.size |@> k.a |>> k.p
+let body k = k.f k.size k.cap |@> k.a |>> k.p
 
 let lhalf k =
     let w, d, h = k.size in
@@ -133,7 +134,7 @@ let ortho mat =
 
 let pbody k =
     let w, d, _ = k.size in
-    let top = k.f (w, d, 0.001) |@> k.a |>> k.p in
+    let top = k.f (w, d, 0.001) None |@> k.a |>> k.p in
     let bottom = M.linear_extrude ~height:0.1 @@ M.projection top in
     M.hull [top; bottom]
 

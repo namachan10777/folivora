@@ -14,6 +14,7 @@ let pi = Scad_ml.Core.pi
 
 module P = Model.Pad
 module M = Scad_ml.Model
+module K = Model.Key_unit
 open Core
 open Scad_ml.Util
 
@@ -24,114 +25,133 @@ let cylinder_bottom = M.cylinder 3.0 3.0 ~center:true |>> (0., 0., -3.)
 let k11 =
     { P.a= (-.pi /. 10., (pi /. 20.) +. (pi /. 20.), pi /. 30.)
     ; P.f= kailh_box (1.5, 1.5)
+    ; P.cap= Some K.keycap_chery_r4
     ; P.p= (-3.5, -30., 29.5)
     ; P.size= (20., 20., 6.) }
 
 let k12 =
     { P.a= (pi /. 8., (pi /. 12.) +. (pi /. 20.), pi /. 30.)
     ; P.f= kailh_box (1.5, 0.)
+    ; P.cap= Some K.keycap_chery_r3
     ; P.p= (-10., -1.5, 27.5)
     ; P.size= (20., 17., 6.) }
 
 let k13 =
     { P.a= (pi /. 4., (pi /. 12.) +. (pi /. 20.), pi /. 20.)
     ; P.f= kailh_box (1.5, 0.)
-    ; P.p= (-9., 16.5, 41.0)
+    ; P.cap= Some K.keycap_chery_r2
+    ; P.p= (-9., 19.5, 37.5)
     ; P.size= (20., 17., 6.) }
 
 let k21 =
     { P.a= (-.pi /. 10., pi /. 20., pi /. 60.)
     ; P.f= kailh_box (0., 1.5)
+    ; P.cap= Some K.keycap_chery_r2
     ; P.p= (18., -26., 22.5)
     ; P.size= (17., 20., 6.) }
 
 let k22 =
     { P.a= (pi /. 8., pi /. 20., pi /. 60.)
     ; P.f= kailh_box (0., 0.)
+    ; P.cap= Some K.keycap_chery_r3
     ; P.p= (14., 3., 18.)
     ; P.size= (17., 17., 6.) }
 
 let k23 =
     { P.a= (pi /. 4., pi /. 20., pi /. 60.)
     ; P.f= kailh_box (0., 0.)
-    ; P.p= (14.5, 21.5, 31.0)
+    ; P.cap= Some K.keycap_chery_r2
+    ; P.p= (14.5, 24.5, 27.0)
     ; P.size= (17., 17., 6.) }
 
 let kp =
-    { P.a= (0., pi /. 20., 0.)
+    { P.a= (pi /. 10., pi /. 20., 0.)
+    ; P.cap= Some K.keycap_choc
     ; P.f= kailh_choc (0., 0.)
-    ; P.p= (45., -64., 33.0)
+    ; P.p= (45., -64., 29.0)
     ; P.size= (24., 24., 3.5) }
 
 let k31 =
     { P.a= (-.pi /. 10., pi /. 20., 0.)
     ; P.f= kailh_box (0., 0.)
-    ; P.p= (36., -19., 17.)
+    ; P.cap= Some K.keycap_chery_r2
+    ; P.p= (36., -18., 17.)
     ; P.size= (17., 17., 6.) }
 
 let k32 =
     { P.a= (pi /. 8., pi /. 20., 0.)
     ; P.f= kailh_box (0., 0.)
-    ; P.p= (35., 10., 10.)
+    ; P.cap= Some K.keycap_chery_r3
+    ; P.p= (35., 10., 11.)
     ; P.size= (17., 17., 6.) }
 
 let k33 =
     { P.a= (pi /. 4., pi /. 20., 0.)
     ; P.f= kailh_box (0., 0.)
+    ; P.cap= Some K.keycap_chery_r2
     ; P.p= (36., 32., 21.)
     ; P.size= (17., 17., 6.) }
 
 let k41 =
     { P.a= (-.pi /. 10., pi /. 20., -.pi /. 60.)
     ; P.f= kailh_box (0., 0.)
+    ; P.cap= Some K.keycap_chery_r2
     ; P.p= (56., -20., 17.)
     ; P.size= (17., 17., 6.) }
 
 let k42 =
     { P.a= (pi /. 10., pi /. 20., -.pi /. 60.)
     ; P.f= kailh_box (0., 0.)
-    ; P.p= (56., 6., 9.)
+    ; P.cap= Some K.keycap_chery_r3
+    ; P.p= (56., 6., 10.)
     ; P.size= (17., 17., 6.) }
 
 let k43 =
     { P.a= (pi /. 4., pi /. 20., -.pi /. 60.)
     ; P.f= kailh_box (0., 0.)
-    ; P.p= (58., 27., 20.)
+    ; P.cap= Some K.keycap_chery_r2
+    ; P.p= (58., 29., 18.)
     ; P.size= (17., 17., 6.) }
 
 let k51 =
     { P.a= (-.pi /. 10., pi /. 20., -.pi /. 30.)
     ; P.f= kailh_box (0., 1.5)
+    ; P.cap= Some K.keycap_chery_r2
     ; P.p= (75., -30., 15.)
     ; P.size= (17., 20., 6.) }
 
 let k52 =
     { P.a= (pi /. 10., pi /. 20., -.pi /. 30.)
     ; P.f= kailh_box (0., 0.)
+    ; P.cap= Some K.keycap_chery_r3
     ; P.p= (75.5, -2., 9.5)
     ; P.size= (17., 17., 6.) }
 
 let k53 =
     { P.a= (pi /. 4., pi /. 20., -.pi /. 30.)
     ; P.f= kailh_box (-1.5, -1.5)
+    ; P.cap= Some K.keycap_chery_r2
     ; P.p= (78., 20., 18.)
     ; P.size= (20., 20., 6.) }
 
 let k61 =
     { P.a= (-.pi /. 10., pi /. 20., -.pi /. 20.)
     ; P.f= kailh_box (-1.5, 1.5)
+    ; P.cap= Some K.keycap_chery_r3
     ; P.p= (93., -28., 12.)
     ; P.size= (20., 20., 6.) }
 
 let k62 =
     { P.a= (pi /. 8., 0., -.pi /. 15.)
     ; P.f= Model.Key_unit.dummy
+    ; P.cap= None
     ; P.p= (96., 1., 5.)
     ; P.size= (19., 3., 6.) }
 
 let k63 =
     { P.a= (pi /. 4., 0., -.pi /. 10.)
     ; P.f= kailh_box (-1.5, -1.5)
+    ; P.cap= Some K.keycap_chery_r2
     ; P.p= (98.5, 9., 10.)
     ; P.size= (20., 20., 6.) }
 
@@ -141,6 +161,7 @@ let under_cover d t f k =
     let open Model.Pad in
     { P.a= k.a
     ; P.f
+    ; P.cap= None
     ; P.size= (get_x k.size, get_y k.size, t)
     ; P.p= k.p <+> Model.Matrix.trans (Model.Matrix.rot k.a) (0., 0., -.d -. t)
     }
@@ -238,7 +259,7 @@ let screw_k40 =
 
 let screw_kp_l =
     { Patch.a= (0., pi /. 20., 0.)
-    ; Patch.p= (47., -63., 31.5)
+    ; Patch.p= (47., -63., 28.5)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 4.5
@@ -246,7 +267,7 @@ let screw_kp_l =
 
 let screw_kp_r =
     { Patch.a= (0., pi /. 20., 0.)
-    ; Patch.p= (67., -63., 28.5)
+    ; Patch.p= (67., -63., 25.5)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 4.5
@@ -256,7 +277,8 @@ let screw_kt11 =
     { Patch.a= (0., -1. *. pi /. 2., 0.)
     ; Patch.p= (26.5, -56., 4.0)
     ; Patch.out_r= 2.5
-    ; Patch.in_r= 1.1 ; Patch.top_h= 8.5
+    ; Patch.in_r= 1.1
+    ; Patch.top_h= 8.5
     ; Patch.insert_r= 1.5 }
 
 let screw_kt12 =
@@ -308,24 +330,28 @@ let screw_thumb_bottom =
 let kt11 =
     { P.a= (0., -1. *. pi /. 2., 0.)
     ; P.f= Model.Key_unit.dummy
+    ; P.cap= None
     ; P.p= (23., -56., 0.)
     ; P.size= (19., 2., 6.) }
 
 let kt12 =
     { P.a= (0., -1. *. pi /. 2., pi /. 6.)
     ; P.f= kailh_choc (3., 0.)
+    ; P.cap= Some K.keycap_choc
     ; P.p= (22., -47., 0.)
     ; P.size= (23., 17., 6.) }
 
 let kt21 =
     { P.a= (0., -3. *. pi /. 7., 0.)
     ; P.f= Model.Key_unit.dummy
+    ; P.cap= None
     ; P.p= (23., -54., 22.)
     ; P.size= (20., 2., 6.) }
 
 let kt22 =
     { P.a= (0., -3. *. pi /. 7., pi /. 6.)
     ; P.f= kailh_choc (-1.5, 0.)
+    ; P.cap= Some K.keycap_choc
     ; P.p= (22., -47., 26.)
     ; P.size= (20., 17., 6.) }
 
@@ -354,6 +380,7 @@ let thumb_trackball =
 let dummy_key =
     { P.a= (0., 0., 0.)
     ; P.f= Model.Key_unit.dummy
+    ; P.cap= None
     ; P.p= (0., 0., 0.)
     ; P.size= (0., 0., 0.) }
 

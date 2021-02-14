@@ -11,6 +11,7 @@ type screw_conf_t =
     ; a: Scad_ml.Math.t }
 
 let insert_l = 3.3
+
 let extent = 2.
 
 type patch_t = Screw of screw_conf_t
@@ -45,7 +46,8 @@ let apply_patches target patches =
                  (outer, M.union [inner; top_cut; bottom_cut])
              | Screw screw, Bottom ->
                  let outer =
-                     M.cylinder ~center:true ~fn:30 screw.out_r (insert_l +. extent)
+                     M.cylinder ~center:true ~fn:30 screw.out_r
+                       (insert_l +. extent)
                      |>> (0., 0., -.(insert_l +. extent) /. 2.)
                      |@> screw.a |>> screw.p
                  in
