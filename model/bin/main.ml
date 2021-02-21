@@ -26,42 +26,42 @@ let k11 =
     { P.a= (-.pi /. 10., (pi /. 20.) +. (pi /. 20.), pi /. 30.)
     ; P.f= kailh_box (1.5, 1.5)
     ; P.cap= Some K.keycap_chery_r4
-    ; P.p= (-3.5, -30., 29.5)
+    ; P.p= (-3.5, -30., 32.0)
     ; P.size= (20., 20., 6.) }
 
 let k12 =
-    { P.a= (pi /. 8., (pi /. 12.) +. (pi /. 20.), pi /. 30.)
+    { P.a= (pi /. 20., (pi /. 12.) +. (pi /. 20.), pi /. 30.)
     ; P.f= kailh_box (1.5, 0.)
     ; P.cap= Some K.keycap_chery_r3
-    ; P.p= (-10., -1.5, 27.5)
+    ; P.p= (-10., -4.5, 26.5)
     ; P.size= (20., 17., 6.) }
 
 let k13 =
-    { P.a= (pi /. 4., (pi /. 12.) +. (pi /. 20.), pi /. 20.)
+    { P.a= (pi /. 6., (pi /. 12.) +. (pi /. 20.), pi /. 20.)
     ; P.f= kailh_box (1.5, 0.)
     ; P.cap= Some K.keycap_chery_r2
-    ; P.p= (-9., 19.5, 37.5)
+    ; P.p= (-9., 18.5, 29.5)
     ; P.size= (20., 17., 6.) }
 
 let k21 =
     { P.a= (-.pi /. 10., pi /. 20., pi /. 60.)
     ; P.f= kailh_box (0., 1.5)
     ; P.cap= Some K.keycap_chery_r2
-    ; P.p= (18., -26., 22.5)
+    ; P.p= (18., -26., 23.0)
     ; P.size= (17., 20., 6.) }
 
 let k22 =
-    { P.a= (pi /. 8., pi /. 20., pi /. 60.)
+    { P.a= (pi /. 20., pi /. 20., pi /. 60.)
     ; P.f= kailh_box (0., 0.)
     ; P.cap= Some K.keycap_chery_r3
-    ; P.p= (14., 3., 18.)
+    ; P.p= (14., 0., 17.)
     ; P.size= (17., 17., 6.) }
 
 let k23 =
-    { P.a= (pi /. 4., pi /. 20., pi /. 60.)
+    { P.a= (pi /. 8., pi /. 20., pi /. 60.)
     ; P.f= kailh_box (0., 0.)
     ; P.cap= Some K.keycap_chery_r2
-    ; P.p= (14.5, 24.5, 27.0)
+    ; P.p= (14.5, 21.0, 20.0)
     ; P.size= (17., 17., 6.) }
 
 let kp =
@@ -79,80 +79,80 @@ let k31 =
     ; P.size= (17., 17., 6.) }
 
 let k32 =
-    { P.a= (pi /. 8., pi /. 20., 0.)
+    { P.a= (pi /. 20., pi /. 20., 0.)
     ; P.f= kailh_box (0., 0.)
     ; P.cap= Some K.keycap_chery_r3
-    ; P.p= (35., 10., 11.)
+    ; P.p= (35., 6., 11.)
     ; P.size= (17., 17., 6.) }
 
 let k33 =
-    { P.a= (pi /. 4., pi /. 20., 0.)
+    { P.a= (pi /. 8., pi /. 20., 0.)
     ; P.f= kailh_box (0., 0.)
     ; P.cap= Some K.keycap_chery_r2
-    ; P.p= (36., 32., 21.)
+    ; P.p= (36., 27., 15.)
     ; P.size= (17., 17., 6.) }
 
 let k41 =
     { P.a= (-.pi /. 10., pi /. 20., -.pi /. 60.)
     ; P.f= kailh_box (0., 0.)
     ; P.cap= Some K.keycap_chery_r2
-    ; P.p= (56., -20., 17.)
+    ; P.p= (56., -25., 17.)
     ; P.size= (17., 17., 6.) }
 
 let k42 =
-    { P.a= (pi /. 10., pi /. 20., -.pi /. 60.)
+    { P.a= (pi /. 20., pi /. 20., -.pi /. 60.)
     ; P.f= kailh_box (0., 0.)
     ; P.cap= Some K.keycap_chery_r3
-    ; P.p= (56., 6., 10.)
+    ; P.p= (56., -1., 9.)
     ; P.size= (17., 17., 6.) }
 
 let k43 =
-    { P.a= (pi /. 4., pi /. 20., -.pi /. 60.)
+    { P.a= (pi /. 8., pi /. 20., -.pi /. 60.)
     ; P.f= kailh_box (0., 0.)
     ; P.cap= Some K.keycap_chery_r2
-    ; P.p= (58., 29., 18.)
+    ; P.p= (58., 22., 13.)
     ; P.size= (17., 17., 6.) }
 
 let k51 =
     { P.a= (-.pi /. 10., pi /. 20., -.pi /. 30.)
     ; P.f= kailh_box (0., 1.5)
     ; P.cap= Some K.keycap_chery_r2
-    ; P.p= (75., -30., 15.)
+    ; P.p= (75., -33.5, 15.)
     ; P.size= (17., 20., 6.) }
 
 let k52 =
-    { P.a= (pi /. 10., pi /. 20., -.pi /. 30.)
+    { P.a= (pi /. 20., pi /. 20., -.pi /. 30.)
     ; P.f= kailh_box (0., 0.)
     ; P.cap= Some K.keycap_chery_r3
-    ; P.p= (75.5, -2., 9.5)
+    ; P.p= (75.5, -7., 8.5)
     ; P.size= (17., 17., 6.) }
 
 let k53 =
-    { P.a= (pi /. 4., pi /. 20., -.pi /. 30.)
+    { P.a= (pi /. 8., pi /. 20., -.pi /. 30.)
     ; P.f= kailh_box (-1.5, -1.5)
     ; P.cap= Some K.keycap_chery_r2
-    ; P.p= (78., 20., 18.)
+    ; P.p= (78., 14., 13.)
     ; P.size= (20., 20., 6.) }
 
 let k61 =
     { P.a= (-.pi /. 10., pi /. 20., -.pi /. 20.)
     ; P.f= kailh_box (-1.5, 1.5)
     ; P.cap= Some K.keycap_chery_r3
-    ; P.p= (93., -28., 12.)
+    ; P.p= (93., -32., 12.)
     ; P.size= (20., 20., 6.) }
 
 let k62 =
-    { P.a= (pi /. 8., 0., -.pi /. 15.)
+    { P.a= (pi /. 20., 0., -.pi /. 15.)
     ; P.f= Model.Key_unit.dummy
     ; P.cap= None
-    ; P.p= (96., 1., 5.)
-    ; P.size= (19., 3., 6.) }
+    ; P.p= (96., -7., 6.)
+    ; P.size= (19., 3., 4.) }
 
 let k63 =
-    { P.a= (pi /. 4., 0., -.pi /. 10.)
+    { P.a= (pi /. 8., 0., -.pi /. 10.)
     ; P.f= kailh_box (-1.5, -1.5)
     ; P.cap= Some K.keycap_chery_r2
-    ; P.p= (98.5, 9., 10.)
+    ; P.p= (98.5, 2., 9.)
     ; P.size= (20., 20., 6.) }
 
 open Scad_ml.Util
@@ -179,7 +179,7 @@ module Patch = Model.Patch
 
 let screw_k13 =
     { Patch.a= (pi /. 5., pi /. 15., pi /. 60.)
-    ; Patch.p= (13.5, 36., 37.0)
+    ; Patch.p= (13.0, 33., 24.0)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 6.5
@@ -187,7 +187,7 @@ let screw_k13 =
 
 let screw_k12 =
     { Patch.a= (pi /. 12., pi /. 20., pi /. 60.)
-    ; Patch.p= (11.8, 0., 19.5)
+    ; Patch.p= (12.5, 0., 19.5)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 5.5
@@ -195,7 +195,7 @@ let screw_k12 =
 
 let screw_k20 =
     { Patch.a= (0., pi /. 20., pi /. 60.)
-    ; Patch.p= (16., -25., 21.5)
+    ; Patch.p= (16., -25., 24.5)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 5.5
@@ -203,7 +203,7 @@ let screw_k20 =
 
 let screw_k33 =
     { Patch.a= (pi /. 12., pi /. 20., -.pi /. 60.)
-    ; Patch.p= (49.5, 28., 15.)
+    ; Patch.p= (33.0, 28., 17.)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 5.5
@@ -211,7 +211,7 @@ let screw_k33 =
 
 let screw_k42 =
     { Patch.a= (pi /. 6., pi /. 20., -.pi /. 30.)
-    ; Patch.p= (69.5, 26., 15.)
+    ; Patch.p= (56.5, 26., 15.)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 5.5
@@ -219,7 +219,7 @@ let screw_k42 =
 
 let screw_k53 =
     { Patch.a= (pi /. 6., pi /. 20., -.pi /. 30.)
-    ; Patch.p= (100., 25., 23.)
+    ; Patch.p= (100., 25., 16.)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 5.5
@@ -227,7 +227,7 @@ let screw_k53 =
 
 let screw_k52 =
     { Patch.a= (pi /. 12., pi /. 20., -.pi /. 30.)
-    ; Patch.p= (110., 0., 6.)
+    ; Patch.p= (110., -7., 6.)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 6.0
@@ -235,7 +235,7 @@ let screw_k52 =
 
 let screw_k50 =
     { Patch.a= (0., pi /. 20., -.pi /. 10.)
-    ; Patch.p= (94., -26.5, 10.)
+    ; Patch.p= (94., -29.0, 10.)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 6.5
@@ -251,7 +251,7 @@ let screw_k30 =
 
 let screw_k40 =
     { Patch.a= (0., pi /. 20., -.pi /. 30.)
-    ; Patch.p= (64., -23., 16.5)
+    ; Patch.p= (64., -26.5, 16.5)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 5.5
