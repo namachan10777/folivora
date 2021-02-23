@@ -273,17 +273,33 @@ let screw_kp_r =
     ; Patch.top_h= 4.5
     ; Patch.insert_r= 1.5 }
 
-let screw_kt11 =
-    { Patch.a= (0., -1. *. pi /. 2., 0.)
-    ; Patch.p= (26.5, -56., 4.0)
+let screw_kt02f =
+    { Patch.a= (0., 0., 0.)
+    ; Patch.p= (-15., -68.7, 6.0)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
-    ; Patch.top_h= 8.5
+    ; Patch.top_h= 6.5
     ; Patch.insert_r= 1.5 }
 
-let screw_kt12 =
-    { Patch.a= (0., -1. *. pi /. 2., pi /. 6.)
-    ; Patch.p= (15., -29.0, 3.5)
+let screw_kt02n =
+    { Patch.a= (0., 0., 0.)
+    ; Patch.p= (-30., -54., 6.0)
+    ; Patch.out_r= 2.5
+    ; Patch.in_r= 1.1
+    ; Patch.top_h= 6.5
+    ; Patch.insert_r= 1.5 }
+
+let screw_kt12f =
+    { Patch.a= (0., 0., pi /. 6.)
+    ; Patch.p= (-.5., -37.0, 6.5)
+    ; Patch.out_r= 2.5
+    ; Patch.in_r= 1.1
+    ; Patch.top_h= 5.5
+    ; Patch.insert_r= 1.5 }
+
+let screw_kt12n =
+    { Patch.a= (0., 0., pi /. 6.)
+    ; Patch.p= (10., -50.0, 6.5)
     ; Patch.out_r= 2.5
     ; Patch.in_r= 1.1
     ; Patch.top_h= 8.5
@@ -324,22 +340,24 @@ let screw_thumb_top = []
 let screw_thumb_bottom =
     [ Patch.Screw screw_kt22
     ; Patch.Screw screw_kt21
-    ; Patch.Screw screw_kt12
-    ; Patch.Screw screw_kt11 ]
-
-let kt11 =
-    { P.a= (0., -1. *. pi /. 2., 0.)
-    ; P.f= Model.Key_unit.dummy
-    ; P.cap= None
-    ; P.p= (23., -56., 0.)
-    ; P.size= (18., 2., 6.) }
+    ; Patch.Screw screw_kt12f
+    ; Patch.Screw screw_kt12n
+    ; Patch.Screw screw_kt02f 
+    ; Patch.Screw screw_kt02n ]
 
 let kt12 =
-    { P.a= (0., -1. *. pi /. 2., pi /. 6.)
-    ; P.f= kailh_choc (1., -1.)
+    { P.a= (0., 0., pi /. 6.)
+    ; P.f= kailh_choc (1., 0.)
     ; P.cap= Some K.keycap_choc
-    ; P.p= (22., -47., 0.)
-    ; P.size= (18., 19., 6.) }
+    ; P.p= (-9., -62., 7.)
+    ; P.size= (18., 20., 6.) }
+
+let kt02 =
+    { P.a= (0., 0., pi /. 4.)
+    ; P.f= kailh_choc (1., 0.)
+    ; P.cap= Some K.keycap_choc
+    ; P.p= (-23., -76., 7.)
+    ; P.size= (18., 20., 6.) }
 
 let kt21 =
     { P.a= (0., -3. *. pi /. 7., 0.)
@@ -356,8 +374,8 @@ let kt22 =
     ; P.size= (20., 19., 6.) }
 
 let tmat =
-    [ [None; None; None; None]
-    ; [None; Some kt11; Some kt12; None]
+    [ [None; None; Some kt02; None]
+    ; [None; None; Some kt12; None]
     ; [None; Some kt21; Some kt22; None]
     ; [None; None; None; None] ]
 
@@ -407,6 +425,36 @@ let top mat =
       ( (screw_top_bottom |> List.map ~f:(fun p -> (p, Patch.Top)))
       @ (screw_thumb_top |> List.map ~f:(fun p -> (p, Patch.Bottom))) )
 
+let palm_rest =
+    let w = 75. in
+    let d = 60. in
+    let h = 18. in
+    let hex_r = 5.0 in
+    let hex_d = 2.0 in
+    let hex = M.cylinder ~center:true ~fn:6 hex_r (h+.0.02) |>> (0., 0., h/.2.) |@> (0., 0., pi/.2.) in
+    let gen_hannycum n m =
+        M.union @@ List.init m ~f:(fun i ->
+            let col n = M.union @@ List.init n ~f:(fun i -> hex |>> ((hex_r *. 2. *. Float.cos (pi/.6.) +. hex_d)*. float_of_int i, 0., 0.)) in
+            (if i mod 2 = 0
+            then col n
+            else col (n-1) |>> (hex_r, 0., 0.)) |>> (0., (hex_d +. 2. *. hex_r *. Float.cos (pi /. 6.) ** 2.) *. float_of_int i, 0.)
+        )
+    in
+    let k_w = 22. in
+    let k_d = 20. in
+    let k_h = 20. in
+    let space = 5. in
+    let lshift = 10. in
+    M.union [
+        M.hull [
+        M.cube (k_w, k_d, k_h);
+        M.cube (w, 0.01, h) |>> (-.lshift, -.space, 0.);
+        ];
+        M.difference (M.cube (w, d -. space, h)) [
+            gen_hannycum 6 5 |>> (10., 10., 0.);
+        ]|>> (-.lshift, -.d, 0.);
+    ]
+
 let bottom tmat mat =
     let tcover = gen_cover 3.5 tmat in
     let ortho = gen_cover 0.5 mat in
@@ -431,34 +479,42 @@ let bottom tmat mat =
                  ; P.nside @@ idx ortho 3 2
                  ; P.pnside @@ idx ortho 3 2 ]
              ; M.hull
-                 [P.bottom @@ tidx 1 1; P.lside kp_bottom; P.plside kp_bottom]
-             ; M.hull
                  [P.brside @@ tidx 1 1; P.blside @@ tidx 2 1; P.lside kp_bottom]
              ; M.hull [P.bottom @@ tidx 2 1; P.lside kp_bottom]
              ; M.hull
                  [P.bfside @@ tidx 2 1; P.bnside @@ tidx 2 2; P.barfl kp_bottom]
              ; M.hull
-                 [ P.bfside @@ tidx 1 1
-                 ; P.bnside @@ tidx 1 2
-                 ; P.barfl kp_bottom
-                 ; P.pbarfl kp_bottom ]
-             ; M.hull
-                 [P.bottom @@ tidx 1 2; P.barfl kp_bottom; P.pbarfl kp_bottom]
+             [
+                 P.plside kp_bottom;
+                 P.blside kp_bottom;
+                 P.bnside @@ tidx 2 1;
+                 P.bfside @@ tidx 2 1;
+                 P.bnside @@ tidx 2 2;
+             ]
+             ; M.hull[
+                 P.plside kp_bottom;
+                 P.blside kp_bottom;
+                 P.bnside @@ tidx 2 2;
+                 P.blside @@ tidx 2 2;
+             ]
+             ; M.hull [
+                 P.plside @@ tidx 2 2;
+                 P.brside @@ tidx 1 2;
+             ]
+             ; M.hull[
+                 P.plside @@ tidx 2 2;
+                 P.plside @@ kp_bottom
+             ]
              ; M.hull [P.bottom @@ tidx 2 2; P.barfl kp_bottom]
-             ; M.hull
-                 [P.blside @@ tidx 2 2; P.brside @@ tidx 1 2; P.barfl kp_bottom]
-             ; M.hull
-                 [ P.bbarfr @@ tidx 1 1
-                 ; P.bbarfl @@ tidx 2 1
-                 ; P.bbarnl @@ tidx 2 2
-                 ; P.bbarnr @@ tidx 1 2
-                 ; P.barfl kp_bottom ] ])
+             ; palm_rest |>> (45., -60., 0.)
+                ])
           ( (screw_top_bottom |> List.map ~f:(fun p -> (p, Patch.Bottom)))
           @ (screw_thumb_bottom |> List.map ~f:(fun p -> (p, Patch.Bottom))) )
     in
     M.difference
       (M.union [base; Pcbmod.top |>> (-27.5, -25.5, 0.)])
       [Pcbmod.hollow |>> (-27.5, -25.5, 0.)]
+
 
 let remove_cap =
     List.map
