@@ -1,3 +1,0 @@
-(sym_lib_table
-  (lib (name trackball-rescue)(type Legacy)(uri ${KIPRJMOD}/trackball-rescue.lib)(options "")(descr ""))
-)
