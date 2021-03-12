@@ -2949,13 +2949,13 @@ Text Label 4150 8600 2    50   ~ 0
 COL7
 Text Label 4150 8500 2    50   ~ 0
 COL8
-Text Label 4150 8400 2    50   ~ 0
-COL12
-Text Label 5450 9300 0    50   ~ 0
-COL11
-Text Label 5450 9200 0    50   ~ 0
-COL10
 Text Label 5450 9100 0    50   ~ 0
+COL12
+Text Label 5450 9200 0    50   ~ 0
+COL11
+Text Label 5450 9300 0    50   ~ 0
+COL10
+Text Label 4150 8400 2    50   ~ 0
 COL9
 NoConn ~ 4150 9000
 NoConn ~ 5450 9000
